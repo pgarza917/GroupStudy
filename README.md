@@ -1,4 +1,4 @@
-Original App Design Project - README Template
+Original App Design Project
 ===
 
 # Study Group 
@@ -100,7 +100,7 @@ Original App Design Project - README Template
 
 ## Wireframes
 [Add picture of your hand sketched wireframes in this section]
-<img src="YOUR_WIREFRAME_IMAGE_URL" width=600>
+<img src="https://github.com/pgarza917/GroupStudy/blob/master/GroupStudyWireframeV0.jpg" width=600>
 
 ### [BONUS] Digital Wireframes & Mockups
 
