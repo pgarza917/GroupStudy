@@ -100,7 +100,7 @@ Original App Design Project
 
 ## Wireframes
 [Add picture of your hand sketched wireframes in this section]
-<img src="https://github.com/pgarza917/GroupStudy/blob/master/GroupStudyWireframeV0.jpg" width=600>
+<img src="https://github.com/pgarza917/GroupStudy/blob/master/GroupStudy_wireframe_v1.jpg" width=600>
 
 ### [BONUS] Digital Wireframes & Mockups
 
