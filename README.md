@@ -107,10 +107,114 @@ Original App Design Project
 ### [BONUS] Interactive Prototype
 
 ## Schema 
-[This section will be completed in Unit 9]
 ### Models
-[Add table of models]
+
+- **User**
+
+| Property       | Type         | Description  |
+| :------------: | :----------: | :----------- |
+| userId         | String       | unique ID for each user (default)|
+| email          | String | email address of the user |
+| pasword        | String | password of the user |
+| bio            | String | user's bio |
+| profileImage   | File   | image that user uses for their profile pic|
+| privacy        | String | privacy setting of user |
+
+- **Event**
+
+| Property       | Type         | Description  |
+| :------------: | :----------: | :----------- |
+| eventId        | String  | unique ID for each event created (default) |
+| title          | String | title of the event |
+| description    | String | description of the event |
+| location       | Location | location of the event |
+| users          | List of User objects | list of users invited to an event 
+| createdAt      | DateTime | time when event is created |
+| privacy        | String | privacy setting of event |
+| hosts          | List of User object | list of users hosting event |
+| files          | List of File objects | list of files uploaded to event |
+| gdocs          | List of Strings | list of urls to google docs of event |
+
+* **Group**
+
+| Property       | Type         | Description  |
+| :------------: | :----------: | :----------- |
+| groupId        | String       | unique ID for each group created (default) |
+| name           | String       | name of the group |
+| users          | List of User objects | list of users added to the group |
+| createdAt      | DateTime     | time of when group was created |
+| privacy        | String       | privacy setting of group |
+| files          | List of File objects | list of files uploaded to group |
+
+
+
 ### Networking
-- [Add list of network requests by screen ]
-- [Create basic snippets for each Parse network request]
-- [OPTIONAL: List endpoints if using existing API such as Yelp]
+**List of network requests by screen**
+* Home timeline Screen
+    * (Read/GET) Query all events where user is invited
+    * ```java 
+        // Specify which class to query from Parse DB
+        ParseQuery<Post> query = ParseQuery.getQuery(Event.class);
+        query.include(Post.KEY_USER);
+        query.whereEqualTo(Post.KEY_USER, ParseUser.getCurrentUser());
+        query.setLimit(20);
+        query.orderByDescending(Post.KEY_CREATED);
+        // Using findInBackground to pull all Posts from DB
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Event> events, ParseException e) {
+                // The ParseException will not be null if error with populating List with Post objects
+                // went wrong with query
+                if(e != null) {
+                    Log.e(TAG, "Issue with getting events", e);
+                    return;
+                }
+                // The ParseException will be null if List was populated successfully from query
+                for(Event event : events) {
+                    Log.i(TAG, "Event: " + event.getDescription() + ", username: " + post.getUser().getUsername());
+                }
+                mAdapter.clear();
+                // Update the posts data set and notify the adapter of change
+                mAdapter.addAll(events);
+                // Now we call setRefreshing(false) to signal refresh has finished
+                mSwipeContainer.setRefreshing(false);
+            }
+        })
+        ```
+* Event creation screen
+    * (Create/POST) Create a new event object
+    * ```java 
+        Event event = new Post();
+        event.setDescription(description);
+        event.setUser(currentUser);
+        event.setImage(new ParseFile(photoFile));
+
+        // Executes query on a background thread to prevent disruption of main thread for improved
+        // user experience
+        event.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e != null) {
+                    Log.e(TAG, "Error creating event", e);
+                    Toast.makeText(getContext(), "Error while saving", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Log.i(TAG, "Event created successfully");
+                // Clear our description field to give user more visual confirmation of success
+                mEditTextDescription.setText("");
+                // Clear out image view for more confirmation of save success
+                mImageViewPost.setImageResource(0);
+            }
+        });
+        ```
+* Search screen
+    * (Read/GET) Query events and users where privacy is open for current user
+* Profile details screen
+    * (Read/GET) Query selected user (default is current user)
+    * (Update/PUT) Update current user's profile details
+* Event details creen
+    * (Read/GET) Query selected event
+    * (Update/PUT) Update event details if user is host
+    * (Read/GET) Query files and docs of selected event
+* Register screen
+    * (Create/POST) Create a new user object
