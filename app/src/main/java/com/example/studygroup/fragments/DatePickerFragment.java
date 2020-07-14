@@ -34,7 +34,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         }
         Intent intent = new Intent();
         intent.putExtra("year", year);
-        intent.putExtra("month", month);
+        intent.putExtra("month", month + 1);
         intent.putExtra("day", day);
 
         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);

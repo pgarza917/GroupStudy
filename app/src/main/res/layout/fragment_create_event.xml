@@ -67,5 +67,19 @@
         android:layout_toEndOf="@+id/datePickerImageButton"
         android:text="Select Date" />
 
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/datePickerImageButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="#FFB300"
+        android:text="Create Event"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
 
 </RelativeLayout>
