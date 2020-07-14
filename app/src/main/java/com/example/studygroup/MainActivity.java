@@ -2,6 +2,7 @@ package com.example.studygroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -9,10 +10,13 @@ import android.Manifest;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.studygroup.fragments.CreateEventFragment;
+import com.example.studygroup.fragments.DatePickerFragment;
 import com.example.studygroup.fragments.FeedFragment;
 import com.example.studygroup.fragments.ProfileFragment;
+import com.example.studygroup.fragments.TimePickerFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {

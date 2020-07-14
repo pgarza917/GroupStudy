@@ -88,10 +88,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             mTitleTextView.setText(event.getTitle());
             mDescriptionTextView.setText(event.getDescription());
 
-            Calendar eventDate = Calendar.getInstance();
+            /*Calendar eventDate = Calendar.getInstance();
             eventDate.setTime(event.getTime());
             String strEventDate = eventDate.get(Calendar.MONTH) + "/" + eventDate.get(Calendar.DAY_OF_MONTH) + "/" + eventDate.get(Calendar.YEAR);
-            mTimeTextView.setText(strEventDate);
+            mTimeTextView.setText(strEventDate);*/
 
         }
     }
