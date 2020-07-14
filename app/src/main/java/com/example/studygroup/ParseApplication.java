@@ -2,6 +2,7 @@ package com.example.studygroup;
 
 import android.app.Application;
 
+import com.example.studygroup.models.Event;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -13,6 +14,9 @@ public class ParseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Registering our Parse model
+        ParseObject.registerSubclass(Event.class);
 
         // Use for monitoring Parse OkHttp traffic
         // Can be Level.BASIC, Level.HEADERS, or Level.BODY

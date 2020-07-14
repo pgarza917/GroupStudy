@@ -10,6 +10,7 @@ public class Event extends ParseObject {
     public static final String KEY_TITLE = "title";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_TIME = "time";
+    public static final String KEY_CREATED_AT = "createdAt";
     public static final String KEY_LOCATION = "location";
 
     public String getTitle() {
@@ -26,5 +27,13 @@ public class Event extends ParseObject {
 
     public void setDescription(String description) {
         put(KEY_DESCRIPTION, description);
+    }
+
+    public Date getTime() {
+        return (Date) get(KEY_TIME);
+    }
+
+    public void setTime(Date time) {
+        put(KEY_TIME, time);
     }
 }
