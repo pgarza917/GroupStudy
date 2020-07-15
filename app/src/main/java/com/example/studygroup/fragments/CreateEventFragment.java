@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +45,7 @@ public class CreateEventFragment extends Fragment {
 
     private ImageButton mSelectTimeImageButton;
     private ImageButton mSelectDateImageButton;
+    private ImageButton mSelectLocationImageButton;
     private TextView mSelectedTimeTextView;
     private TextView mSelectedDateTextView;
     private Button mSubmitButton;
@@ -72,10 +74,12 @@ public class CreateEventFragment extends Fragment {
         mSelectDateImageButton = view.findViewById(R.id.datePickerImageButton);
         mSelectedTimeTextView = view.findViewById(R.id.selectTimeTextView);
         mSelectedDateTextView = view.findViewById(R.id.selectDateTextView);
+        mSelectLocationImageButton = view.findViewById(R.id.locationPickerImageButton);
         mSubmitButton = view.findViewById(R.id.submitButton);
         mTitleEditText = view.findViewById(R.id.titleEditText);
         mDescriptionEditText = view.findViewById(R.id.descriptionEditText);
 
+        // Launching a Date picker widget when user taps on calendar icon button
         mSelectDateImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,12 +89,22 @@ public class CreateEventFragment extends Fragment {
             }
         });
 
+        // Launching a Time picker widget when user taps on clock icon button
         mSelectTimeImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DialogFragment timePickerFragment = new TimePickerFragment();
                 timePickerFragment.setTargetFragment(CreateEventFragment.this, TIME_PICKER_REQUEST_CODE);
                 timePickerFragment.show(((MainActivity)getContext()).getSupportFragmentManager(), "timePicker");
+            }
+        });
+
+        mSelectLocationImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(((MainActivity) getContext()).isGoogleServicesOk()) {
+                    ((MainActivity) getContext()).openUpMapActivity();
+                }
             }
         });
 
@@ -156,6 +170,7 @@ public class CreateEventFragment extends Fragment {
         }
     }
 
+    // Method for helping parse a Date format and creating a Date object
     public static Date stringToDate(String string, final String format, final Locale locale) throws ParseException {
         ThreadLocal formatter = new ThreadLocal() {
             protected SimpleDateFormat initialValue() {
@@ -165,6 +180,8 @@ public class CreateEventFragment extends Fragment {
         return ((SimpleDateFormat)formatter.get()).parse(string);
     }
 
+    // Method for submitting the user-created event to the Parse database with the correct
+    // details
     private void saveEvent(ParseUser user, String title, String description, Date dateTime) {
         Event event = new Event();
         event.setTitle(title);

@@ -2,7 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF"
+    android:paddingBottom="12dp">
 
     <TextView
         android:id="@+id/titleTextView"
@@ -36,16 +39,18 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
         android:layout_toEndOf="@+id/descriptionTextView"
+        android:background="@android:drawable/screen_background_light_transparent"
         app:srcCompat="@android:drawable/ic_menu_share" />
 
     <ImageButton
-        android:id="@+id/locationImageButton"
+        android:id="@+id/locationPickerImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/descriptionTextView"
         android:layout_alignParentStart="true"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:drawable/screen_background_light_transparent"
         app:srcCompat="@android:drawable/ic_menu_mylocation" />
 
     <TextView
@@ -54,8 +59,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/descriptionTextView"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="18dp"
-        android:layout_toEndOf="@+id/locationImageButton"
+        android:layout_marginTop="22dp"
+        android:layout_toEndOf="@+id/locationPickerImageButton"
         tools:text="Hillhouse 117" />
 
     <ImageButton
@@ -63,9 +68,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/descriptionTextView"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="4dp"
-        android:layout_toEndOf="@+id/locationTextView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="190dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:drawable/screen_background_light_transparent"
         app:srcCompat="@android:drawable/ic_menu_today" />
 
     <TextView
@@ -74,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/descriptionTextView"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="22dp"
         android:layout_toEndOf="@+id/timeImageButton"
         tools:text="Sept. 17, 2020" />
 </RelativeLayout>

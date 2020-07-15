@@ -66,5 +66,20 @@
         android:textColor="@android:color/white"
         android:textSize="18sp" />
 
+    <Button
+        android:id="@+id/registerCancelButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/registerButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="#F4511E"
+        android:text="Cancel"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
+
 
 </RelativeLayout>

@@ -7,21 +7,28 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
+import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.studygroup.fragments.CreateEventFragment;
 import com.example.studygroup.fragments.DatePickerFragment;
 import com.example.studygroup.fragments.FeedFragment;
 import com.example.studygroup.fragments.ProfileFragment;
 import com.example.studygroup.fragments.TimePickerFragment;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
+    public static final int ERROR_DIALOG_REQUEST = 8001;
 
     final FragmentManager mFragmentManager = getSupportFragmentManager();
     private BottomNavigationView mBottomNavigationView;
@@ -58,5 +65,29 @@ public class MainActivity extends AppCompatActivity {
 
         // Set default selection as home action icon
         mBottomNavigationView.setSelectedItemId(R.id.action_home);
+    }
+
+    public void openUpMapActivity() {
+        Intent intent = new Intent(MainActivity.this, MapActivity.class);
+        startActivity(intent);
+    }
+
+    // Helper method for determining if the current device is able to work with Google Play services
+    // so that we do not run into errors when using the Google Map API
+    public boolean isGoogleServicesOk() {
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(MainActivity.this);
+
+        if(available == ConnectionResult.SUCCESS) {
+            Log.d(TAG, "Google Play services are working");
+            return true;
+        } else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
+            Log.d(TAG, "A Google Play services error occurred, but we can fix it");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(MainActivity.this, available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        } else {
+            Toast.makeText(this, "You can't make map requests!", Toast.LENGTH_LONG).show();
+        }
+
+        return false;
     }
 }

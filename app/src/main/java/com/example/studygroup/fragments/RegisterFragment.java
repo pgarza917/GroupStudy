@@ -6,7 +6,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.studygroup.LoginActivity;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.parse.ParseException;
@@ -25,11 +28,14 @@ import com.parse.SignUpCallback;
  */
 public class RegisterFragment extends Fragment {
 
+    public static final String TAG = RegisterFragment.class.getSimpleName();
+
     private EditText mUsernameEditText;
     private EditText mPasswordEditText;
     private EditText mEmailEditText;
     private EditText mBioEditText;
     private Button mRegisterAccountButton;
+    private Button mCancelRegisterButton;
 
     public RegisterFragment() {
         // Required empty public constructor
@@ -51,6 +57,7 @@ public class RegisterFragment extends Fragment {
         mEmailEditText = view.findViewById(R.id.registerEmailEditText);
         mBioEditText = view.findViewById(R.id.registerBioEditText);
         mRegisterAccountButton = view.findViewById(R.id.registerButton);
+        mCancelRegisterButton = view.findViewById(R.id.registerCancelButton);
 
         mRegisterAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +80,15 @@ public class RegisterFragment extends Fragment {
                 }
 
                 registerUser(username, password, email, bio);
+            }
+        });
+
+        mCancelRegisterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "Cancel Button clicked!");
+                Fragment fragment = new LoginFragment();
+                ((LoginActivity) getContext()).getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutContainer, fragment).commit();
             }
         });
 

@@ -14,8 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.studygroup.R;
 import com.example.studygroup.models.Event;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
@@ -74,7 +72,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             mTitleTextView = itemView.findViewById(R.id.titleTextView);
             mDescriptionTextView = itemView.findViewById(R.id.descriptionTextView);
             mShareImageButton = itemView.findViewById(R.id.shareImageButton);
-            mLocationButton = itemView.findViewById(R.id.locationImageButton);
+            mLocationButton = itemView.findViewById(R.id.locationPickerImageButton);
             mLocationTextView = itemView.findViewById(R.id.locationTextView);
             mTimeImageButton = itemView.findViewById(R.id.timeImageButton);
             mTimeTextView = itemView.findViewById(R.id.timeTextView);
