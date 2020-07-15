@@ -13,37 +13,46 @@
         android:id="@+id/map"
         tools:context=".MapsActivity"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
-    
-    <RelativeLayout
+
+
+    <ImageButton
+        android:id="@+id/gpsIconImageButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="100dp"
+        android:layout_marginRight="20dp"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_gps" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="15dp"
+        android:id="@+id/mapSearchLinearLayout"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:elevation="10dp"
-        android:background="@drawable/white_border"
-        android:id="@+id/mapWidgetsRelativeLayout">
-
-        <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:id="@+id/magnifyIconImageView"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/ic_magnify"/>
-
+        android:layout_height="match_parent"
+        tools:context=".activity.MapsActivity">
         <EditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/magnifyIconImageView"
-            android:layout_centerVertical="true"
-            android:textSize="15sp"
-            android:textColor="@color/black"
             android:id="@+id/locationSearchEditText"
-            android:background="@null"
-            android:hint="Enter an Address, City, or Zip Code"
-            android:imeOptions="actionSearch"/>
+            android:hint="Search"
+            android:inputType="textPostalAddress"
+            android:padding="15dp"
+            android:layout_marginBottom="15dp"
+            android:drawableLeft="@drawable/places_ic_search"
+            android:background="@drawable/white_border"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-    </RelativeLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/placesRecyclerView"
+            android:background="#FFF"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </androidx.recyclerview.widget.RecyclerView>
+
+    </LinearLayout>
 
 </RelativeLayout>
