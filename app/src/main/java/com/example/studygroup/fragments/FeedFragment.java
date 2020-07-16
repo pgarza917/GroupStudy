@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -81,6 +82,9 @@ public class FeedFragment extends Fragment {
         mEventsRecyclerView.setAdapter(mEventsAdapter);
         // 4. Set the layout manager on the Recycler View
         mEventsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        DividerItemDecoration itemDecor = new DividerItemDecoration(mEventsRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        mEventsRecyclerView.addItemDecoration(itemDecor);
 
         queryEvents();
     }

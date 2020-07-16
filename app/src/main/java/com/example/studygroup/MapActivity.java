@@ -4,32 +4,23 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.studygroup.adapters.PlacesAutoCompleteAdapter;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.dynamic.SupportFragmentWrapper;
+import com.example.studygroup.fragments.CreateEventFragment;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -41,12 +32,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -54,55 +45,72 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     public static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     public static final int LOCATION_PERMISSION_REQUEST_CODE = 1254;
-    public static final float DEFAULT_ZOOM = 15f;
+    public static final float DEFAULT_ZOOM = 17f;
 
-    private EditText mLocationSearchEditText;
-    private RecyclerView mPlacesRecyclerView;
     private ImageButton mGpsImageButton;
+    private AutocompleteSupportFragment mAutoCompleteSupportFragment;
+    private Button mConfirmSelectionButton;
 
     private Boolean mLocationPermissionGranted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
-    private PlacesAutoCompleteAdapter mAutoCompleteAdapter;
+    private PlacesClient mPlacesClient;
+
+    private LatLng mSelectedLocationLatLng;
+    private String mSelectedLocationName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        // Initialize the SDK
-        Places.initialize(getApplicationContext(), getString(R.string.google_api_key));
-
-        // Create a new PlacesClient instance
-        PlacesClient placesClient = Places.createClient(this);
-
-        mLocationSearchEditText = findViewById(R.id.locationSearchEditText);
         mGpsImageButton = findViewById(R.id.gpsIconImageButton);
-        mPlacesRecyclerView = findViewById(R.id.placesRecyclerView);
+        mConfirmSelectionButton = findViewById(R.id.confirmSelectionButton);
+
+        if(!Places.isInitialized()) {
+            Places.initialize(this, getString(R.string.google_api_key));
+        }
+        mPlacesClient = Places.createClient(this);
+
+        mAutoCompleteSupportFragment = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocompleteFragment);
+        mAutoCompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME));
+        mAutoCompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                mSelectedLocationLatLng = place.getLatLng();
+                mSelectedLocationName = place.getName();
+
+                Log.i(TAG, "onPlaceSelected: " + mSelectedLocationLatLng.latitude + " " + mSelectedLocationLatLng.longitude);
+                moveMapCamera(mSelectedLocationLatLng, DEFAULT_ZOOM, ((place.getName() == null) ? "" : place.getName()));
+
+                mConfirmSelectionButton.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onError(@NonNull Status status) {
+                Log.i(TAG, "onError: Could not find place " + status.getStatusMessage());
+            }
+        });
+
+        mConfirmSelectionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mSelectedLocationLatLng == null || mSelectedLocationName == null) {
+                    Toast.makeText(getApplicationContext(), "You must select a location", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent intent = new Intent();
+                intent.putExtra("name", mSelectedLocationName);
+                intent.putExtra("lat", mSelectedLocationLatLng.latitude);
+                intent.putExtra("lng", mSelectedLocationLatLng.longitude);
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        });
 
         getLocationPermission();
     }
 
-    // Attempts to find the location inputted in the search location edit text
-    private void geoLocate() {
-        Log.i(TAG, "geoLocate: Attempting to find location...");
-
-        String searchString = mLocationSearchEditText.getText().toString();
-
-        Geocoder geocoder = new Geocoder(MapActivity.this);
-        List<Address> addressList = new ArrayList<>();
-        try {
-            addressList = geocoder.getFromLocationName(searchString, 1);
-        } catch(IOException e) {
-            Log.e(TAG, "geoLocate: IO Exception: ", e);
-        }
-
-        if(addressList.size() > 0) {
-            Address address = addressList.get(0);
-
-            moveMapCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM, address.getAddressLine(0));
-        }
-    }
 
     private void initMapFragment() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -190,14 +198,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (mLocationPermissionGranted) {
             findDeviceLocation();
 
-            mAutoCompleteAdapter = new PlacesAutoCompleteAdapter(this);
-            mLocationSearchEditText.addTextChangedListener(filterTextWatcher);
-
-            mAutoCompleteAdapter = new PlacesAutoCompleteAdapter(this);
-            mPlacesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            //mAutoCompleteAdapter.setClickListener(this);
-            mPlacesRecyclerView.setAdapter(mAutoCompleteAdapter);
-            mAutoCompleteAdapter.notifyDataSetChanged();
 
             // Permission check once again to make sure user hasn't reverted previous permissions
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -208,17 +208,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
-            mLocationSearchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                    if(actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE
-                            || keyEvent.getAction() == KeyEvent.ACTION_DOWN || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER) {
-                        // Now execute search of inputted location
-                        geoLocate();
-                    }
-                    return true;
-                }
-            });
 
             mGpsImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -234,16 +223,4 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
-    private TextWatcher filterTextWatcher = new TextWatcher() {
-        public void afterTextChanged(Editable s) {
-            if (!s.toString().equals("")) {
-                mAutoCompleteAdapter.getFilter().filter(s.toString());
-                if (mPlacesRecyclerView.getVisibility() == View.GONE) {mPlacesRecyclerView.setVisibility(View.VISIBLE);}
-            } else {
-                if (mPlacesRecyclerView.getVisibility() == View.VISIBLE) {mPlacesRecyclerView.setVisibility(View.GONE);}
-            }
-        }
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-        public void onTextChanged(CharSequence s, int start, int before, int count) { }
-    };
 }

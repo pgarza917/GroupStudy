@@ -1,6 +1,7 @@
 package com.example.studygroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -39,12 +40,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mBottomNavigationView = findViewById(R.id.bottom_navigation);
-        mBottomNavigationView.setItemIconTintList(null);
         mBottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 Fragment fragment;
-                switch(menuItem.getItemId()) {
+                switch (menuItem.getItemId()) {
                     case R.id.action_create_event:
                         fragment = new CreateEventFragment();
                         break;
@@ -67,11 +67,6 @@ public class MainActivity extends AppCompatActivity {
         mBottomNavigationView.setSelectedItemId(R.id.action_home);
     }
 
-    public void openUpMapActivity() {
-        Intent intent = new Intent(MainActivity.this, MapActivity.class);
-        startActivity(intent);
-    }
-
     // Helper method for determining if the current device is able to work with Google Play services
     // so that we do not run into errors when using the Google Map API
     public boolean isGoogleServicesOk() {
@@ -90,4 +85,5 @@ public class MainActivity extends AppCompatActivity {
 
         return false;
     }
+
 }

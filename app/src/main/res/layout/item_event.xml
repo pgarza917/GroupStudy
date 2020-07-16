@@ -40,7 +40,7 @@
         android:layout_marginTop="4dp"
         android:layout_toEndOf="@+id/descriptionTextView"
         android:background="@android:drawable/screen_background_light_transparent"
-        app:srcCompat="@android:drawable/ic_menu_share" />
+        app:srcCompat="@drawable/ic_baseline_share_24" />
 
     <ImageButton
         android:id="@+id/locationPickerImageButton"
@@ -51,7 +51,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="16dp"
         android:background="@android:drawable/screen_background_light_transparent"
-        app:srcCompat="@android:drawable/ic_menu_mylocation" />
+        app:srcCompat="@drawable/ic_baseline_add_location_24" />
 
     <TextView
         android:id="@+id/locationTextView"
@@ -72,7 +72,7 @@
         android:layout_marginStart="190dp"
         android:layout_marginTop="16dp"
         android:background="@android:drawable/screen_background_light_transparent"
-        app:srcCompat="@android:drawable/ic_menu_today" />
+        app:srcCompat="@drawable/ic_baseline_calendar_today_24" />
 
     <TextView
         android:id="@+id/timeTextView"

@@ -5,17 +5,17 @@
     <item
         android:id="@+id/action_home"
         android:checked="true"
-        android:icon="@android:drawable/ic_menu_compass"
+        android:icon="@drawable/ic_home"
         android:title="Home"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_create_event"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@drawable/ic_add_box"
         android:title="Create Event"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_messages"
-        android:icon="@android:drawable/sym_action_email"
+        android:icon="@drawable/ic_messages"
         android:title="Messages"
         app:showAsAction="always" />
     <item

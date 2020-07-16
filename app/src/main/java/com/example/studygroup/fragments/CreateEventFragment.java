@@ -3,9 +3,9 @@ package com.example.studygroup.fragments;
 import android.app.Activity;
 import android.content.Intent;
 
-import java.security.AlgorithmParameterGenerator;
 import java.text.SimpleDateFormat;
-import android.os.Build;
+
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +24,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.studygroup.MainActivity;
+import com.example.studygroup.MapActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.models.Event;
+import com.google.android.gms.maps.model.LatLng;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -42,6 +44,7 @@ public class CreateEventFragment extends Fragment {
     public static final String TAG = CreateEventFragment.class.getSimpleName();
     public static final int TIME_PICKER_REQUEST_CODE = 300;
     public static final int DATE_PICKER_REQUEST_CODE = 500;
+    public static final int LOCATION_SELECT_REQUEST_CODE = 450;
 
     private ImageButton mSelectTimeImageButton;
     private ImageButton mSelectDateImageButton;
@@ -51,9 +54,11 @@ public class CreateEventFragment extends Fragment {
     private Button mSubmitButton;
     private EditText mTitleEditText;
     private EditText mDescriptionEditText;
+    private TextView mSelectedLocationTextView;
 
     private String mFormattedDate;
     private String mFormattedTime;
+    private ParseGeoPoint mSelectedLocationGeoPoint;
 
     public CreateEventFragment() {
         // Required empty public constructor
@@ -78,6 +83,7 @@ public class CreateEventFragment extends Fragment {
         mSubmitButton = view.findViewById(R.id.submitButton);
         mTitleEditText = view.findViewById(R.id.titleEditText);
         mDescriptionEditText = view.findViewById(R.id.descriptionEditText);
+        mSelectedLocationTextView = view.findViewById(R.id.selectLocationTextView);
 
         // Launching a Date picker widget when user taps on calendar icon button
         mSelectDateImageButton.setOnClickListener(new View.OnClickListener() {
@@ -103,7 +109,8 @@ public class CreateEventFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(((MainActivity) getContext()).isGoogleServicesOk()) {
-                    ((MainActivity) getContext()).openUpMapActivity();
+                    Intent intent = new Intent(getActivity(), MapActivity.class);
+                    startActivityForResult(intent, LOCATION_SELECT_REQUEST_CODE);
                 }
             }
         });
@@ -113,6 +120,8 @@ public class CreateEventFragment extends Fragment {
             public void onClick(View view) {
                 String title = mTitleEditText.getText().toString();
                 String description = mDescriptionEditText.getText().toString();
+                String locationName = mSelectedLocationTextView.getText().toString();
+
                 // Error checking for empty required fields
                 if(title.isEmpty()) {
                     Toast.makeText(getContext(), "Please enter a title for the event!", Toast.LENGTH_LONG).show();
@@ -130,11 +139,15 @@ public class CreateEventFragment extends Fragment {
                     Toast.makeText(getContext(), "Please select a date for the event!", Toast.LENGTH_LONG).show();
                     return;
                 }
+                if(mSelectedLocationGeoPoint == null) {
+                    Toast.makeText(getContext(), "Please select a location for the event!", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
                 String formattedDateTime = mFormattedDate + " " + mFormattedTime;
                 try {
                     Date eventDateTime = stringToDate(formattedDateTime, "dd.MM.yyyy HH:mm", Locale.ENGLISH);
-                    saveEvent(ParseUser.getCurrentUser(), title, description, eventDateTime);
+                    saveEvent(ParseUser.getCurrentUser(), title, description, eventDateTime, mSelectedLocationGeoPoint);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -156,6 +169,7 @@ public class CreateEventFragment extends Fragment {
             String min = String.format("%02d", minute);
             String time = ((hour == 12) ? 12 : hour % 12) + ":" + min + " " + ((hour >= 12) ? "pm" : "am");
             mSelectedTimeTextView.setText(time);
+            mSelectedTimeTextView.setTypeface(Typeface.DEFAULT_BOLD);
             mFormattedTime = String.format("%02d:%s", hour, min);
 
         }
@@ -166,7 +180,17 @@ public class CreateEventFragment extends Fragment {
 
             String date = month + "/" + day + "/" + year;
             mSelectedDateTextView.setText(date);
+            mSelectedDateTextView.setTypeface(Typeface.DEFAULT_BOLD);
             mFormattedDate = String.format("%02d.%02d.%04d", day, month, year);
+        }
+        if(requestCode == LOCATION_SELECT_REQUEST_CODE) {
+            String locationName = data.getStringExtra("name");
+            Double lat = data.getDoubleExtra("lat", 0.0);
+            Double lng = data.getDoubleExtra("lng", 0.0);
+            mSelectedLocationGeoPoint = new ParseGeoPoint(lat, lng);
+
+            mSelectedLocationTextView.setTypeface(Typeface.DEFAULT_BOLD);
+            mSelectedLocationTextView.setText(locationName);
         }
     }
 
@@ -182,11 +206,12 @@ public class CreateEventFragment extends Fragment {
 
     // Method for submitting the user-created event to the Parse database with the correct
     // details
-    private void saveEvent(ParseUser user, String title, String description, Date dateTime) {
+    private void saveEvent(ParseUser user, String title, String description, Date dateTime, ParseGeoPoint location) {
         Event event = new Event();
         event.setTitle(title);
         event.setDescription(description);
         event.setTime(dateTime);
+        event.setLocation(location);
         event.addUnique(Event.KEY_OWNERS, user);
 
         event.saveInBackground(new SaveCallback() {

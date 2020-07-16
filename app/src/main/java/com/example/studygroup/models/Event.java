@@ -1,6 +1,8 @@
 package com.example.studygroup.models;
 
+import com.parse.Parse;
 import com.parse.ParseClassName;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 
 import java.util.Date;
@@ -36,5 +38,13 @@ public class Event extends ParseObject {
 
     public void setTime(Date time) {
         put(KEY_TIME, time);
+    }
+
+    public ParseGeoPoint getLocation() {
+        return getParseGeoPoint(KEY_LOCATION);
+    }
+
+    public void setLocation(ParseGeoPoint location) {
+        put(KEY_LOCATION, location);
     }
 }
