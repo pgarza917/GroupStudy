@@ -15,12 +15,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.studygroup.LoginActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.adapters.EventsAdapter;
 import com.example.studygroup.models.Event;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 

@@ -1,4 +1,4 @@
-package com.example.studygroup.fragments;
+package com.example.studygroup.eventCreation;
 
 import android.os.Bundle;
 
@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +15,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.studygroup.R;
+import com.example.studygroup.models.Event;
+
+import org.parceler.Parcels;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class EventDetailsFragment extends Fragment {
+
+    public static final String TAG = EventDetailsFragment.class.getSimpleName();
 
     private TextView mTitleTextView;
     private TextView mDateTextView;
@@ -53,8 +59,12 @@ public class EventDetailsFragment extends Fragment {
         mTimeImageButton = view.findViewById(R.id.detailsTimeImageButton);
         mLocationImageButton = view.findViewById(R.id.detailsLocationImageButton);
 
+        Event event = (Event) Parcels.unwrap(getArguments().getParcelable(Event.class.getSimpleName()));
+        Log.i(TAG, "Received Bundled Event Data!");
 
-
+        mTitleTextView.setText(event.getTitle());
+        mLocationTextView.setText(event.getLocationName());
+        mDescriptionTextView.setText(event.getDescription());
 
     }
 }

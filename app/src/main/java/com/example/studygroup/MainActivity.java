@@ -1,27 +1,19 @@
 package com.example.studygroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import android.Manifest;
 import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
-import com.example.studygroup.fragments.CreateEventFragment;
-import com.example.studygroup.fragments.DatePickerFragment;
+import com.example.studygroup.eventCreation.CreateEventFragment;
 import com.example.studygroup.fragments.FeedFragment;
 import com.example.studygroup.fragments.ProfileFragment;
-import com.example.studygroup.fragments.TimePickerFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.bottomnavigation.BottomNavigationView;

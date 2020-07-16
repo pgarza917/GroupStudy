@@ -1,4 +1,4 @@
-package com.example.studygroup.fragments;
+package com.example.studygroup.eventCreation;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -24,10 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.studygroup.MainActivity;
-import com.example.studygroup.MapActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.models.Event;
-import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -49,12 +47,14 @@ public class CreateEventFragment extends Fragment {
     private ImageButton mSelectTimeImageButton;
     private ImageButton mSelectDateImageButton;
     private ImageButton mSelectLocationImageButton;
+    private ImageButton mAddFilesImageButton;
     private TextView mSelectedTimeTextView;
     private TextView mSelectedDateTextView;
     private Button mSubmitButton;
     private EditText mTitleEditText;
     private EditText mDescriptionEditText;
     private TextView mSelectedLocationTextView;
+    private TextView mAddFilesTextView;
 
     private String mFormattedDate;
     private String mFormattedTime;
@@ -85,43 +85,62 @@ public class CreateEventFragment extends Fragment {
         mTitleEditText = view.findViewById(R.id.titleEditText);
         mDescriptionEditText = view.findViewById(R.id.descriptionEditText);
         mSelectedLocationTextView = view.findViewById(R.id.selectLocationTextView);
+        mAddFilesImageButton = view.findViewById(R.id.addFileImageButton);
+        mAddFilesTextView = view.findViewById(R.id.addFilesTextView);
 
-        // Launching a Date picker widget when user taps on calendar icon button
-        mSelectDateImageButton.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener dateSelectListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment datePickerFragment = new DatePickerFragment();
-                datePickerFragment.setTargetFragment(CreateEventFragment.this, DATE_PICKER_REQUEST_CODE);
-                datePickerFragment.show(((MainActivity)getContext()).getSupportFragmentManager(), "datePicker");
+                launchDatePicker();
             }
-        });
+        };
 
-        // Launching a Time picker widget when user taps on clock icon button
-        mSelectTimeImageButton.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener timeSelectListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment timePickerFragment = new TimePickerFragment();
-                timePickerFragment.setTargetFragment(CreateEventFragment.this, TIME_PICKER_REQUEST_CODE);
-                timePickerFragment.show(((MainActivity)getContext()).getSupportFragmentManager(), "timePicker");
+                launchTimePicker();
             }
-        });
+        };
 
-        mSelectLocationImageButton.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener locationSelectListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(((MainActivity) getContext()).isGoogleServicesOk()) {
-                    Intent intent = new Intent(getActivity(), MapActivity.class);
-                    startActivityForResult(intent, LOCATION_SELECT_REQUEST_CODE);
-                }
+                launchMapActivity();
             }
-        });
+        };
+
+        View.OnClickListener addFilesListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new FileViewFragment();
+                ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutContainer, fragment).commit();
+            }
+        };
+
+        // Launching a Date picker widget when user taps on calendar icon button or taps on the
+        // text view right next to the calendar icon button
+        mSelectDateImageButton.setOnClickListener(dateSelectListener);
+        mSelectedDateTextView.setOnClickListener(dateSelectListener);
+
+        // Launching a Time picker widget when user taps on clock icon button or taps on the
+        // text view right next to the clock icon button
+        mSelectTimeImageButton.setOnClickListener(timeSelectListener);
+        mSelectedTimeTextView.setOnClickListener(timeSelectListener);
+
+        // Launching the Map activity when the user taps on the location icon button or taps on the
+        // text view right next to the location icon
+        mSelectLocationImageButton.setOnClickListener(locationSelectListener);
+        mSelectedLocationTextView.setOnClickListener(locationSelectListener);
+
+
+        mAddFilesImageButton.setOnClickListener(addFilesListener);
+        mAddFilesTextView.setOnClickListener(addFilesListener);
 
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String title = mTitleEditText.getText().toString();
                 String description = mDescriptionEditText.getText().toString();
-                String locationName = mSelectedLocationTextView.getText().toString();
 
                 // Error checking for empty required fields
                 if(title.isEmpty()) {
@@ -154,6 +173,27 @@ public class CreateEventFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void launchTimePicker() {
+        Log.i(TAG, "Launching Time Picker Dialog!");
+        DialogFragment timePickerFragment = new TimePickerFragment();
+        timePickerFragment.setTargetFragment(CreateEventFragment.this, TIME_PICKER_REQUEST_CODE);
+        timePickerFragment.show(((MainActivity)getContext()).getSupportFragmentManager(), "timePicker");
+    }
+
+    private void launchDatePicker() {
+        Log.i(TAG, "Launching Date Picker Dialog!");
+        DialogFragment datePickerFragment = new DatePickerFragment();
+        datePickerFragment.setTargetFragment(CreateEventFragment.this, DATE_PICKER_REQUEST_CODE);
+        datePickerFragment.show(((MainActivity)getContext()).getSupportFragmentManager(), "datePicker");
+    }
+
+    private void launchMapActivity() {
+        if(((MainActivity) getContext()).isGoogleServicesOk()) {
+            Intent intent = new Intent(getActivity(), MapActivity.class);
+            startActivityForResult(intent, LOCATION_SELECT_REQUEST_CODE);
+        }
     }
 
     @Override

@@ -1,20 +1,11 @@
-package com.example.studygroup;
+package com.example.studygroup.loginAndRegister;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
-import com.example.studygroup.fragments.LoginFragment;
-import com.parse.LogInCallback;
-import com.parse.ParseException;
-import com.parse.ParseUser;
+import com.example.studygroup.R;
 
 public class LoginActivity extends AppCompatActivity {
 

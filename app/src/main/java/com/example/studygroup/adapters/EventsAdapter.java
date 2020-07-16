@@ -11,10 +11,15 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
+import com.example.studygroup.eventCreation.EventDetailsFragment;
 import com.example.studygroup.models.Event;
+
+import org.parceler.Parcels;
 
 import java.util.Calendar;
 import java.util.List;
@@ -59,7 +64,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener {
 
         private TextView mTitleTextView;
         private TextView mDescriptionTextView;
@@ -69,7 +74,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         private ImageButton mTimeImageButton;
         private TextView mTimeTextView;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView){
             super(itemView);
 
             mTitleTextView = itemView.findViewById(R.id.titleTextView);
@@ -80,7 +85,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             mTimeImageButton = itemView.findViewById(R.id.timeImageButton);
             mTimeTextView = itemView.findViewById(R.id.timeTextView);
 
-
+            itemView.setOnClickListener(this);
         }
 
         // Method to help bind the data retrieved and stored in an Event object to the views in
@@ -97,6 +102,22 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
             mLocationTextView.setText(event.getLocationName());
 
+        }
+
+        @Override
+        public void onClick(View view) {
+            final int position = getAdapterPosition();
+            Event event = mEventsList.get(position);
+
+            if(position != RecyclerView.NO_POSITION) {
+                Fragment fragment = new EventDetailsFragment();
+
+                Bundle data = new Bundle();
+                data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(event));
+                fragment.setArguments(data);
+
+                ((MainActivity) mContext).getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutContainer, fragment).commit();
+            }
         }
     }
 }

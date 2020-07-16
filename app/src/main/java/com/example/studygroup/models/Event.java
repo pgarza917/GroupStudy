@@ -5,8 +5,11 @@ import com.parse.ParseClassName;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 
+import org.parceler.Parcel;
+
 import java.util.Date;
 
+@Parcel(analyze={Event.class})
 @ParseClassName("Event")
 public class Event extends ParseObject {
     public static final String KEY_TITLE = "title";

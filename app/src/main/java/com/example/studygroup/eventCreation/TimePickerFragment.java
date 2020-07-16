@@ -1,4 +1,4 @@
-package com.example.studygroup.fragments;
+package com.example.studygroup.eventCreation;
 
 import android.app.Activity;
 import android.app.Dialog;
