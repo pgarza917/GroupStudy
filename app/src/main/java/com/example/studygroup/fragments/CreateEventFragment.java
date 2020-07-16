@@ -59,6 +59,7 @@ public class CreateEventFragment extends Fragment {
     private String mFormattedDate;
     private String mFormattedTime;
     private ParseGeoPoint mSelectedLocationGeoPoint;
+    private String mSelectedLocationName;
 
     public CreateEventFragment() {
         // Required empty public constructor
@@ -139,7 +140,7 @@ public class CreateEventFragment extends Fragment {
                     Toast.makeText(getContext(), "Please select a date for the event!", Toast.LENGTH_LONG).show();
                     return;
                 }
-                if(mSelectedLocationGeoPoint == null) {
+                if(mSelectedLocationGeoPoint == null && mSelectedLocationName == null) {
                     Toast.makeText(getContext(), "Please select a location for the event!", Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -147,7 +148,7 @@ public class CreateEventFragment extends Fragment {
                 String formattedDateTime = mFormattedDate + " " + mFormattedTime;
                 try {
                     Date eventDateTime = stringToDate(formattedDateTime, "dd.MM.yyyy HH:mm", Locale.ENGLISH);
-                    saveEvent(ParseUser.getCurrentUser(), title, description, eventDateTime, mSelectedLocationGeoPoint);
+                    saveEvent(ParseUser.getCurrentUser(), title, description, eventDateTime, mSelectedLocationGeoPoint, mSelectedLocationName);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -188,6 +189,7 @@ public class CreateEventFragment extends Fragment {
             Double lat = data.getDoubleExtra("lat", 0.0);
             Double lng = data.getDoubleExtra("lng", 0.0);
             mSelectedLocationGeoPoint = new ParseGeoPoint(lat, lng);
+            mSelectedLocationName = locationName;
 
             mSelectedLocationTextView.setTypeface(Typeface.DEFAULT_BOLD);
             mSelectedLocationTextView.setText(locationName);
@@ -206,12 +208,13 @@ public class CreateEventFragment extends Fragment {
 
     // Method for submitting the user-created event to the Parse database with the correct
     // details
-    private void saveEvent(ParseUser user, String title, String description, Date dateTime, ParseGeoPoint location) {
+    private void saveEvent(ParseUser user, String title, String description, Date dateTime, ParseGeoPoint location, String locationName) {
         Event event = new Event();
         event.setTitle(title);
         event.setDescription(description);
         event.setTime(dateTime);
         event.setLocation(location);
+        event.setLocationName(locationName);
         event.addUnique(Event.KEY_OWNERS, user);
 
         event.saveInBackground(new SaveCallback() {

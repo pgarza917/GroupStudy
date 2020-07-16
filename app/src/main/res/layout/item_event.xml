@@ -51,7 +51,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="16dp"
         android:background="@android:drawable/screen_background_light_transparent"
-        app:srcCompat="@drawable/ic_baseline_add_location_24" />
+        app:srcCompat="@drawable/ic_baseline_location_on_24" />
 
     <TextView
         android:id="@+id/locationTextView"
@@ -59,7 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/descriptionTextView"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="18dp"
         android:layout_toEndOf="@+id/locationPickerImageButton"
         tools:text="Hillhouse 117" />
 
@@ -79,8 +79,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/descriptionTextView"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="18dp"
         android:layout_toEndOf="@+id/timeImageButton"
         tools:text="Sept. 17, 2020" />
 </RelativeLayout>

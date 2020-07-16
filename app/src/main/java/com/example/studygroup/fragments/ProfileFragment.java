@@ -7,14 +7,27 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.studygroup.LoginActivity;
 import com.example.studygroup.R;
+import com.example.studygroup.models.Event;
+import com.parse.FindCallback;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -22,6 +35,9 @@ import com.parse.ParseUser;
 public class ProfileFragment extends Fragment {
 
     private Button mLogoutButton;
+    private TextView mProfileNameTextView;
+    private TextView mBioTextView;
+    private ImageView mProfilePictureImageView;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -39,6 +55,9 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mLogoutButton = view.findViewById(R.id.logoutButton);
+        mProfileNameTextView = view.findViewById(R.id.profileNameTextView);
+        mBioTextView = view.findViewById(R.id.profileBioTextView);
+        mProfilePictureImageView = view.findViewById(R.id.profilePictureImageView);
 
         mLogoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,5 +68,29 @@ public class ProfileFragment extends Fragment {
                 getActivity().finish();
             }
         });
+
+        ParseUser currentUser = ParseUser.getCurrentUser();
+
+        mProfileNameTextView.setText(currentUser.getUsername());
+
+        String bio = (String) currentUser.get("bio");
+        if(bio == null || bio.isEmpty()) {
+            mBioTextView.setText(getString(R.string.no_bio));
+        } else {
+            mBioTextView.setText(bio);
+        }
+
+        ParseFile profileImage = ParseUser.getCurrentUser().getParseFile("profileImage");
+        if(profileImage == null) {
+            mProfilePictureImageView.setVisibility(View.GONE);
+        } else {
+            mProfilePictureImageView.setVisibility(View.VISIBLE);
+            Glide.with(getContext())
+                    .load(profileImage.getUrl())
+                    .circleCrop()
+                    .into(mProfilePictureImageView);
+        }
+
+
     }
 }

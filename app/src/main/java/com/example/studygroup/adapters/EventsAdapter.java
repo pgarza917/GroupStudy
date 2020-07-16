@@ -2,7 +2,9 @@ package com.example.studygroup.adapters;
 
 import android.content.Context;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.studygroup.R;
 import com.example.studygroup.models.Event;
 
+import java.util.Calendar;
 import java.util.List;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
@@ -77,6 +80,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             mTimeImageButton = itemView.findViewById(R.id.timeImageButton);
             mTimeTextView = itemView.findViewById(R.id.timeTextView);
 
+
         }
 
         // Method to help bind the data retrieved and stored in an Event object to the views in
@@ -86,10 +90,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             mTitleTextView.setText(event.getTitle());
             mDescriptionTextView.setText(event.getDescription());
 
-            /*Calendar eventDate = Calendar.getInstance();
+            Calendar eventDate = Calendar.getInstance();
             eventDate.setTime(event.getTime());
             String strEventDate = eventDate.get(Calendar.MONTH) + "/" + eventDate.get(Calendar.DAY_OF_MONTH) + "/" + eventDate.get(Calendar.YEAR);
-            mTimeTextView.setText(strEventDate);*/
+            mTimeTextView.setText(strEventDate);
+
+            mLocationTextView.setText(event.getLocationName());
 
         }
     }

@@ -15,6 +15,7 @@ public class Event extends ParseObject {
     public static final String KEY_CREATED_AT = "createdAt";
     public static final String KEY_LOCATION = "location";
     public static final String KEY_OWNERS = "owners";
+    public static final String KEY_LOCATION_NAME = "locationName";
 
     public String getTitle() {
         return getString(KEY_TITLE);
@@ -46,5 +47,13 @@ public class Event extends ParseObject {
 
     public void setLocation(ParseGeoPoint location) {
         put(KEY_LOCATION, location);
+    }
+
+    public String getLocationName() {
+        return getString(KEY_LOCATION_NAME);
+    }
+
+    public void setLocationName(String locationName) {
+        put(KEY_LOCATION_NAME, locationName);
     }
 }

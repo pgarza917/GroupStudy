@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:backgroundTint="#FFFFFF"
+    tools:context=".fragments.EventDetailsFragment">
+
+
+    <TextView
+        android:id="@+id/eventTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="64dp"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        tools:text="Physics Review Session" />
+
+    <ImageButton
+        android:id="@+id/detailsCalendarImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/eventTitleTextView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="56dp"
+        android:backgroundTint="@color/quantum_white_100"
+        android:src="@drawable/ic_baseline_calendar_today_24" />
+
+    <TextView
+        android:id="@+id/detailsDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/eventTitleTextView"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="68dp"
+        android:layout_toEndOf="@+id/detailsCalendarImageButton"
+        android:text="2 Oct 2019" />
+
+    <ImageButton
+        android:id="@+id/detailsTimeImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/eventTitleTextView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="190dp"
+        android:layout_marginTop="56dp"
+        android:backgroundTint="#FFFFFF"
+        android:src="@drawable/ic_baseline_access_time_small" />
+
+    <TextView
+        android:id="@+id/detailsTimeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/eventTitleTextView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="68dp"
+        android:layout_marginEnd="96dp"
+        android:layout_toEndOf="@+id/detailsTimeImageButton"
+        tools:text="3:00 PM" />
+
+    <TextView
+        android:id="@+id/detailsDescriptionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/detailsCalendarImageButton"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="36dp"
+        tools:text="In this review session, we will be covering Hermitian Operators and their applications. This is meant to help with the upcoming midterm." />
+
+    <ImageButton
+        android:id="@+id/detailsLocationImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/detailsDescriptionTextView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="26dp"
+        android:layout_marginTop="56dp"
+        android:backgroundTint="@color/quantum_white_100"
+        android:src="@drawable/ic_baseline_location_on_24" />
+
+    <TextView
+        android:id="@+id/detailsLocationTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/detailsDescriptionTextView"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="66dp"
+        android:layout_toEndOf="@+id/detailsLocationImageButton"
+        tools:text="Sterling Memorial Library" />
+
+</RelativeLayout>

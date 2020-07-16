@@ -3,8 +3,10 @@ package com.example.studygroup;
 import android.app.Application;
 
 import com.example.studygroup.models.Event;
+import com.example.studygroup.models.User;
 import com.parse.Parse;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
