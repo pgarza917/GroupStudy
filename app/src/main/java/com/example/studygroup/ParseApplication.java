@@ -3,10 +3,9 @@ package com.example.studygroup;
 import android.app.Application;
 
 import com.example.studygroup.models.Event;
-import com.example.studygroup.models.User;
+import com.example.studygroup.models.FileExtended;
 import com.parse.Parse;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -19,6 +18,7 @@ public class ParseApplication extends Application {
 
         // Registering our Parse model
         ParseObject.registerSubclass(Event.class);
+        ParseObject.registerSubclass(FileExtended.class);
 
         // Use for monitoring Parse OkHttp traffic
         // Can be Level.BASIC, Level.HEADERS, or Level.BODY
