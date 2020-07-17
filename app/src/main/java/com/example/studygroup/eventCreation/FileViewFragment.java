@@ -2,8 +2,10 @@ package com.example.studygroup.eventCreation;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -13,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,9 +33,16 @@ import com.parse.SaveCallback;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import okio.BufferedSink;
+import okio.BufferedSource;
+import okio.Okio;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -96,34 +106,55 @@ public class FileViewFragment extends Fragment {
 
         if(requestCode == FILE_PICKER_REQUEST_CODE) {
             Uri uri = data.getData();
-            String src = uri.getPath();
-            String filename = uri.getLastPathSegment();
+            ContentResolver contentResolver = getContext().getContentResolver();
 
-            File source = new File(src);
-            long fileSize = source.length();
-            byte[] fileBytes = readFileToByteArray(source);
+            String filename = queryName(contentResolver, uri);
+            File fileToUpload = createTempFile(filename);
+            fileToUpload = saveContentToFile(uri, fileToUpload, contentResolver);
 
-            ParseFile file = new ParseFile(filename, fileBytes);
-
+            ParseFile file = new ParseFile(fileToUpload, filename);
+            long fileSize = fileToUpload.length();
             saveFileToParse(file, filename, fileSize);
         }
     }
 
-    // This method uses java.io.FileInputStream to read file content into a byte array
-    private static byte[] readFileToByteArray(File file){
-        FileInputStream fis = null;
-        // Creating a byte array using the length of the file
-        // file.length returns long which is cast to int
-        byte[] bArray = new byte[(int) file.length()];
-        try{
-            fis = new FileInputStream(file);
-            fis.read(bArray);
-            fis.close();
-        }catch(IOException ioExp){
-            ioExp.printStackTrace();
-        }
-        return bArray;
+    private String queryName(ContentResolver resolver, Uri uri) {
+        Cursor returnCursor = resolver.query(uri, null, null, null, null);
+        assert returnCursor != null;
+        int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+        returnCursor.moveToFirst();
+        String name = returnCursor.getString(nameIndex);
+        returnCursor.close();
+        return name;
     }
+
+    private File createTempFile(String name) {
+        File file = null;
+        try {
+            file = File.createTempFile(name, null, getContext().getCacheDir());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
+
+    private File saveContentToFile(Uri uri, File file, ContentResolver contentResolver) {
+        try {
+            InputStream stream = contentResolver.openInputStream(uri);
+            BufferedSource source = Okio.buffer(Okio.source(stream));
+            BufferedSink sink = Okio.buffer(Okio.sink(file));
+            sink.writeAll(source);
+            sink.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return file;
+    }
+
 
     public void saveFileToParse(ParseFile fileData, String filename, long fileSize) {
         FileExtended file = new FileExtended();
