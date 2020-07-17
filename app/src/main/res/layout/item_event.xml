@@ -55,10 +55,11 @@
 
     <TextView
         android:id="@+id/locationTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="136dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/descriptionTextView"
         android:layout_marginStart="4dp"
+        android:maxLines="2"
         android:layout_marginTop="18dp"
         android:layout_toEndOf="@+id/locationPickerImageButton"
         tools:text="Hillhouse 117" />
@@ -76,7 +77,7 @@
 
     <TextView
         android:id="@+id/timeTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/descriptionTextView"
         android:layout_marginStart="6dp"

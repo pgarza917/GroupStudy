@@ -26,6 +26,7 @@ ext {
     appCompatVersion = '1.0.0'
     designSupportVersion = '1.0.0'
     recyclerViewVersion = '1.0.0'
+    android_file_chooser_version = '1.1.19'
 }
 
 ext {
