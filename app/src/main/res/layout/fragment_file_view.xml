@@ -12,86 +12,66 @@
         android:id="@+id/uploadedFilesRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/googleDocsImageButton"
+        android:layout_below="@+id/fileViewHeaderTextView"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="126dp"
-        android:layout_marginEnd="0dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="12dp"
         android:layout_marginBottom="266dp" />
-
-    <ImageButton
-        android:id="@+id/googleDocsImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="-4dp"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="#FFFFFF"
-        android:src="@drawable/ic_icons8_google_docs" />
 
     <TextView
         android:id="@+id/createGoogleDocTextView"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/googleDocsImageButton"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="-4dp"
-        android:text="Create Google Doc" />
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="76dp"
+        android:layout_toStartOf="@+id/takePhotoTextView"
+        android:text="Create Google Doc"
+        android:textColor="#B1B2B8"
+        android:textStyle="bold" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/uploadFilesImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="18dp"
-        android:layout_marginTop="28dp"
-        android:layout_toEndOf="@+id/imageButton3"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="22dp"
+        android:layout_toEndOf="@+id/takePhotoImageButton"
         android:backgroundTint="#FFFFFF"
-        android:scaleX="0.8"
-        android:scaleY="0.8"
+        android:scaleX="0.7"
+        android:scaleY="0.7"
         android:src="@drawable/ic_outbox" />
 
-    <ImageButton
-        android:id="@+id/imageButton3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="18dp"
-        android:layout_marginTop="28dp"
-        android:layout_toEndOf="@+id/googleDocsImageButton"
-        android:backgroundTint="#FFFFFF"
-        android:scaleX="0.75"
-        android:scaleY="0.75"
-        android:src="@drawable/ic_photograph_square" />
-
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/takePhotoTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageButton3"
-        android:layout_marginStart="72dp"
+        android:layout_below="@id/takePhotoImageButton"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="-8dp"
-        android:layout_toEndOf="@+id/createGoogleDocTextView"
-        android:text="Take a Photo" />
+        android:text="Take a Photo"
+        android:textColor="#B1B2B8"
+        android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/uploadFilesTextView"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageButton2"
-        android:layout_marginStart="82dp"
-        android:layout_marginTop="-8dp"
-        android:layout_toEndOf="@+id/textView2"
+        android:layout_below="@+id/uploadFilesImageButton"
+        android:layout_marginStart="78dp"
+        android:layout_marginTop="-18dp"
+        android:layout_toEndOf="@+id/takePhotoTextView"
         android:text="Upload Files"
-        android:textAlignment="viewEnd" />
+        android:textAlignment="viewEnd"
+        android:textColor="#B1B2B8"
+        android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/fileViewHeaderTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/createGoogleDocTextView"
@@ -101,4 +81,28 @@
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/takePhotoImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp"
+        android:backgroundTint="#FFFFFF"
+        android:src="@drawable/ic_ar_camera"
+        android:tint="#0A2850" />
+
+    <ImageButton
+        android:id="@+id/googleDocsImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="58dp"
+        android:layout_toStartOf="@+id/takePhotoImageButton"
+        android:backgroundTint="#FFFFFF"
+        android:scaleX="1.3"
+        android:scaleY="1.3"
+        android:src="@drawable/ic_icons8_google_docs_copy"
+        android:tint="#0A2950" />
 </RelativeLayout>

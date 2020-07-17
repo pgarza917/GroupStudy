@@ -335,8 +335,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_photograph_square" />
-                            <entry key="sourceFile" value="$USER_HOME$/Desktop/FBU_2020/photograph.svg" />
+                            <entry key="outputName" value="ic_icons8_google_docs_copy" />
+                            <entry key="sourceFile" value="$USER_HOME$/Desktop/FBU_2020/icons8-google-docs copy.svg" />
                           </map>
                         </option>
                       </PersistentState>
