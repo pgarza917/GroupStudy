@@ -6,17 +6,22 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Environment;
 import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,6 +63,7 @@ public class FileViewFragment extends Fragment {
 
     public static final String TAG = FileViewFragment.class.getSimpleName();
     public static final int FILE_PICKER_REQUEST_CODE = 1940;
+    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
 
     private FileViewAdapter mAdapter;
     private List<FileExtended> mFilesList;
@@ -66,6 +72,10 @@ public class FileViewFragment extends Fragment {
     private ImageButton mCreateDocImageButton;
     private ImageButton mTakePhotoImageButton;
     private ImageButton mUploadFilesImageButton;
+
+    // Member variables for camera functionality
+    public String photoFileName = "photo.jpg";
+    File photoFile;
 
     public FileViewFragment() {
         // Required empty public constructor
@@ -81,7 +91,6 @@ public class FileViewFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.create_event_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -126,6 +135,13 @@ public class FileViewFragment extends Fragment {
                 startActivityForResult(chooseFile, FILE_PICKER_REQUEST_CODE);
             }
         });
+
+        mTakePhotoImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onLaunchCamera(view);
+            }
+        });
     }
 
     @Override
@@ -154,6 +170,25 @@ public class FileViewFragment extends Fragment {
 
             mFilesList.add(file);
             mAdapter.notifyItemInserted(0);
+        }
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                // by this point we have the camera photo on disk
+                Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+
+                String filename = photoFile.getName();
+                ParseFile fileData = new ParseFile(photoFile, filename);
+                FileExtended fileToUpload = new FileExtended();
+
+                fileToUpload.setFileName(filename);
+                fileToUpload.setFile(fileData);
+                fileToUpload.setFileSize(photoFile.length());
+
+                mFilesList.add(fileToUpload);
+                mAdapter.notifyItemInserted(0);
+            } else { // Result was a failure
+                Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -191,6 +226,44 @@ public class FileViewFragment extends Fragment {
             e.printStackTrace();
             return null;
         }
+        return file;
+    }
+
+    public void onLaunchCamera(View view) {
+        // create Intent to take a picture and return control to the calling application
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Create a File reference for future access
+        photoFile = getPhotoFileUri(photoFileName);
+
+        // wrap File object into a content provider
+        // required for API >= 24
+        // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
+        Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.codepath.fileprovider.studygroup", photoFile);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+
+        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+        // So as long as the result is not null, it's safe to use the intent.
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Start the image capture intent to take photo
+            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        }
+    }
+
+    // Returns the File for a photo stored on disk given the fileName
+    public File getPhotoFileUri(String fileName) {
+        // Get safe storage directory for photos
+        // Use `getExternalFilesDir` on Context to access package-specific directories.
+        // This way, we don't need to request external read/write runtime permissions.
+        File mediaStorageDir = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+            Log.d(TAG, "failed to create directory");
+        }
+
+        // Return the file target for the photo based on filename
+        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
+
         return file;
     }
 }

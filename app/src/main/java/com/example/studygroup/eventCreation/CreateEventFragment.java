@@ -132,7 +132,7 @@ public class CreateEventFragment extends Fragment {
             public void onClick(View view) {
                 Fragment fragment = new FileViewFragment();
                 fragment.setTargetFragment(CreateEventFragment.this, FILE_UPLOAD_REQUEST_CODE);
-                ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutContainer, fragment).addToBackStack("frame1").commit();
+                ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction().add(R.id.frameLayoutContainer, fragment).addToBackStack(null).commit();
             }
         };
 
