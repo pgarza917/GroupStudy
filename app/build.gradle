@@ -56,4 +56,5 @@ dependencies {
     implementation 'org.parceler:parceler-api:1.1.12'
     annotationProcessor 'org.parceler:parceler:1.1.12'
     implementation 'com.squareup.okio:okio:2.7.0'
+    implementation 'com.google.android.gms:play-services-auth:18.1.0'
 }
