@@ -12,7 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,6 +30,7 @@ import android.widget.Toast;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
+import com.example.studygroup.adapters.FileViewAdapter;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
 import com.parse.ParseGeoPoint;
@@ -61,12 +65,14 @@ public class CreateEventFragment extends Fragment {
     private EditText mDescriptionEditText;
     private TextView mSelectedLocationTextView;
     private TextView mAddFilesTextView;
+    private RecyclerView mAttachedFilesRecyclerView;
 
     private String mFormattedDate;
     private String mFormattedTime;
     private ParseGeoPoint mSelectedLocationGeoPoint;
     private String mSelectedLocationName;
     private List<FileExtended> mEventFiles;
+    private FileViewAdapter mFileAdapter;
 
     public CreateEventFragment() {
         // Required empty public constructor
@@ -105,6 +111,13 @@ public class CreateEventFragment extends Fragment {
         mSelectedLocationTextView = view.findViewById(R.id.selectLocationTextView);
         mAddFilesImageButton = view.findViewById(R.id.addFileImageButton);
         mAddFilesTextView = view.findViewById(R.id.addFilesTextView);
+        mAttachedFilesRecyclerView = view.findViewById(R.id.attachedFilesRecyclerView);
+
+        mFileAdapter = new FileViewAdapter(getContext(), mEventFiles);
+
+        mAttachedFilesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mAttachedFilesRecyclerView.setAdapter(mFileAdapter);
+
 
         View.OnClickListener dateSelectListener = new View.OnClickListener() {
             @Override
@@ -132,6 +145,9 @@ public class CreateEventFragment extends Fragment {
             public void onClick(View view) {
                 Fragment fragment = new FileViewFragment();
                 fragment.setTargetFragment(CreateEventFragment.this, FILE_UPLOAD_REQUEST_CODE);
+                Bundle data = new Bundle();
+                data.putParcelableArrayList("filesAttached", (ArrayList<? extends Parcelable>) mEventFiles);
+                fragment.setArguments(data);
                 ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction().add(R.id.frameLayoutContainer, fragment).addToBackStack(null).commit();
             }
         };
@@ -186,6 +202,8 @@ public class CreateEventFragment extends Fragment {
                 String formattedDateTime = mFormattedDate + " " + mFormattedTime;
                 try {
                     Date eventDateTime = stringToDate(formattedDateTime, "dd.MM.yyyy HH:mm", Locale.ENGLISH);
+                    // This for loop will go through all the files in the event files list and
+                    // upload them individually to the Parse DB
                     for(final FileExtended file : mEventFiles) {
                         file.saveInBackground(new SaveCallback() {
                             @Override
@@ -198,6 +216,7 @@ public class CreateEventFragment extends Fragment {
                             }
                         });
                     }
+                    // Finally, we save the entire event to Parse
                     saveEvent(ParseUser.getCurrentUser(), title, description, eventDateTime, mSelectedLocationGeoPoint, mSelectedLocationName, mEventFiles);
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -206,6 +225,8 @@ public class CreateEventFragment extends Fragment {
         });
     }
 
+    // This method handles the launching of the Time Picker dialog fragment so users have a nice
+    // UI to select the event time
     private void launchTimePicker() {
         Log.i(TAG, "Launching Time Picker Dialog!");
         DialogFragment timePickerFragment = new TimePickerFragment();
@@ -213,6 +234,8 @@ public class CreateEventFragment extends Fragment {
         timePickerFragment.show(((MainActivity)getContext()).getSupportFragmentManager(), "timePicker");
     }
 
+    // This method handles the launching of the Date Picker dialog fragment so users have a nice
+    // UI to select and event date
     private void launchDatePicker() {
         Log.i(TAG, "Launching Date Picker Dialog!");
         DialogFragment datePickerFragment = new DatePickerFragment();
@@ -220,6 +243,8 @@ public class CreateEventFragment extends Fragment {
         datePickerFragment.show(((MainActivity)getContext()).getSupportFragmentManager(), "datePicker");
     }
 
+    // This method handles the launching of a Map activity where users will be able to view a map
+    // and search/select a location for their event
     private void launchMapActivity() {
         if(((MainActivity) getContext()).isGoogleServicesOk()) {
             Intent intent = new Intent(getActivity(), MapActivity.class);
@@ -236,38 +261,61 @@ public class CreateEventFragment extends Fragment {
         int hour, minute, day, month, year;
 
         if(requestCode == TIME_PICKER_REQUEST_CODE) {
+            // Retrieving the hour and minute of the day the user has chosen as the
+            // time of their event
             hour = data.getIntExtra("hour", 0);
             minute = data.getIntExtra("minute", 0);
+            // Formatting the retrieved hour and minute integers into a user-friendly
+            // String display
             String min = String.format("%02d", minute);
             String time = ((hour == 12) ? 12 : hour % 12) + ":" + min + " " + ((hour >= 12) ? "pm" : "am");
+            // Setting the appropriate text views with the formatted event-time String
+            // to let users know they have successfully selected a time
             mSelectedTimeTextView.setText(time);
             mSelectedTimeTextView.setTypeface(Typeface.DEFAULT_BOLD);
             mFormattedTime = String.format("%02d:%s", hour, min);
 
         }
         if (requestCode == DATE_PICKER_REQUEST_CODE) {
+            // Retrieving the day, month, and year that the user has chosen
+            // as the date of their event
             day = data.getIntExtra("day", 0);
             month = data.getIntExtra("month", 0);
             year = data.getIntExtra("year", 0);
 
+            // Formatting the retrieved date integers into a user-friendly String format
+            // i.e. MM/DD/YYYY
             String date = month + "/" + day + "/" + year;
+            // Setting the appropriate text vies with the formatted event-date string
+            // to let users know they have successfully selected a date
             mSelectedDateTextView.setText(date);
             mSelectedDateTextView.setTypeface(Typeface.DEFAULT_BOLD);
             mFormattedDate = String.format("%02d.%02d.%04d", day, month, year);
         }
         if(requestCode == LOCATION_SELECT_REQUEST_CODE) {
+            // Extracting the latitude and longitude of the location the user selected in the
+            // Map activity
             String locationName = data.getStringExtra("name");
             Double lat = data.getDoubleExtra("lat", 0.0);
             Double lng = data.getDoubleExtra("lng", 0.0);
+
+            // Creating a Parse GeoPoint object to add to the event
             mSelectedLocationGeoPoint = new ParseGeoPoint(lat, lng);
             mSelectedLocationName = locationName;
 
+            // Changing the appropriate fields with the name of the selected location to let
+            // the user know they have successfully selected an event location
             mSelectedLocationTextView.setTypeface(Typeface.DEFAULT_BOLD);
             mSelectedLocationTextView.setText(locationName);
         }
         if(requestCode == FILE_UPLOAD_REQUEST_CODE) {
+            // Retrieving the list of files a user would like to upload attached to their event
+            // that they selected in the file view fragment
             List<FileExtended> files = data.getParcelableArrayListExtra("uploadFiles");
             mEventFiles.addAll(files);
+            mFileAdapter.notifyDataSetChanged();
+
+            mAddFilesTextView.setText("Selected Files: ");
             Log.i(TAG, "Received selected files");
         }
     }

@@ -50,6 +50,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import okio.BufferedSink;
@@ -99,11 +100,14 @@ public class FileViewFragment extends Fragment {
 
         switch(item.getItemId()) {
             case R.id.action_check:
-
+                // This case implementation handles the returning of the list of files that the user has
+                // added to the event back to the create event fragment for upload of the event
                 Intent intent = new Intent();
                 intent.putParcelableArrayListExtra("uploadFiles", (ArrayList<? extends Parcelable>) mFilesList);
                 getTargetFragment().onActivityResult(CreateEventFragment.FILE_UPLOAD_REQUEST_CODE, Activity.RESULT_OK, intent);
                 FragmentManager fm = getActivity().getSupportFragmentManager();
+                // This is used so that the state of the previous create-event fragment is
+                // not changed when we return to it
                 fm.popBackStackImmediate();
                 return true;
             default:
@@ -115,7 +119,13 @@ public class FileViewFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mFilesList = new ArrayList<>();
+        Bundle data = getArguments();
+        List<FileExtended> alreadyAttachedFiles = data.getParcelableArrayList("filesAttached");
+        if(alreadyAttachedFiles!= null) {
+            mFilesList = alreadyAttachedFiles;
+        } else {
+            mFilesList = new ArrayList<>();
+        }
         mFileViewRecyclerView = view.findViewById(R.id.uploadedFilesRecyclerView);
         mCreateDocImageButton = view.findViewById(R.id.googleDocsImageButton);
         mTakePhotoImageButton = view.findViewById(R.id.takePhotoImageButton);
@@ -129,6 +139,9 @@ public class FileViewFragment extends Fragment {
         mUploadFilesImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Here we start a file picker activity by allowing android to use the
+                // most appropriate application it had to handle the picking. It will
+                // then return to us the selected file
                 Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
                 chooseFile.setType("*/*");
                 chooseFile = Intent.createChooser(chooseFile, "Choose a file");
@@ -151,8 +164,8 @@ public class FileViewFragment extends Fragment {
         if(resultCode != Activity.RESULT_OK) {
             return;
         }
-
         if(requestCode == FILE_PICKER_REQUEST_CODE) {
+            // Retrieves the URI of the file the user has picked
             Uri uri = data.getData();
             ContentResolver contentResolver = getContext().getContentResolver();
 
@@ -160,14 +173,21 @@ public class FileViewFragment extends Fragment {
             File fileToUpload = createTempFile(filename);
             fileToUpload = saveContentToFile(uri, fileToUpload, contentResolver);
 
+            Date lastModDate = new Date(fileToUpload.lastModified());
+
             ParseFile parseFile = new ParseFile(fileToUpload, filename);
             long fileSize = fileToUpload.length();
             FileExtended file = new FileExtended();
 
+            // Sets the necessary fields of the FileExtended object so that it can be uploaded
+            // to the Parse DB
             file.setFile(parseFile);
             file.setFileName(filename);
             file.setFileSize(fileSize);
+            file.setLastModified(lastModDate);
 
+            // Adds the new attached file to the Recycler View so the user knows the file is now
+            // attached to their event for upload
             mFilesList.add(file);
             mAdapter.notifyItemInserted(0);
         }
@@ -180,10 +200,14 @@ public class FileViewFragment extends Fragment {
                 ParseFile fileData = new ParseFile(photoFile, filename);
                 FileExtended fileToUpload = new FileExtended();
 
+                // Sets the necessary fields of the FileExtended object so that it can be uploaded
+                // to the Parse DB
                 fileToUpload.setFileName(filename);
                 fileToUpload.setFile(fileData);
                 fileToUpload.setFileSize(photoFile.length());
 
+                // Adds the new attached file to the Recycler View so the user knows the file is now
+                // attached to their event for upload
                 mFilesList.add(fileToUpload);
                 mAdapter.notifyItemInserted(0);
             } else { // Result was a failure
@@ -192,6 +216,7 @@ public class FileViewFragment extends Fragment {
         }
     }
 
+    // This method helps in determining the filename from a content URI using a content resolver
     private String queryName(ContentResolver resolver, Uri uri) {
         Cursor returnCursor = resolver.query(uri, null, null, null, null);
         assert returnCursor != null;
@@ -202,6 +227,7 @@ public class FileViewFragment extends Fragment {
         return name;
     }
 
+    // This method creates a temporary file in the application cache and returns it
     private File createTempFile(String name) {
         File file = null;
         try {
@@ -212,6 +238,9 @@ public class FileViewFragment extends Fragment {
         return file;
     }
 
+    // This method reads a content by opening an input stream from its uri and feeding that into
+    // file to write all the data to that file from the accessed content. Users the Okio IO library
+    // to accomplish this
     private File saveContentToFile(Uri uri, File file, ContentResolver contentResolver) {
         try {
             InputStream stream = contentResolver.openInputStream(uri);
@@ -229,6 +258,7 @@ public class FileViewFragment extends Fragment {
         return file;
     }
 
+    // Method to handle the launching of the camera activity for users to take photos
     public void onLaunchCamera(View view) {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

@@ -61,7 +61,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
         public void bind(FileExtended file) {
             mFileNameTextView.setText(file.getFileName());
 
-            //String createdAt = file.getCreatedAt().toString();
+            String modifiedTimestamp = file.getLastModified().toString();
 
             long fileSize = file.getFileSize();
             String fileSizeString = getSize(fileSize);
@@ -71,6 +71,8 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
         }
     }
 
+    // This method is for formatting the size of files, which is in bytes, into a more
+    // user-friendly and readable form, e.g. 503296 --> "503.00 KB"
     public static String getSize(long size) {
         long n = 1000;
         String s = "";

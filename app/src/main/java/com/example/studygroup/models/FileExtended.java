@@ -6,6 +6,8 @@ import com.parse.ParseObject;
 
 import org.parceler.Parcel;
 
+import java.util.Date;
+
 
 @Parcel(analyze={FileExtended.class})
 @ParseClassName("File")
@@ -13,6 +15,7 @@ public class FileExtended extends ParseObject {
     public static final String KEY_FILE_NAME = "fileName";
     public static final String KEY_FILE_SIZE = "fileSize";
     public static final String KEY_FILE_DATA = "fileData";
+    public static final String KEY_MODIFIED = "lastModified";
 
     public String getFileName() {
         return getString(KEY_FILE_NAME);
@@ -36,5 +39,13 @@ public class FileExtended extends ParseObject {
 
     public void setFile(ParseFile file) {
         put(KEY_FILE_DATA, file);
+    }
+
+    public Date getLastModified() {
+        return getDate(KEY_MODIFIED);
+    }
+
+    public void setLastModified(Date modified) {
+        put(KEY_MODIFIED, modified);
     }
 }
