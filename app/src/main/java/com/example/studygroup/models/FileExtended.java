@@ -4,6 +4,10 @@ import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 
+import org.parceler.Parcel;
+
+
+@Parcel(analyze={FileExtended.class})
 @ParseClassName("File")
 public class FileExtended extends ParseObject {
     public static final String KEY_FILE_NAME = "fileName";

@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -26,12 +28,15 @@ import android.widget.Toast;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.models.Event;
+import com.example.studygroup.models.FileExtended;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -43,6 +48,7 @@ public class CreateEventFragment extends Fragment {
     public static final int TIME_PICKER_REQUEST_CODE = 300;
     public static final int DATE_PICKER_REQUEST_CODE = 500;
     public static final int LOCATION_SELECT_REQUEST_CODE = 450;
+    public static final int FILE_UPLOAD_REQUEST_CODE = 901;
 
     private ImageButton mSelectTimeImageButton;
     private ImageButton mSelectDateImageButton;
@@ -60,6 +66,7 @@ public class CreateEventFragment extends Fragment {
     private String mFormattedTime;
     private ParseGeoPoint mSelectedLocationGeoPoint;
     private String mSelectedLocationName;
+    private List<FileExtended> mEventFiles;
 
     public CreateEventFragment() {
         // Required empty public constructor
@@ -68,13 +75,24 @@ public class CreateEventFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_create_event, container, false);
     }
 
     @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.create_event_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if(mEventFiles == null) {
+            mEventFiles = new ArrayList<>();
+        }
 
         mSelectTimeImageButton = view.findViewById(R.id.timePickerImageButton);
         mSelectDateImageButton = view.findViewById(R.id.datePickerImageButton);
@@ -113,7 +131,8 @@ public class CreateEventFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Fragment fragment = new FileViewFragment();
-                ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutContainer, fragment).commit();
+                fragment.setTargetFragment(CreateEventFragment.this, FILE_UPLOAD_REQUEST_CODE);
+                ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutContainer, fragment).addToBackStack("frame1").commit();
             }
         };
 
@@ -167,7 +186,19 @@ public class CreateEventFragment extends Fragment {
                 String formattedDateTime = mFormattedDate + " " + mFormattedTime;
                 try {
                     Date eventDateTime = stringToDate(formattedDateTime, "dd.MM.yyyy HH:mm", Locale.ENGLISH);
-                    saveEvent(ParseUser.getCurrentUser(), title, description, eventDateTime, mSelectedLocationGeoPoint, mSelectedLocationName);
+                    for(final FileExtended file : mEventFiles) {
+                        file.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(com.parse.ParseException e) {
+                                if (e != null) {
+                                    Toast.makeText(getContext(), "Error uploading file", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                Log.i(TAG, "Uploaded file: " + file.getFileName());
+                            }
+                        });
+                    }
+                    saveEvent(ParseUser.getCurrentUser(), title, description, eventDateTime, mSelectedLocationGeoPoint, mSelectedLocationName, mEventFiles);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -234,6 +265,11 @@ public class CreateEventFragment extends Fragment {
             mSelectedLocationTextView.setTypeface(Typeface.DEFAULT_BOLD);
             mSelectedLocationTextView.setText(locationName);
         }
+        if(requestCode == FILE_UPLOAD_REQUEST_CODE) {
+            List<FileExtended> files = data.getParcelableArrayListExtra("uploadFiles");
+            mEventFiles.addAll(files);
+            Log.i(TAG, "Received selected files");
+        }
     }
 
     // Method for helping parse a Date format and creating a Date object
@@ -248,7 +284,7 @@ public class CreateEventFragment extends Fragment {
 
     // Method for submitting the user-created event to the Parse database with the correct
     // details
-    private void saveEvent(ParseUser user, String title, String description, Date dateTime, ParseGeoPoint location, String locationName) {
+    private void saveEvent(ParseUser user, String title, String description, Date dateTime, ParseGeoPoint location, String locationName, List<FileExtended> files) {
         Event event = new Event();
         event.setTitle(title);
         event.setDescription(description);
@@ -256,6 +292,7 @@ public class CreateEventFragment extends Fragment {
         event.setLocation(location);
         event.setLocationName(locationName);
         event.addUnique(Event.KEY_OWNERS, user);
+        event.addUnique(Event.KEY_FILES, files);
 
         event.saveInBackground(new SaveCallback() {
             @Override

@@ -19,6 +19,7 @@ public class Event extends ParseObject {
     public static final String KEY_LOCATION = "location";
     public static final String KEY_OWNERS = "owners";
     public static final String KEY_LOCATION_NAME = "locationName";
+    public static final String KEY_FILES = "files";
 
     public String getTitle() {
         return getString(KEY_TITLE);

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studygroup.R;
 import com.example.studygroup.models.FileExtended;
+import com.parse.ParseQuery;
 
 import java.util.List;
 
@@ -60,12 +61,35 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
         public void bind(FileExtended file) {
             mFileNameTextView.setText(file.getFileName());
 
-            String createdAt = file.getCreatedAt().toString();
+            //String createdAt = file.getCreatedAt().toString();
 
             long fileSize = file.getFileSize();
+            String fileSizeString = getSize(fileSize);
 
+            mFileSizeTextView.setText(fileSizeString);
 
         }
+    }
+
+    public static String getSize(long size) {
+        long n = 1000;
+        String s = "";
+        double kb = size / n;
+        double mb = kb / n;
+        double gb = mb / n;
+        double tb = gb / n;
+        if(size < n) {
+            s = size + " Bytes";
+        } else if(size >= n && size < (n * n)) {
+            s =  String.format("%.2f", kb) + " KB";
+        } else if(size >= (n * n) && size < (n * n * n)) {
+            s = String.format("%.2f", mb) + " MB";
+        } else if(size >= (n * n * n) && size < (n * n * n * n)) {
+            s = String.format("%.2f", gb) + " GB";
+        } else if(size >= (n * n * n * n)) {
+            s = String.format("%.2f", tb) + " TB";
+        }
+        return s;
     }
 
 }

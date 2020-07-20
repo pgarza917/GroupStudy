@@ -12,16 +12,22 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcelable;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
@@ -29,6 +35,7 @@ import com.example.studygroup.adapters.FileViewAdapter;
 import com.example.studygroup.models.FileExtended;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 import java.io.File;
@@ -49,6 +56,7 @@ import okio.Okio;
  */
 public class FileViewFragment extends Fragment {
 
+    public static final String TAG = FileViewFragment.class.getSimpleName();
     public static final int FILE_PICKER_REQUEST_CODE = 1940;
 
     private FileViewAdapter mAdapter;
@@ -66,8 +74,32 @@ public class FileViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_file_view, container, false);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.create_event_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch(item.getItemId()) {
+            case R.id.action_check:
+
+                Intent intent = new Intent();
+                intent.putParcelableArrayListExtra("uploadFiles", (ArrayList<? extends Parcelable>) mFilesList);
+                getTargetFragment().onActivityResult(CreateEventFragment.FILE_UPLOAD_REQUEST_CODE, Activity.RESULT_OK, intent);
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                fm.popBackStackImmediate();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -112,9 +144,16 @@ public class FileViewFragment extends Fragment {
             File fileToUpload = createTempFile(filename);
             fileToUpload = saveContentToFile(uri, fileToUpload, contentResolver);
 
-            ParseFile file = new ParseFile(fileToUpload, filename);
+            ParseFile parseFile = new ParseFile(fileToUpload, filename);
             long fileSize = fileToUpload.length();
-            saveFileToParse(file, filename, fileSize);
+            FileExtended file = new FileExtended();
+
+            file.setFile(parseFile);
+            file.setFileName(filename);
+            file.setFileSize(fileSize);
+
+            mFilesList.add(file);
+            mAdapter.notifyItemInserted(0);
         }
     }
 
@@ -153,25 +192,5 @@ public class FileViewFragment extends Fragment {
             return null;
         }
         return file;
-    }
-
-
-    public void saveFileToParse(ParseFile fileData, String filename, long fileSize) {
-        FileExtended file = new FileExtended();
-
-        file.setFile(fileData);
-        file.setFileName(filename);
-        file.setFileSize(fileSize);
-
-        file.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if(e != null) {
-                    Toast.makeText(getContext(), "Error uploading file!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                Toast.makeText(getContext(), "File uploaded successfully", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }
