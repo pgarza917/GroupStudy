@@ -78,5 +78,7 @@ public class ProfileFragment extends Fragment {
         } else {
             mProfilePictureImageView.setVisibility(View.GONE);
         }
+
+
     }
 }

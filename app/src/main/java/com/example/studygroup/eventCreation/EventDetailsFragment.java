@@ -25,6 +25,7 @@ import org.parceler.Parcels;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
@@ -85,12 +86,12 @@ public class EventDetailsFragment extends Fragment {
 
         setDateTimeText();
 
-        List<FileExtended> files = (List<FileExtended>) mEvent.getFiles().get(0);
+        List<FileExtended> files = (List<FileExtended>) mEvent.getFiles();
         if(mEventFiles == null) {
             mEventFiles = new ArrayList<>();
         }
         if(files != null) {
-            mEventFiles.addAll(files);
+            mEventFiles.addAll((Collection<? extends FileExtended>) files.get(0));
         }
 
         mFileViewAdapter = new FileViewAdapter(getContext(), mEventFiles);

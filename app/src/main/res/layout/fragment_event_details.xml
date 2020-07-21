@@ -29,7 +29,7 @@
         android:layout_below="@+id/eventTitleTextView"
         android:layout_alignParentStart="true"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="40dp"
         android:backgroundTint="@color/quantum_white_100"
         android:src="@drawable/ic_baseline_calendar_today_24" />
 
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/eventTitleTextView"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="68dp"
+        android:layout_marginTop="52dp"
         android:layout_toEndOf="@+id/detailsCalendarImageButton"
         android:text="2 Oct 2019"
         android:textSize="18sp" />
@@ -51,7 +51,7 @@
         android:layout_below="@+id/eventTitleTextView"
         android:layout_alignParentStart="true"
         android:layout_marginStart="190dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="40dp"
         android:backgroundTint="#FFFFFF"
         android:src="@drawable/ic_baseline_access_time_small" />
 
@@ -60,10 +60,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/eventTitleTextView"
-        android:layout_alignParentEnd="true"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="68dp"
-        android:layout_marginEnd="96dp"
+        android:layout_marginTop="52dp"
         android:layout_toEndOf="@+id/detailsTimeImageButton"
         android:textSize="18sp"
         tools:text="3:00 PM" />
@@ -76,7 +74,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="48dp"
         android:layout_marginEnd="36dp"
         android:textSize="18sp"
         tools:text="In this review session, we will be covering Hermitian Operators and their applications. This is meant to help with the upcoming midterm." />
@@ -109,7 +107,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/detailsLocationImageButton"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="44dp"
         android:layout_marginEnd="16dp" />
 
 </RelativeLayout>

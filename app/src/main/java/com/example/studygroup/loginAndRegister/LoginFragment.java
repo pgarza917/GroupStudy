@@ -29,6 +29,11 @@ import com.google.android.gms.tasks.Task;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
+import com.parse.boltsinternal.Continuation;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,12 +69,14 @@ public class LoginFragment extends Fragment {
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.oauth2_0clientid))
                 .requestEmail()
                 .build();
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(getContext(), gso);
 
+        /*
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getContext());
@@ -77,6 +84,8 @@ public class LoginFragment extends Fragment {
         if(account != null) {
             goToMainActivity();
         }
+
+         */
 
         // Check to see if there is a cached user so we don't make the user have to sign
         // in again if they already have before. Persistence of user login across app
@@ -90,7 +99,7 @@ public class LoginFragment extends Fragment {
         mPasswordEditText = view.findViewById(R.id.passwordEditText);
         mLoginButton = view.findViewById(R.id.loginButton);
         mRegisterButton = view.findViewById(R.id.goToRegisterButton);
-        //mGoogleSignInButton = view.findViewById(R.id.googleSignInButton);
+        mGoogleSignInButton = view.findViewById(R.id.googleSignInButton);
 
         // Set click listener to handle registration when 'Register Account' button is tapped
         mLoginButton.setOnClickListener(new View.OnClickListener() {
@@ -103,12 +112,12 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        /*mGoogleSignInButton.setOnClickListener(new View.OnClickListener() {
+        mGoogleSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 launchGoogleSignIn();
             }
-        });*/
+        });
 
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,9 +143,44 @@ public class LoginFragment extends Fragment {
             // a listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                // Signed in successfully, show authenticated UI.
-                goToMainActivity();
+                final GoogleSignInAccount account = task.getResult(ApiException.class);
+                String idToken = account.getIdToken();
+                String userId = account.getId();
+                // Pass the relevant info to Parse for third-party authentication with Google
+                Map<String, String> authData = new HashMap<String, String>();
+                authData.put("id", userId);
+                authData.put("id_token", idToken);
+                com.parse.boltsinternal.Task<ParseUser> parseUserTask = ParseUser.logInWithInBackground("google", authData);
+                parseUserTask.continueWith(new Continuation<ParseUser, Void>() {
+                    @Override
+                    public Void then(com.parse.boltsinternal.Task<ParseUser> task) throws Exception {
+                        if(task.isCancelled()) {
+                            Log.i(TAG, "then: task cancelled");
+                            return null;
+                        }
+                        if(task.isFaulted()) {
+                            Log.i(TAG, "then: tag faulted");
+                            return null;
+                        }
+                        final ParseUser user = task.getResult();
+                        user.setEmail(account.getEmail());
+                        user.setUsername(account.getDisplayName());
+                        user.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if(e == null) {
+                                    Toast.makeText(getContext(), "Login Successful!", Toast.LENGTH_SHORT).show();
+                                    goToMainActivity();
+                                } else {
+                                    user.deleteInBackground();
+                                    ParseUser.logOutInBackground();
+                                }
+                            }
+                        });
+                        return null;
+                    }
+                });
+
             } catch (ApiException e) {
                 // The ApiException status code indicates the detailed failure reason.
                 // Please refer to the GoogleSignInStatusCodes class reference for more information.
