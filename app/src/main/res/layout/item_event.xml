@@ -27,6 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/titleTextView"
         android:layout_alignParentStart="true"
+        android:maxLines="3"
         android:layout_marginStart="12dp"
         android:layout_marginTop="5dp"
         tools:text="This review session will cover the material that will appear on the final exam for the Math 120 Multivariable course. We will be going over Greene's and Stoke's Theorem in detail as many student had trouble with these theorems and their applications." />

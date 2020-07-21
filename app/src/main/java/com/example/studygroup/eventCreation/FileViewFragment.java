@@ -1,9 +1,7 @@
 package com.example.studygroup.eventCreation;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ContentResolver;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -16,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,21 +31,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
-import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.adapters.FileViewAdapter;
 import com.example.studygroup.models.FileExtended;
-import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseQuery;
-import com.parse.SaveCallback;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -99,7 +91,7 @@ public class FileViewFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch(item.getItemId()) {
-            case R.id.action_check:
+            case R.id.action_search:
                 // This case implementation handles the returning of the list of files that the user has
                 // added to the event back to the create event fragment for upload of the event
                 Intent intent = new Intent();
@@ -136,6 +128,9 @@ public class FileViewFragment extends Fragment {
 
         mFileViewRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        DividerItemDecoration itemDecor = new DividerItemDecoration(mFileViewRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        mFileViewRecyclerView.addItemDecoration(itemDecor);
+
         mUploadFilesImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -153,7 +148,16 @@ public class FileViewFragment extends Fragment {
         mTakePhotoImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.i(TAG, "Launching camera activity");
                 onLaunchCamera(view);
+            }
+        });
+
+        mCreateDocImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "Beginning to create new Google Doc for event");
+
             }
         });
     }

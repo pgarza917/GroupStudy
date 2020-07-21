@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -118,6 +119,9 @@ public class CreateEventFragment extends Fragment {
         mAttachedFilesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAttachedFilesRecyclerView.setAdapter(mFileAdapter);
 
+        DividerItemDecoration itemDecor = new DividerItemDecoration(mAttachedFilesRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        mAttachedFilesRecyclerView.addItemDecoration(itemDecor);
+
 
         View.OnClickListener dateSelectListener = new View.OnClickListener() {
             @Override
@@ -166,7 +170,6 @@ public class CreateEventFragment extends Fragment {
         // text view right next to the location icon
         mSelectLocationImageButton.setOnClickListener(locationSelectListener);
         mSelectedLocationTextView.setOnClickListener(locationSelectListener);
-
 
         mAddFilesImageButton.setOnClickListener(addFilesListener);
         mAddFilesTextView.setOnClickListener(addFilesListener);

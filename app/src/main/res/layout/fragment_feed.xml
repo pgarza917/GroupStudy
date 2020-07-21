@@ -5,6 +5,14 @@
     android:layout_height="match_parent"
     tools:context=".fragments.FeedFragment">
 
+    <ProgressBar
+        android:id="@+id/progressBarFeedLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:visibility="invisible" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipeContainer"

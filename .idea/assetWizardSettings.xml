@@ -334,6 +334,7 @@
                         </option>
                         <option name="values">
                           <map>
+                            <entry key="color" value="28ff62" />
                             <entry key="outputName" value="ic_baseline_check_24" />
                             <entry key="sourceFile" value="$USER_HOME$/Desktop/FBU_2020/icons8-google-docs copy.svg" />
                           </map>

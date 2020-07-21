@@ -12,12 +12,18 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
+import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.adapters.EventsAdapter;
 import com.example.studygroup.models.Event;
+import com.example.studygroup.search.SearchFragment;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -37,6 +43,7 @@ public class FeedFragment extends Fragment {
     protected EventsAdapter mEventsAdapter;
     protected List<Event> mEventsList;
     protected SwipeRefreshLayout mSwipeContainer;
+    private ProgressBar mProgressBarLoading;
 
     public FeedFragment() {
         // Required empty public constructor
@@ -45,6 +52,7 @@ public class FeedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_feed, container, false);
     }
@@ -54,6 +62,7 @@ public class FeedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mSwipeContainer = view.findViewById(R.id.swipeContainer);
+
 
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -84,7 +93,16 @@ public class FeedFragment extends Fragment {
         DividerItemDecoration itemDecor = new DividerItemDecoration(mEventsRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
         mEventsRecyclerView.addItemDecoration(itemDecor);
 
+        mProgressBarLoading = view.findViewById(R.id.progressBarFeedLoading);
+        mProgressBarLoading.setVisibility(View.VISIBLE);
+
         queryEvents();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.search_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     // Method to help query the Parse DB for events objects
@@ -110,7 +128,19 @@ public class FeedFragment extends Fragment {
                 mEventsAdapter.addAll(events);
                 // Now we call setRefreshing(false) to signal refresh has finished
                 mSwipeContainer.setRefreshing(false);
+                mProgressBarLoading.setVisibility(View.INVISIBLE);
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if(item.getItemId() == R.id.action_search) {
+            Fragment fragment = new SearchFragment();
+            ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutContainer, fragment).commit();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

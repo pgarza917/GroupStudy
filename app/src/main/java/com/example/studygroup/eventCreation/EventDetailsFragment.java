@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -97,6 +98,9 @@ public class EventDetailsFragment extends Fragment {
         mFileViewAdapter = new FileViewAdapter(getContext(), mEventFiles);
         mEventFilesRecyclerView.setAdapter(mFileViewAdapter);
         mEventFilesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        DividerItemDecoration itemDecor = new DividerItemDecoration(mEventFilesRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        mEventFilesRecyclerView.addItemDecoration(itemDecor);
 
         Log.i(TAG, "onViewCreated: Successful event details load");
     }
