@@ -90,7 +90,7 @@ public class LoginFragment extends Fragment {
         mPasswordEditText = view.findViewById(R.id.passwordEditText);
         mLoginButton = view.findViewById(R.id.loginButton);
         mRegisterButton = view.findViewById(R.id.goToRegisterButton);
-        mGoogleSignInButton = view.findViewById(R.id.googleSignInButton);
+        //mGoogleSignInButton = view.findViewById(R.id.googleSignInButton);
 
         // Set click listener to handle registration when 'Register Account' button is tapped
         mLoginButton.setOnClickListener(new View.OnClickListener() {
@@ -103,12 +103,12 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        mGoogleSignInButton.setOnClickListener(new View.OnClickListener() {
+        /*mGoogleSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 launchGoogleSignIn();
             }
-        });
+        });*/
 
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override

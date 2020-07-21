@@ -121,8 +121,8 @@ public class FileViewFragment extends Fragment {
 
         Bundle data = getArguments();
         List<FileExtended> alreadyAttachedFiles = data.getParcelableArrayList("filesAttached");
-        if(alreadyAttachedFiles!= null) {
-            mFilesList = alreadyAttachedFiles;
+        if(alreadyAttachedFiles != null && !alreadyAttachedFiles.isEmpty()) {
+            mFilesList.addAll(alreadyAttachedFiles);
         } else {
             mFilesList = new ArrayList<>();
         }
@@ -139,6 +139,7 @@ public class FileViewFragment extends Fragment {
         mUploadFilesImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.i(TAG, "Launching file picker activity");
                 // Here we start a file picker activity by allowing android to use the
                 // most appropriate application it had to handle the picking. It will
                 // then return to us the selected file
@@ -188,7 +189,7 @@ public class FileViewFragment extends Fragment {
 
             // Adds the new attached file to the Recycler View so the user knows the file is now
             // attached to their event for upload
-            mFilesList.add(file);
+            mFilesList.add(0, file);
             mAdapter.notifyItemInserted(0);
         }
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -208,7 +209,7 @@ public class FileViewFragment extends Fragment {
 
                 // Adds the new attached file to the Recycler View so the user knows the file is now
                 // attached to their event for upload
-                mFilesList.add(fileToUpload);
+                mFilesList.add(0, fileToUpload);
                 mAdapter.notifyItemInserted(0);
             } else { // Result was a failure
                 Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();

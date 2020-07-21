@@ -20,15 +20,6 @@
         android:textColor="@android:color/white"
         android:textSize="18sp" />
 
-    <ImageView
-        android:id="@+id/profilePictureImageView"
-        android:layout_width="125dp"
-        android:layout_height="125dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="36dp"
-        tools:src="@tools:sample/avatars" />
-
     <TextView
         android:id="@+id/profileNameTextView"
         android:layout_width="wrap_content"
@@ -36,7 +27,7 @@
         android:layout_below="@+id/profilePictureImageView"
         android:layout_alignParentStart="true"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="36dp"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -53,4 +44,13 @@
         android:layout_marginTop="18dp"
         android:layout_marginEnd="36dp"
         tools:text="I am currently a rising junior at Yale University. I really like physics and computer science." />
+
+    <ImageView
+        android:id="@+id/profilePictureImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        tools:src="@tools:sample/avatars" />
+
 </RelativeLayout>

@@ -61,7 +61,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
         public void bind(FileExtended file) {
             mFileNameTextView.setText(file.getFileName());
 
-            String modifiedTimestamp = file.getLastModified().toString();
+            //String modifiedTimestamp = file.getLastModified().toString();
 
             long fileSize = file.getFileSize();
             String fileSizeString = getSize(fileSize);

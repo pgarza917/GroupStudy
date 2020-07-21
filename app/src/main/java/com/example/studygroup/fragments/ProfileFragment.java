@@ -72,16 +72,11 @@ public class ProfileFragment extends Fragment {
         }
 
         ParseFile profileImage = ParseUser.getCurrentUser().getParseFile("profileImage");
-        if(profileImage == null) {
-            mProfilePictureImageView.setVisibility(View.GONE);
-        } else {
+        if(profileImage != null) {
             mProfilePictureImageView.setVisibility(View.VISIBLE);
-            Glide.with(getContext())
-                    .load(profileImage.getUrl())
-                    .circleCrop()
-                    .into(mProfilePictureImageView);
+            Glide.with(getContext()).load(profileImage.getUrl()).circleCrop().into(mProfilePictureImageView);
+        } else {
+            mProfilePictureImageView.setVisibility(View.GONE);
         }
-
-
     }
 }

@@ -19,6 +19,10 @@ import com.example.studygroup.models.Event;
 
 import org.parceler.Parcels;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.StringTokenizer;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -65,6 +69,25 @@ public class EventDetailsFragment extends Fragment {
         mTitleTextView.setText(event.getTitle());
         mLocationTextView.setText(event.getLocationName());
         mDescriptionTextView.setText(event.getDescription());
+        
+        String timeStamp = event.getTime().toString();
+        StringTokenizer tokenizer = new StringTokenizer(timeStamp);
 
+        String weekday = tokenizer.nextToken();
+        String month = tokenizer.nextToken();
+        String day = tokenizer.nextToken();
+
+        String timeInDay = tokenizer.nextToken();
+        String timeZone = tokenizer.nextToken();
+        String year = tokenizer.nextToken();
+
+        String date = day + " " + month + " " + year;
+        int hour = Integer.parseInt(timeInDay.substring(0, 2));
+        String time = ((hour == 12) ? 12 : hour % 12) + ":" + timeInDay.substring(3, 5) + " " + ((hour >= 12) ? "PM" : "AM");
+
+        mDateTextView.setText(date);
+        mTimeTextView.setText(time);
+
+        Log.i(TAG, "onViewCreated: Successful event details load");
     }
 }
