@@ -41,7 +41,8 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="68dp"
         android:layout_toEndOf="@+id/detailsCalendarImageButton"
-        android:text="2 Oct 2019" />
+        android:text="2 Oct 2019"
+        android:textSize="18sp" />
 
     <ImageButton
         android:id="@+id/detailsTimeImageButton"
@@ -64,6 +65,7 @@
         android:layout_marginTop="68dp"
         android:layout_marginEnd="96dp"
         android:layout_toEndOf="@+id/detailsTimeImageButton"
+        android:textSize="18sp"
         tools:text="3:00 PM" />
 
     <TextView
@@ -76,6 +78,7 @@
         android:layout_marginStart="36dp"
         android:layout_marginTop="56dp"
         android:layout_marginEnd="36dp"
+        android:textSize="18sp"
         tools:text="In this review session, we will be covering Hermitian Operators and their applications. This is meant to help with the upcoming midterm." />
 
     <ImageButton
@@ -97,6 +100,7 @@
         android:layout_marginStart="0dp"
         android:layout_marginTop="66dp"
         android:layout_toEndOf="@+id/detailsLocationImageButton"
+        android:textSize="18sp"
         tools:text="Sterling Memorial Library" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -104,6 +108,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/detailsLocationImageButton"
-        android:layout_marginTop="32dp" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp" />
 
 </RelativeLayout>

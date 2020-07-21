@@ -8,6 +8,7 @@ import com.parse.ParseObject;
 import org.parceler.Parcel;
 
 import java.util.Date;
+import java.util.List;
 
 @Parcel(analyze={Event.class})
 @ParseClassName("Event")
@@ -59,5 +60,9 @@ public class Event extends ParseObject {
 
     public void setLocationName(String locationName) {
         put(KEY_LOCATION_NAME, locationName);
+    }
+
+    public List<FileExtended> getFiles() {
+        return (List<FileExtended>) get(KEY_FILES);
     }
 }

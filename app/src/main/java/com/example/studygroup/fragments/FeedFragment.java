@@ -92,6 +92,7 @@ public class FeedFragment extends Fragment {
         // Specify which class to query from Parse DB
         ParseQuery<Event> eventsQuery = ParseQuery.getQuery(Event.class);
         eventsQuery.setLimit(20);
+        eventsQuery.include(Event.KEY_FILES);
         eventsQuery.orderByDescending(Event.KEY_CREATED_AT);
         // Using findInBackground to pull events from DB
         eventsQuery.findInBackground(new FindCallback<Event>() {

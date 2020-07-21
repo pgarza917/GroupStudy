@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,11 +17,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.studygroup.R;
+import com.example.studygroup.adapters.FileViewAdapter;
 import com.example.studygroup.models.Event;
+import com.example.studygroup.models.FileExtended;
 
 import org.parceler.Parcels;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
@@ -38,6 +44,11 @@ public class EventDetailsFragment extends Fragment {
     private ImageButton mDateImageButton;
     private ImageButton mTimeImageButton;
     private ImageButton mLocationImageButton;
+    private RecyclerView mEventFilesRecyclerView;
+
+    private Event mEvent;
+    private List<FileExtended> mEventFiles;
+    private FileViewAdapter mFileViewAdapter;
 
     public EventDetailsFragment() {
         // Required empty public constructor
@@ -54,6 +65,7 @@ public class EventDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
         mTitleTextView = view.findViewById(R.id.eventTitleTextView);
         mDateTextView = view.findViewById(R.id.detailsDateTextView);
         mTimeTextView = view.findViewById(R.id.detailsTimeTextView);
@@ -62,15 +74,34 @@ public class EventDetailsFragment extends Fragment {
         mDateImageButton = view.findViewById(R.id.detailsCalendarImageButton);
         mTimeImageButton = view.findViewById(R.id.detailsTimeImageButton);
         mLocationImageButton = view.findViewById(R.id.detailsLocationImageButton);
+        mEventFilesRecyclerView = view.findViewById(R.id.detailsFilesRecyclerView);
 
-        Event event = (Event) Parcels.unwrap(getArguments().getParcelable(Event.class.getSimpleName()));
+        mEvent = (Event) Parcels.unwrap(getArguments().getParcelable(Event.class.getSimpleName()));
         Log.i(TAG, "Received Bundled Event Data!");
 
-        mTitleTextView.setText(event.getTitle());
-        mLocationTextView.setText(event.getLocationName());
-        mDescriptionTextView.setText(event.getDescription());
-        
-        String timeStamp = event.getTime().toString();
+        mTitleTextView.setText(mEvent.getTitle());
+        mLocationTextView.setText(mEvent.getLocationName());
+        mDescriptionTextView.setText(mEvent.getDescription());
+
+        setDateTimeText();
+
+        List<FileExtended> files = (List<FileExtended>) mEvent.getFiles().get(0);
+        if(mEventFiles == null) {
+            mEventFiles = new ArrayList<>();
+        }
+        if(files != null) {
+            mEventFiles.addAll(files);
+        }
+
+        mFileViewAdapter = new FileViewAdapter(getContext(), mEventFiles);
+        mEventFilesRecyclerView.setAdapter(mFileViewAdapter);
+        mEventFilesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        Log.i(TAG, "onViewCreated: Successful event details load");
+    }
+
+    public void setDateTimeText() {
+        String timeStamp = mEvent.getTime().toString();
         StringTokenizer tokenizer = new StringTokenizer(timeStamp);
 
         String weekday = tokenizer.nextToken();
@@ -78,7 +109,7 @@ public class EventDetailsFragment extends Fragment {
         String day = tokenizer.nextToken();
 
         String timeInDay = tokenizer.nextToken();
-        String timeZone = tokenizer.nextToken();
+        String timezone = tokenizer.nextToken();
         String year = tokenizer.nextToken();
 
         String date = day + " " + month + " " + year;
@@ -87,7 +118,5 @@ public class EventDetailsFragment extends Fragment {
 
         mDateTextView.setText(date);
         mTimeTextView.setText(time);
-
-        Log.i(TAG, "onViewCreated: Successful event details load");
     }
 }
