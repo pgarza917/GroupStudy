@@ -99,7 +99,7 @@ public class RegisterFragment extends Fragment {
         user.setPassword(password);
         user.setEmail(email);
         user.put("bio", bio);
-
+        user.put("displayName", username);
         user.signUpInBackground(new SignUpCallback() {
             @Override
             public void done(ParseException e) {

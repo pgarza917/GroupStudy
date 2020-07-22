@@ -29,6 +29,7 @@ public class ProfileFragment extends Fragment {
     private TextView mProfileNameTextView;
     private TextView mBioTextView;
     private ImageView mProfilePictureImageView;
+    private TextView mEmailTextView;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -49,6 +50,7 @@ public class ProfileFragment extends Fragment {
         mProfileNameTextView = view.findViewById(R.id.profileNameTextView);
         mBioTextView = view.findViewById(R.id.profileBioTextView);
         mProfilePictureImageView = view.findViewById(R.id.profilePictureImageView);
+        mEmailTextView = view.findViewById(R.id.emailTextView);
 
         mLogoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,8 +63,9 @@ public class ProfileFragment extends Fragment {
         });
 
         ParseUser currentUser = ParseUser.getCurrentUser();
+        String displayName = currentUser.getString("displayName");
 
-        mProfileNameTextView.setText(currentUser.getUsername());
+        mProfileNameTextView.setText(displayName);
 
         String bio = (String) currentUser.get("bio");
         if(bio == null || bio.isEmpty()) {
@@ -79,6 +82,6 @@ public class ProfileFragment extends Fragment {
             mProfilePictureImageView.setVisibility(View.GONE);
         }
 
-
+        mEmailTextView.setText(currentUser.getEmail());
     }
 }

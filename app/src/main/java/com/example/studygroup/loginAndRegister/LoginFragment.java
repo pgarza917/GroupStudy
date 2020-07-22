@@ -164,12 +164,14 @@ public class LoginFragment extends Fragment {
                         }
                         final ParseUser user = task.getResult();
                         user.setEmail(account.getEmail());
-                        user.setUsername(account.getDisplayName());
+                        user.setUsername(account.getId());
+                        user.put("displayName", account.getDisplayName());
                         user.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
                                 if(e == null) {
                                     Toast.makeText(getContext(), "Login Successful!", Toast.LENGTH_SHORT).show();
+                                    mGoogleSignInClient.signOut();
                                     goToMainActivity();
                                 } else {
                                     user.deleteInBackground();
