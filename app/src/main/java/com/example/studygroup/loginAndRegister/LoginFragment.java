@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -95,7 +94,7 @@ public class LoginFragment extends Fragment {
             goToMainActivity();
         }
 
-        mUsernameEditText = view.findViewById(R.id.usernameEditText);
+        mUsernameEditText = view.findViewById(R.id.editDisplayNameEditText);
         mPasswordEditText = view.findViewById(R.id.passwordEditText);
         mLoginButton = view.findViewById(R.id.loginButton);
         mRegisterButton = view.findViewById(R.id.goToRegisterButton);

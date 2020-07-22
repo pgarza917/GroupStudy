@@ -7,7 +7,7 @@
     tools:context=".loginAndRegister.LoginActivity">
 
     <EditText
-        android:id="@+id/usernameEditText"
+        android:id="@+id/editDisplayNameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -21,7 +21,7 @@
         android:id="@+id/passwordEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/usernameEditText"
+        android:layout_below="@+id/editDisplayNameEditText"
         android:layout_alignParentStart="true"
         android:layout_marginStart="12dp"
         android:layout_marginTop="30dp"
