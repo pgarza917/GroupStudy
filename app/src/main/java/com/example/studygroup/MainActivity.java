@@ -9,13 +9,12 @@ import androidx.fragment.app.FragmentManager;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.studygroup.eventCreation.CreateEventFragment;
-import com.example.studygroup.fragments.FeedFragment;
-import com.example.studygroup.fragments.ProfileFragment;
+import com.example.studygroup.eventFeed.FeedFragment;
+import com.example.studygroup.profile.ProfileFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
