@@ -2,6 +2,7 @@ package com.example.studygroup.eventCreation;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -175,7 +176,7 @@ public class FileViewFragment extends Fragment {
             ContentResolver contentResolver = getContext().getContentResolver();
 
             String filename = queryName(contentResolver, uri);
-            File fileToUpload = createTempFile(filename);
+            File fileToUpload = createTempFile(filename, getContext());
             fileToUpload = saveContentToFile(uri, fileToUpload, contentResolver);
 
             Date lastModDate = new Date(fileToUpload.lastModified());
@@ -222,7 +223,7 @@ public class FileViewFragment extends Fragment {
     }
 
     // This method helps in determining the filename from a content URI using a content resolver
-    private String queryName(ContentResolver resolver, Uri uri) {
+    public static String queryName(ContentResolver resolver, Uri uri) {
         Cursor returnCursor = resolver.query(uri, null, null, null, null);
         assert returnCursor != null;
         int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
@@ -233,10 +234,10 @@ public class FileViewFragment extends Fragment {
     }
 
     // This method creates a temporary file in the application cache and returns it
-    private File createTempFile(String name) {
+    public static File createTempFile(String name, Context context) {
         File file = null;
         try {
-            file = File.createTempFile(name, null, getContext().getCacheDir());
+            file = File.createTempFile(name, null, context.getCacheDir());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -246,7 +247,7 @@ public class FileViewFragment extends Fragment {
     // This method reads a content by opening an input stream from its uri and feeding that into
     // file to write all the data to that file from the accessed content. Users the Okio IO library
     // to accomplish this
-    private File saveContentToFile(Uri uri, File file, ContentResolver contentResolver) {
+    public static File saveContentToFile(Uri uri, File file, ContentResolver contentResolver) {
         try {
             InputStream stream = contentResolver.openInputStream(uri);
             BufferedSource source = Okio.buffer(Okio.source(stream));
