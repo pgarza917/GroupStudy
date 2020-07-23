@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: com.applozic.mobiframework:mobicommons:5.80@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/35bccec8d65673d87c8022b714dc33fe/jetified-mobicommons-5.80/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/35bccec8d65673d87c8022b714dc33fe/jetified-mobicommons-5.80/res" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.applozic.mobiframework/mobicommons/5.80/1f9e477218015faccd025f611b2c8d12da65203d/mobicommons-5.80-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.applozic.mobiframework/mobicommons/5.80/9fa4c482f5a73dc5258cfa0cea37fd92fe103b7b/mobicommons-5.80-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

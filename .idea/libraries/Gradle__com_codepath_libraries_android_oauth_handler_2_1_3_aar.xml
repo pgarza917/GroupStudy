@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.codepath.libraries:android-oauth-handler:2.1.3@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a94cf4e4192dfbf1650111f6c6282362/jetified-android-oauth-handler-2.1.3/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a94cf4e4192dfbf1650111f6c6282362/jetified-android-oauth-handler-2.1.3/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.codepath.libraries/android-oauth-handler/2.1.3/aca056cbcbec73bb67e7c2014281783eff3d39bf/android-oauth-handler-2.1.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
