@@ -24,9 +24,23 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+        <meta-data android:name="com.applozic.application.key"
+            android:value="@string/applozic_app_id" />
         <activity android:name=".eventCreation.MapActivity"/>
         <activity android:name=".MainActivity"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="oauth"
+                    android:host="studygroup"
+                    />
+            </intent-filter>
+        </activity>
         <activity android:name=".loginAndRegister.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

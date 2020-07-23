@@ -123,6 +123,7 @@ public class EditProfileFragment extends Fragment {
 
                 builder.setPositiveButton("Upload Photo", uploadListener);
                 builder.setNeutralButton("Take a Photo", takePhotoListener);
+                builder.setNegativeButton("Cancel", null);
 
                 // create and show the alert dialog
                 AlertDialog dialog = builder.create();

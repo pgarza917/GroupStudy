@@ -24,6 +24,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
@@ -75,16 +76,18 @@ public class LoginFragment extends Fragment {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(getContext(), gso);
 
-        /*
+
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getContext());
-
-        if(account != null) {
-            goToMainActivity();
-        }
-
-         */
+        /*GoogleSignIn.silentSignIn()
+                .addOnCompleteListener(
+        this,
+        new OnCompleteListener<GoogleSignInAccount>() {
+          @Override
+          public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+            handleSignInResult(task);
+          }
+        });*/
 
         // Check to see if there is a cached user so we don't make the user have to sign
         // in again if they already have before. Persistence of user login across app
@@ -170,7 +173,7 @@ public class LoginFragment extends Fragment {
                             public void done(ParseException e) {
                                 if(e == null) {
                                     Toast.makeText(getContext(), "Login Successful!", Toast.LENGTH_SHORT).show();
-                                    mGoogleSignInClient.signOut();
+                                    //mGoogleSignInClient.signOut();
                                     goToMainActivity();
                                 } else {
                                     user.deleteInBackground();

@@ -1,8 +1,11 @@
 package com.example.studygroup.eventCreation;
 
+import android.accounts.Account;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -30,12 +33,30 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.studygroup.DriveServiceHelper;
+import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.adapters.FileViewAdapter;
 import com.example.studygroup.models.FileExtended;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
+import com.google.gson.Gson;
 import com.parse.ParseFile;
 
 import java.io.File;
@@ -43,6 +64,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -58,14 +80,19 @@ public class FileViewFragment extends Fragment {
     public static final String TAG = FileViewFragment.class.getSimpleName();
     public static final int FILE_PICKER_REQUEST_CODE = 1940;
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
+    public static final int RC_REQUEST_PERMISSION_SUCCESS_CONTINUE_FILE_CREATION = 6730;
 
     private FileViewAdapter mAdapter;
     private List<FileExtended> mFilesList;
+    private DriveServiceHelper mDriveServiceHelper;
+    private String mOpenFileId;
 
     private RecyclerView mFileViewRecyclerView;
     private ImageButton mCreateDocImageButton;
     private ImageButton mTakePhotoImageButton;
     private ImageButton mUploadFilesImageButton;
+    private EditText mFileTitleEditText;
+    private ProgressBar mDriveProgressBar;
 
     // Member variables for camera functionality
     public String photoFileName = "photo.jpg";
@@ -159,8 +186,58 @@ public class FileViewFragment extends Fragment {
             public void onClick(View view) {
                 Log.i(TAG, "Beginning to create new Google Doc for event");
 
+                if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(getActivity()), new Scope(DriveScopes.DRIVE_FILE))) {
+                    GoogleSignIn.requestPermissions(
+                            getActivity(),
+                            RC_REQUEST_PERMISSION_SUCCESS_CONTINUE_FILE_CREATION,
+                            GoogleSignIn.getLastSignedInAccount(getActivity()),
+                            new Scope(DriveScopes.DRIVE_FILE));
+                } else {
+                    gsuiteConfigureCreateDialog();
+                }
             }
         });
+    }
+
+    private void gsuiteConfigureCreateDialog() {
+        GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(getContext(), Collections.singleton(DriveScopes.DRIVE_FILE));
+        Account account = GoogleSignIn.getLastSignedInAccount(getContext()).getAccount();
+        credential.setSelectedAccount(account);
+        Drive googleDriveService = new Drive.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential)
+                .setApplicationName("Study Group")
+                .build();
+        mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Drive File Creation");
+
+        final View customDialogLayout = ((MainActivity) getContext()).getLayoutInflater().inflate(R.layout.gsuite_create_dialog_layout, null);
+        builder.setView(customDialogLayout);
+
+        mFileTitleEditText = customDialogLayout.findViewById(R.id.dialogFileTitleEditText);
+        mDriveProgressBar = customDialogLayout.findViewById(R.id.progressBarDriveLoading);
+        CheckBox addAllEventUsersCheckBox = customDialogLayout.findViewById(R.id.addEventUsersCheckBox);
+        ImageButton addOtherUsersImageButton = customDialogLayout.findViewById(R.id.addOtherUsersImageButton);
+
+        builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                mDriveProgressBar.setVisibility(View.VISIBLE);
+                createDriveDoc();
+            }
+        });
+
+        addOtherUsersImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        builder.setNegativeButton("Cancel", null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override
@@ -219,6 +296,9 @@ public class FileViewFragment extends Fragment {
             } else { // Result was a failure
                 Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
+        }
+        if(requestCode == RC_REQUEST_PERMISSION_SUCCESS_CONTINUE_FILE_CREATION) {
+            gsuiteConfigureCreateDialog();
         }
     }
 
@@ -301,5 +381,62 @@ public class FileViewFragment extends Fragment {
         File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
 
         return file;
+    }
+
+    /**
+     * Creates a new file via the Drive REST API.
+     */
+    private void createDriveDoc() {
+        if (mDriveServiceHelper != null) {
+            Log.d(TAG, "Creating a file.");
+
+            String fileName = mFileTitleEditText.getText().toString();
+
+            mDriveServiceHelper.createDoc(fileName)
+                    .addOnSuccessListener(fileId -> {
+                        mOpenFileId = fileId;
+                        mDriveProgressBar.setVisibility(View.INVISIBLE);
+                    })
+                    .addOnFailureListener(exception ->
+                            Log.e(TAG, "Couldn't create file.", exception));
+        }
+    }
+
+    /**
+     * Retrieves the title and content of a file identified by {@code fileId} and populates the UI.
+     */
+    private void readFile(String fileId) {
+        if (mDriveServiceHelper != null) {
+            Log.d(TAG, "Reading file " + fileId);
+
+            mDriveServiceHelper.readFile(fileId)
+                    .addOnSuccessListener(nameAndContent -> {
+                        String name = nameAndContent.first;
+                        String content = nameAndContent.second;
+
+                        mFileTitleEditText.setText(name);
+                        //mDocContentEditText.setText(content);
+
+                    })
+                    .addOnFailureListener(exception ->
+                            Log.e(TAG, "Couldn't read file.", exception));
+        }
+    }
+
+    /**
+     * Saves the currently opened file created if one exists.
+     */
+    private void saveFile() {
+        if (mDriveServiceHelper != null && mOpenFileId != null) {
+            Log.i(TAG, "Saving " + mOpenFileId);
+
+            String fileName = mFileTitleEditText.getText().toString();
+
+            mDriveServiceHelper.saveFile(mOpenFileId, fileName)
+                    .addOnSuccessListener((Void) ->
+                            Toast.makeText(getContext(), "Drive File Created!", Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(exception ->
+                            Log.e(TAG, "Unable to save file via REST.", exception));
+        }
     }
 }
