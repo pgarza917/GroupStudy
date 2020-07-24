@@ -13,10 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="12dp"
-        android:maxLines="1"
-        android:hint="Event Title" />
+        android:hint="Event Title"
+        android:maxLines="1" />
 
     <EditText
         android:id="@+id/descriptionEditText"
@@ -138,12 +138,43 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/attachedFilesRecyclerView"
-        android:layout_width="match_parent"
+        android:layout_width="196dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/addFileImageButton"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp" />
+
+    <ImageButton
+        android:id="@+id/addUsersToEventImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/locationPickerImageButton"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="146dp"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:src="@drawable/ic_baseline_person_add_48" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/eventUsersRecyclerView"
+        android:layout_width="196dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/addUsersToEventImageButton"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp" />
+
+    <TextView
+        android:id="@+id/addUsersToEventTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/selectLocationTextView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="71dp"
+        android:layout_marginEnd="54dp"
+        android:text="Add Users"
+        android:textSize="18sp" />
 
 
 </RelativeLayout>

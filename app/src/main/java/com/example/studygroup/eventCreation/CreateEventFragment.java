@@ -26,12 +26,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.adapters.FileViewAdapter;
+import com.example.studygroup.adapters.UsersAdapter;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
 import com.parse.ParseGeoPoint;
@@ -55,25 +57,21 @@ public class CreateEventFragment extends Fragment {
     public static final int LOCATION_SELECT_REQUEST_CODE = 450;
     public static final int FILE_UPLOAD_REQUEST_CODE = 901;
 
-    private ImageButton mSelectTimeImageButton;
-    private ImageButton mSelectDateImageButton;
-    private ImageButton mSelectLocationImageButton;
-    private ImageButton mAddFilesImageButton;
     private TextView mSelectedTimeTextView;
     private TextView mSelectedDateTextView;
-    private Button mSubmitButton;
     private EditText mTitleEditText;
     private EditText mDescriptionEditText;
     private TextView mSelectedLocationTextView;
     private TextView mAddFilesTextView;
-    private RecyclerView mAttachedFilesRecyclerView;
 
     private String mFormattedDate;
     private String mFormattedTime;
     private ParseGeoPoint mSelectedLocationGeoPoint;
     private String mSelectedLocationName;
     private List<FileExtended> mEventFiles;
+    private List<ParseUser> mEventUsers;
     private FileViewAdapter mFileAdapter;
+    private UsersAdapter mUsersAdapter;
 
     public CreateEventFragment() {
         // Required empty public constructor
@@ -100,27 +98,42 @@ public class CreateEventFragment extends Fragment {
         if(mEventFiles == null) {
             mEventFiles = new ArrayList<>();
         }
+        if(mEventUsers == null) {
+            mEventUsers = new ArrayList<>();
+        }
 
-        mSelectTimeImageButton = view.findViewById(R.id.timePickerImageButton);
-        mSelectDateImageButton = view.findViewById(R.id.datePickerImageButton);
+        // Setting member variables
         mSelectedTimeTextView = view.findViewById(R.id.selectTimeTextView);
         mSelectedDateTextView = view.findViewById(R.id.selectDateTextView);
-        mSelectLocationImageButton = view.findViewById(R.id.locationPickerImageButton);
-        mSubmitButton = view.findViewById(R.id.submitButton);
         mTitleEditText = view.findViewById(R.id.titleEditText);
         mDescriptionEditText = view.findViewById(R.id.descriptionEditText);
         mSelectedLocationTextView = view.findViewById(R.id.selectLocationTextView);
-        mAddFilesImageButton = view.findViewById(R.id.addFileImageButton);
         mAddFilesTextView = view.findViewById(R.id.addFilesTextView);
-        mAttachedFilesRecyclerView = view.findViewById(R.id.attachedFilesRecyclerView);
-
         mFileAdapter = new FileViewAdapter(getContext(), mEventFiles);
+        mUsersAdapter = new UsersAdapter(getContext(), mEventUsers);
 
+        // Local UI component variables (do not require member variable scope)
+        ImageButton mSelectTimeImageButton = view.findViewById(R.id.timePickerImageButton);
+        ImageButton mSelectDateImageButton = view.findViewById(R.id.datePickerImageButton);
+        ImageButton mSelectLocationImageButton = view.findViewById(R.id.locationPickerImageButton);
+        ImageButton mAddFilesImageButton = view.findViewById(R.id.addFileImageButton);
+        RecyclerView mAttachedFilesRecyclerView = view.findViewById(R.id.attachedFilesRecyclerView);
+        RecyclerView mEventUsersRecyclerView = view.findViewById(R.id.eventUsersRecyclerView);
+        Button mSubmitButton = view.findViewById(R.id.submitButton);
+
+        // Setup for file recycler view
         mAttachedFilesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAttachedFilesRecyclerView.setAdapter(mFileAdapter);
 
-        DividerItemDecoration itemDecor = new DividerItemDecoration(mAttachedFilesRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
-        mAttachedFilesRecyclerView.addItemDecoration(itemDecor);
+        // Setup for the user Recycler View
+        mEventUsersRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mEventUsersRecyclerView.setAdapter(mUsersAdapter);
+
+        DividerItemDecoration fileViewDivider = new DividerItemDecoration(mAttachedFilesRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        mAttachedFilesRecyclerView.addItemDecoration(fileViewDivider);
+
+        DividerItemDecoration userViewDivider = new DividerItemDecoration(mEventUsersRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        mEventUsersRecyclerView.addItemDecoration(userViewDivider);
 
 
         View.OnClickListener dateSelectListener = new View.OnClickListener() {

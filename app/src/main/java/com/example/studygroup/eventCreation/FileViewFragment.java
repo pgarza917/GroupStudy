@@ -119,7 +119,7 @@ public class FileViewFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch(item.getItemId()) {
-            case R.id.action_search:
+            case R.id.action_check:
                 // This case implementation handles the returning of the list of files that the user has
                 // added to the event back to the create event fragment for upload of the event
                 Intent intent = new Intent();
@@ -390,12 +390,23 @@ public class FileViewFragment extends Fragment {
         if (mDriveServiceHelper != null) {
             Log.d(TAG, "Creating a file.");
 
-            String fileName = mFileTitleEditText.getText().toString();
+            final String fileName = mFileTitleEditText.getText().toString();
 
             mDriveServiceHelper.createDoc(fileName)
                     .addOnSuccessListener(fileId -> {
                         mOpenFileId = fileId;
                         mDriveProgressBar.setVisibility(View.INVISIBLE);
+
+                        FileExtended driveFile = new FileExtended();
+                        driveFile.setFileName(fileName);
+                        driveFile.setFileSize(-1);
+
+                        // Adds the new attached file to the Recycler View so the user knows the file is now
+                        // attached to their event for upload
+                        mFilesList.add(0, driveFile);
+                        mAdapter.notifyItemInserted(0);
+
+                        // readFile(mOpenFileId);
                     })
                     .addOnFailureListener(exception ->
                             Log.e(TAG, "Couldn't create file.", exception));
@@ -412,11 +423,16 @@ public class FileViewFragment extends Fragment {
             mDriveServiceHelper.readFile(fileId)
                     .addOnSuccessListener(nameAndContent -> {
                         String name = nameAndContent.first;
-                        String content = nameAndContent.second;
 
-                        mFileTitleEditText.setText(name);
-                        //mDocContentEditText.setText(content);
+                        FileExtended driveFile = new FileExtended();
+                        driveFile.setFileName(name);
+                        driveFile.setFileSize(-1);
+                        driveFile.setFile(null);
 
+                        // Adds the new attached file to the Recycler View so the user knows the file is now
+                        // attached to their event for upload
+                        mFilesList.add(0, driveFile);
+                        mAdapter.notifyItemInserted(0);
                     })
                     .addOnFailureListener(exception ->
                             Log.e(TAG, "Couldn't read file.", exception));
