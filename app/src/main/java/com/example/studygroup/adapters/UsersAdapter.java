@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.studygroup.R;
+import com.example.studygroup.models.Event;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
@@ -21,10 +23,12 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
 
     private Context mContext;
     private List<ParseUser> mUserList;
+    private final CheckBoxListener listener;
 
-    public UsersAdapter(Context mContext, List<ParseUser> mUserList) {
+    public UsersAdapter(Context mContext, List<ParseUser> mUserList, CheckBoxListener listener) {
         this.mContext = mContext;
         this.mUserList = mUserList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -45,11 +49,29 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
         return mUserList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    // Clear all items from Recycler View
+    public void clear() {
+        mUserList.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items (users)
+    public void addAll(List<ParseUser> users) {
+        mUserList.addAll(users);
+        notifyDataSetChanged();
+    }
+
+    public void remove(ParseUser user) {
+        mUserList.remove(user);
+        notifyDataSetChanged();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView mProfilePictureImageView;
         private TextView mDisplayNameTextView;
         private TextView mEmailTextView;
+        private CheckBox mAddUserCheckBox;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -58,6 +80,9 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
             mProfilePictureImageView = itemView.findViewById(R.id.userItemProfilePictureImageView);
             mDisplayNameTextView = itemView.findViewById(R.id.userDisplayNameTextView);
             mEmailTextView = itemView.findViewById(R.id.userItemEmailTextView);
+            mAddUserCheckBox = itemView.findViewById(R.id.addItemUserCheckBox);
+
+            mAddUserCheckBox.setOnClickListener(this);
         }
 
         public void bind(ParseUser user) {
@@ -67,5 +92,25 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
             ParseFile profilePicture = user.getParseFile("profileImage");
             Glide.with(mContext).load(profilePicture.getUrl()).circleCrop().into(mProfilePictureImageView);
         }
+
+        @Override
+        public void onClick(View view) {
+
+            int id = view.getId();
+            int position = getAdapterPosition();
+
+            if(id == R.id.addItemUserCheckBox) {
+                if(mAddUserCheckBox.isChecked()) {
+                    listener.onBoxUnchecked(position);
+                } else {
+                    listener.onBoxChecked(position);
+                }
+            }
+        }
+    }
+
+    public interface CheckBoxListener {
+        void onBoxChecked(int position);
+        void onBoxUnchecked(int position);
     }
 }

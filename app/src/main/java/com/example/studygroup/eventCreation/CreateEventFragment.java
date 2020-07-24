@@ -26,7 +26,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +55,7 @@ public class CreateEventFragment extends Fragment {
     public static final int DATE_PICKER_REQUEST_CODE = 500;
     public static final int LOCATION_SELECT_REQUEST_CODE = 450;
     public static final int FILE_UPLOAD_REQUEST_CODE = 901;
+    public static final int ADD_USERS_REQUEST_CODE = 876;
 
     private TextView mSelectedTimeTextView;
     private TextView mSelectedDateTextView;
@@ -102,6 +102,18 @@ public class CreateEventFragment extends Fragment {
             mEventUsers = new ArrayList<>();
         }
 
+        UsersAdapter.CheckBoxListener checkBoxListener = new UsersAdapter.CheckBoxListener() {
+            @Override
+            public void onBoxChecked(int position) {
+
+            }
+
+            @Override
+            public void onBoxUnchecked(int position) {
+
+            }
+        };
+
         // Setting member variables
         mSelectedTimeTextView = view.findViewById(R.id.selectTimeTextView);
         mSelectedDateTextView = view.findViewById(R.id.selectDateTextView);
@@ -110,13 +122,14 @@ public class CreateEventFragment extends Fragment {
         mSelectedLocationTextView = view.findViewById(R.id.selectLocationTextView);
         mAddFilesTextView = view.findViewById(R.id.addFilesTextView);
         mFileAdapter = new FileViewAdapter(getContext(), mEventFiles);
-        mUsersAdapter = new UsersAdapter(getContext(), mEventUsers);
+        mUsersAdapter = new UsersAdapter(getContext(), mEventUsers, checkBoxListener);
 
         // Local UI component variables (do not require member variable scope)
         ImageButton mSelectTimeImageButton = view.findViewById(R.id.timePickerImageButton);
         ImageButton mSelectDateImageButton = view.findViewById(R.id.datePickerImageButton);
         ImageButton mSelectLocationImageButton = view.findViewById(R.id.locationPickerImageButton);
         ImageButton mAddFilesImageButton = view.findViewById(R.id.addFileImageButton);
+        ImageButton mAddUsersImageButton = view.findViewById(R.id.addUsersToEventImageButton);
         RecyclerView mAttachedFilesRecyclerView = view.findViewById(R.id.attachedFilesRecyclerView);
         RecyclerView mEventUsersRecyclerView = view.findViewById(R.id.eventUsersRecyclerView);
         Button mSubmitButton = view.findViewById(R.id.submitButton);
@@ -165,7 +178,25 @@ public class CreateEventFragment extends Fragment {
                 Bundle data = new Bundle();
                 data.putParcelableArrayList("filesAttached", (ArrayList<? extends Parcelable>) mEventFiles);
                 fragment.setArguments(data);
-                ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction().add(R.id.frameLayoutContainer, fragment).addToBackStack(null).commit();
+                ((MainActivity) getContext()).getSupportFragmentManager()
+                        .beginTransaction().add(R.id.frameLayoutContainer, fragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        };
+
+        View.OnClickListener addUsersListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new AddUsersFragment();
+                fragment.setTargetFragment(CreateEventFragment.this, ADD_USERS_REQUEST_CODE);
+                Bundle data = new Bundle();
+                data.putParcelableArrayList("eventUsers", (ArrayList<? extends Parcelable>) mEventUsers);
+                fragment.setArguments(data);
+                ((MainActivity) getContext()).getSupportFragmentManager()
+                        .beginTransaction().add(R.id.frameLayoutContainer, fragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         };
 
@@ -186,6 +217,8 @@ public class CreateEventFragment extends Fragment {
 
         mAddFilesImageButton.setOnClickListener(addFilesListener);
         mAddFilesTextView.setOnClickListener(addFilesListener);
+
+        mAddUsersImageButton.setOnClickListener(addUsersListener);
 
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
