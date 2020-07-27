@@ -85,7 +85,7 @@ public class UserSearchResultAdapter extends RecyclerView.Adapter<UserSearchResu
 
         public void bind(ParseUser user) {
             mDisplayNameTextView.setText(user.getString("displayName"));
-            mEmailTextView.setText(user.getEmail());
+            mEmailTextView.setText(user.getString("openEmail"));
 
             ParseFile profilePicture = user.getParseFile("profileImage");
             Glide.with(mContext).load(profilePicture.getUrl()).circleCrop().into(mProfilePictureImageView);

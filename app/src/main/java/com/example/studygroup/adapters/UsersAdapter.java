@@ -87,7 +87,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
 
         public void bind(ParseUser user) {
             mDisplayNameTextView.setText(user.getString("displayName"));
-            String email = user.getEmail();
+            String email = user.getString("openEmail");
             mEmailTextView.setText(email);
             mAddUserCheckBox.setChecked(true);
 

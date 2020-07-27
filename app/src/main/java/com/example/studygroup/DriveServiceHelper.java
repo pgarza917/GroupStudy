@@ -134,7 +134,7 @@ public class DriveServiceHelper {
             BatchRequest batch = mDriveService.batch();
 
             for(int i = 0; i < users.size(); i++) {
-                String currentEmail = users.get(i).getEmail();
+                String currentEmail = users.get(i).getString("openEmail");
                 Permission userPermission = new Permission()
                         .setType("user")
                         .setRole("writer")
