@@ -36,6 +36,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -52,8 +53,10 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
+import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseFile;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.io.File;
@@ -78,6 +81,7 @@ public class FileViewFragment extends Fragment {
     public static final int FILE_PICKER_REQUEST_CODE = 1940;
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     public static final int RC_REQUEST_PERMISSION_SUCCESS_CONTINUE_FILE_CREATION = 6730;
+    public static final int ADD_USERS_REQUEST_CODE = 3490;
 
     private FileViewAdapter mFileViewAdapter;
     private UsersAdapter mUsersAdapter;
@@ -85,6 +89,7 @@ public class FileViewFragment extends Fragment {
     private List<ParseUser> mEventUsers;
     private DriveServiceHelper mDriveServiceHelper;
     private String mOpenFileId;
+    private AlertDialog mFileDialog;
 
     private RecyclerView mFileViewRecyclerView;
     private ImageButton mCreateDocImageButton;
@@ -111,26 +116,35 @@ public class FileViewFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.create_event_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        switch(item.getItemId()) {
-            case R.id.action_check:
-                // This case implementation handles the returning of the list of files that the user has
-                // added to the event back to the create event fragment for upload of the event
-                Intent intent = new Intent();
-                intent.putParcelableArrayListExtra("uploadFiles", (ArrayList<? extends Parcelable>) mFilesList);
-                getTargetFragment().onActivityResult(CreateEventFragment.FILE_UPLOAD_REQUEST_CODE, Activity.RESULT_OK, intent);
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                // This is used so that the state of the previous create-event fragment is
-                // not changed when we return to it
-                fm.popBackStackImmediate();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainer);
+        String fragmentName = fragment.getClass().getSimpleName();
+        if(fragmentName.equals(FileViewFragment.class.getSimpleName())) {
+            switch(item.getItemId()) {
+                case R.id.action_check:
+                    // This case implementation handles the returning of the list of files that the user has
+                    // added to the event back to the create event fragment for upload of the event
+                    Intent intent = new Intent();
+                    intent.putParcelableArrayListExtra("uploadFiles", (ArrayList<? extends Parcelable>) mFilesList);
+                    getTargetFragment().onActivityResult(CreateEventFragment.FILE_UPLOAD_REQUEST_CODE, Activity.RESULT_OK, intent);
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    // This is used so that the state of the previous create-event fragment is
+                    // not changed when we return to it
+                    fm.popBackStackImmediate();
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
+        }
+        else {
+            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -241,7 +255,7 @@ public class FileViewFragment extends Fragment {
         mFileTitleEditText = customDialogLayout.findViewById(R.id.dialogFileTitleEditText);
         mDriveProgressBar = customDialogLayout.findViewById(R.id.progressBarDriveLoading);
         CheckBox addAllEventUsersCheckBox = customDialogLayout.findViewById(R.id.addEventUsersCheckBox);
-        ImageButton addOtherUsersImageButton = customDialogLayout.findViewById(R.id.addOtherUsersImageButton);
+        LinearLayout addOtherUsersLinearLayout = customDialogLayout.findViewById(R.id.addOtherUsersLinearLayout);
 
         addAllEventUsersCheckBox.setChecked(true);
 
@@ -269,17 +283,27 @@ public class FileViewFragment extends Fragment {
             }
         });
 
-        addOtherUsersImageButton.setOnClickListener(new View.OnClickListener() {
+        builder.setNegativeButton("Cancel", null);
+
+        mFileDialog = builder.create();
+        mFileDialog.show();
+
+        addOtherUsersLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                mFileDialog.hide();
+                Fragment fragment = new AddUsersFragment();
+                fragment.setTargetFragment(FileViewFragment.this, ADD_USERS_REQUEST_CODE);
+                Bundle data = new Bundle();
+                data.putParcelableArrayList("eventUsers", (ArrayList<? extends Parcelable>) mEventUsers);
+                fragment.setArguments(data);
+                ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()
+                        .add(R.id.frameLayoutContainer, fragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
-        builder.setNegativeButton("Cancel", null);
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 
     @Override
@@ -317,30 +341,32 @@ public class FileViewFragment extends Fragment {
             mFileViewAdapter.notifyItemInserted(0);
         }
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                // by this point we have the camera photo on disk
-                Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+            // by this point we have the camera photo on disk
+            Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
 
-                String filename = photoFile.getName();
-                ParseFile fileData = new ParseFile(photoFile, filename);
-                FileExtended fileToUpload = new FileExtended();
+            String filename = photoFile.getName();
+            ParseFile fileData = new ParseFile(photoFile, filename);
+            FileExtended fileToUpload = new FileExtended();
 
-                // Sets the necessary fields of the FileExtended object so that it can be uploaded
-                // to the Parse DB
-                fileToUpload.setFileName(filename);
-                fileToUpload.setFile(fileData);
-                fileToUpload.setFileSize(photoFile.length());
+            // Sets the necessary fields of the FileExtended object so that it can be uploaded
+            // to the Parse DB
+            fileToUpload.setFileName(filename);
+            fileToUpload.setFile(fileData);
+            fileToUpload.setFileSize(photoFile.length());
 
-                // Adds the new attached file to the Recycler View so the user knows the file is now
-                // attached to their event for upload
-                mFilesList.add(0, fileToUpload);
-                mFileViewAdapter.notifyItemInserted(0);
-            } else { // Result was a failure
-                Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
-            }
+            // Adds the new attached file to the Recycler View so the user knows the file is now
+            // attached to their event for upload
+            mFilesList.add(0, fileToUpload);
+            mFileViewAdapter.notifyItemInserted(0);
         }
         if(requestCode == RC_REQUEST_PERMISSION_SUCCESS_CONTINUE_FILE_CREATION) {
             gsuiteConfigureCreateDialog();
+        }
+        if(requestCode == ADD_USERS_REQUEST_CODE) {
+            mFileDialog.show();
+            List<ParseUser> newUsers = data.getParcelableArrayListExtra("eventUsers");
+            mUsersAdapter.clear();
+            mUsersAdapter.addAll(newUsers);
         }
     }
 

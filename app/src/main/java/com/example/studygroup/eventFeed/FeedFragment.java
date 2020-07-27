@@ -27,6 +27,7 @@ import com.example.studygroup.search.SearchFragment;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,12 +109,22 @@ public class FeedFragment extends Fragment {
     // Method to help query the Parse DB for events objects
     protected void queryEvents() {
         // Specify which class to query from Parse DB
-        ParseQuery<Event> eventsQuery = ParseQuery.getQuery(Event.class);
-        eventsQuery.setLimit(20);
-        eventsQuery.include(Event.KEY_FILES);
-        eventsQuery.orderByDescending(Event.KEY_CREATED_AT);
+        ParseQuery<Event> ownersQuery = ParseQuery.getQuery(Event.class);
+        ownersQuery.whereEqualTo("owners", ParseUser.getCurrentUser());
+
+        ParseQuery<Event> usersQuery = ParseQuery.getQuery(Event.class);
+        usersQuery.whereEqualTo("users", ParseUser.getCurrentUser());
+
+        List<ParseQuery<Event>> queries = new ArrayList<ParseQuery<Event>>();
+        queries.add(ownersQuery);
+        queries.add(usersQuery);
+
+        ParseQuery<Event> mainQuery = ParseQuery.or(queries);
+        mainQuery.orderByDescending(Event.KEY_CREATED_AT);
+        mainQuery.include(Event.KEY_FILES);
+
         // Using findInBackground to pull events from DB
-        eventsQuery.findInBackground(new FindCallback<Event>() {
+        mainQuery.findInBackground(new FindCallback<Event>() {
             @Override
             public void done(List<Event> events, ParseException e) {
                 if(e != null) {

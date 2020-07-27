@@ -34,8 +34,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/userDisplayNameTextView"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_toStartOf="@+id/addItemUserCheckBox"
         android:layout_toEndOf="@+id/userItemProfilePictureImageView"
         android:textSize="18sp"
         tools:text="pablogarza917@gmail.com" />

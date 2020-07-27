@@ -87,6 +87,7 @@ public class CreateEventFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.create_event_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -371,7 +372,7 @@ public class CreateEventFragment extends Fragment {
         }
         if(requestCode == ADD_USERS_REQUEST_CODE) {
             List<ParseUser> users = data.getParcelableArrayListExtra("eventUsers");
-            mUsersAdapter.addAll(users);
+            mUsersAdapter.addUnique(users);
 
             Log.i(TAG, "Received selected users");
         }

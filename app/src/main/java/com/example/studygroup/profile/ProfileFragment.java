@@ -6,35 +6,56 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.studygroup.adapters.EventsAdapter;
+import com.example.studygroup.models.Event;
 import com.example.studygroup.profile.EditProfileFragment;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.loginAndRegister.LoginActivity;
 import com.example.studygroup.R;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.parse.FindCallback;
+import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ProfileFragment extends Fragment {
 
-    private Button mLogoutButton;
+    public static final String TAG = ProfileFragment.class.getSimpleName();
+
     private TextView mProfileNameTextView;
     private TextView mBioTextView;
     private ImageView mProfilePictureImageView;
     private TextView mEmailTextView;
+    private RecyclerView mUserEventsRecyclerView;
+    private ProgressBar mUserEventsProgressBar;
+
+    private EventsAdapter mUserEventsAdapter;
+    private List<Event> mUserEventList;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -52,21 +73,21 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mLogoutButton = view.findViewById(R.id.logoutButton);
+        mUserEventList = new ArrayList<>();
+        mUserEventsAdapter = new EventsAdapter(getContext(), mUserEventList);
+
         mProfileNameTextView = view.findViewById(R.id.profileNameTextView);
         mBioTextView = view.findViewById(R.id.profileBioTextView);
         mProfilePictureImageView = view.findViewById(R.id.profilePictureImageView);
         mEmailTextView = view.findViewById(R.id.emailTextView);
+        mUserEventsRecyclerView = view.findViewById(R.id.userEventsRecyclerView);
+        mUserEventsProgressBar = view.findViewById(R.id.userEventsProgressBar);
 
-        mLogoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ParseUser.logOut();
-                Intent intent = new Intent(getContext(), LoginActivity.class);
-                startActivity(intent);
-                getActivity().finish();
-            }
-        });
+        mUserEventsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mUserEventsRecyclerView.setAdapter(mUserEventsAdapter);
+
+        DividerItemDecoration itemDecor = new DividerItemDecoration(mUserEventsRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        mUserEventsRecyclerView.addItemDecoration(itemDecor);
 
         ParseUser currentUser = ParseUser.getCurrentUser();
         String displayName = currentUser.getString("displayName");
@@ -88,6 +109,10 @@ public class ProfileFragment extends Fragment {
             mProfilePictureImageView.setVisibility(View.GONE);
         }
         mEmailTextView.setText(currentUser.getEmail());
+
+        mUserEventsProgressBar.setVisibility(View.VISIBLE);
+
+        getUserEvents();
     }
 
     @Override
@@ -102,9 +127,53 @@ public class ProfileFragment extends Fragment {
 
         if(id == R.id.action_edit_profile) {
             Fragment fragment = new EditProfileFragment();
-            ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutContainer, fragment).commit();
+            ((MainActivity) getContext()).getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.frameLayoutContainer, fragment)
+                    .commit();
+        }
+        if(id == R.id.action_logout) {
+            logoutUser();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void logoutUser() {
+        ParseUser.logOut();
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        startActivity(intent);
+        getActivity().finish();
+    }
+
+    private void getUserEvents() {
+        ParseQuery<Event> ownersQuery = ParseQuery.getQuery(Event.class);
+        ownersQuery.whereEqualTo("owners", ParseUser.getCurrentUser());
+
+        ParseQuery<Event> usersQuery = ParseQuery.getQuery(Event.class);
+        usersQuery.whereEqualTo("users", ParseUser.getCurrentUser());
+
+        List<ParseQuery<Event>> queries = new ArrayList<ParseQuery<Event>>();
+        queries.add(ownersQuery);
+        queries.add(usersQuery);
+
+        ParseQuery<Event> mainQuery = ParseQuery.or(queries);
+        mainQuery.orderByDescending(Event.KEY_CREATED_AT);
+        mainQuery.include(Event.KEY_FILES);
+
+        mainQuery.findInBackground(new FindCallback<Event>() {
+            @Override
+            public void done(List<Event> events, ParseException e) {
+                if(e != null) {
+                    Log.e(TAG, "Error finding the user's events", e);
+                    return;
+                }
+                Log.i(TAG, "Successfully found the user's events");
+                mUserEventsAdapter.clear();
+                mUserEventsAdapter.addAll(events);
+
+                mUserEventsProgressBar.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 }

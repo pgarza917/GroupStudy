@@ -66,6 +66,19 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
+    public void addUnique(List<ParseUser> users) {
+        for(int i = 0; i < users.size(); i++) {
+            String currId = users.get(i).getObjectId();
+            int j = 0;
+            while(j < mUserList.size() && !currId.equals(mUserList.get(j).getObjectId())) {
+                j++;
+            }
+            if(j >= mUserList.size()) {
+                mUserList.add(users.get(i));
+            }
+        }
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView mProfilePictureImageView;
@@ -103,9 +116,9 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
 
             if(id == R.id.addItemUserCheckBox) {
                 if(mAddUserCheckBox.isChecked()) {
-                    listener.onBoxUnchecked(position);
-                } else {
                     listener.onBoxChecked(position);
+                } else {
+                    listener.onBoxUnchecked(position);
                 }
             }
         }

@@ -62,6 +62,8 @@ public class AddUsersFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.create_event_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -69,15 +71,21 @@ public class AddUsersFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
+        String targetClassName = getTargetFragment().getClass().getSimpleName();
 
         if(id == R.id.action_check) {
             Intent intent = new Intent();
             intent.putParcelableArrayListExtra("eventUsers", (ArrayList<? extends Parcelable>) mSelectedUsers);
-            getTargetFragment().onActivityResult(CreateEventFragment.ADD_USERS_REQUEST_CODE, Activity.RESULT_OK, intent);
+            if(targetClassName.equals(CreateEventFragment.class.getSimpleName())) {
+                getTargetFragment().onActivityResult(CreateEventFragment.ADD_USERS_REQUEST_CODE, Activity.RESULT_OK, intent);
+            } else {
+                getTargetFragment().onActivityResult(FileViewFragment.ADD_USERS_REQUEST_CODE, Activity.RESULT_OK, intent);
+            }
             FragmentManager fm = getActivity().getSupportFragmentManager();
             // This is used so that the state of the previous create-event fragment is
             // not changed when we return to it
             fm.popBackStackImmediate();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
