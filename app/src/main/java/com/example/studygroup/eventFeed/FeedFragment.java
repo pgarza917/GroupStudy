@@ -116,8 +116,8 @@ public class FeedFragment extends Fragment {
         usersQuery.whereEqualTo("users", ParseUser.getCurrentUser());
 
         List<ParseQuery<Event>> queries = new ArrayList<ParseQuery<Event>>();
-        queries.add(ownersQuery);
         queries.add(usersQuery);
+        queries.add(ownersQuery);
 
         ParseQuery<Event> mainQuery = ParseQuery.or(queries);
         mainQuery.orderByDescending(Event.KEY_CREATED_AT);

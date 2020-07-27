@@ -4,7 +4,6 @@ import android.content.Context;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -16,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
-import com.example.studygroup.eventCreation.EventDetailsFragment;
+import com.example.studygroup.eventFeed.EventDetailsFragment;
 import com.example.studygroup.models.Event;
 
 import org.parceler.Parcels;

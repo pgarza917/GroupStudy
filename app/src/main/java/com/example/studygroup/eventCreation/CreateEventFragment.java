@@ -400,7 +400,12 @@ public class CreateEventFragment extends Fragment {
         event.setLocationName(locationName);
         event.addUnique(Event.KEY_OWNERS, user);
         event.addUnique(Event.KEY_FILES, files);
-        event.addUnique("users", users);
+        for(int i = 0; i < users.size(); i++) {
+            event.addUnique("users", users.get(i));
+        }
+        for(int i = 0; i < files.size(); i++) {
+            event.addUnique("files", files.get(i));
+        }
 
         event.saveInBackground(new SaveCallback() {
             @Override

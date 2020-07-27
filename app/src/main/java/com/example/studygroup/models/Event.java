@@ -4,6 +4,7 @@ import com.parse.Parse;
 import com.parse.ParseClassName;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import org.parceler.Parcel;
 
@@ -64,5 +65,9 @@ public class Event extends ParseObject {
 
     public List<FileExtended> getFiles() {
         return (List<FileExtended>) get(KEY_FILES);
+    }
+
+    public List<ParseUser> getOwners() {
+        return (List<ParseUser>) get(KEY_OWNERS);
     }
 }
