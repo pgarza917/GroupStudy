@@ -177,6 +177,7 @@ public class CreateEventFragment extends Fragment {
                 fragment.setTargetFragment(CreateEventFragment.this, FILE_UPLOAD_REQUEST_CODE);
                 Bundle data = new Bundle();
                 data.putParcelableArrayList("filesAttached", (ArrayList<? extends Parcelable>) mEventFiles);
+                data.putParcelableArrayList("eventUsers", (ArrayList<? extends Parcelable>) mEventUsers);
                 fragment.setArguments(data);
                 ((MainActivity) getContext()).getSupportFragmentManager()
                         .beginTransaction().add(R.id.frameLayoutContainer, fragment)
@@ -266,7 +267,8 @@ public class CreateEventFragment extends Fragment {
                         });
                     }
                     // Finally, we save the entire event to Parse
-                    saveEvent(ParseUser.getCurrentUser(), title, description, eventDateTime, mSelectedLocationGeoPoint, mSelectedLocationName, mEventFiles);
+                    saveEvent(ParseUser.getCurrentUser(), title, description, eventDateTime, mSelectedLocationGeoPoint,
+                                mSelectedLocationName, mEventFiles, mEventUsers);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -367,6 +369,12 @@ public class CreateEventFragment extends Fragment {
             mAddFilesTextView.setText("Selected Files: ");
             Log.i(TAG, "Received selected files");
         }
+        if(requestCode == ADD_USERS_REQUEST_CODE) {
+            List<ParseUser> users = data.getParcelableArrayListExtra("eventUsers");
+            mUsersAdapter.addAll(users);
+
+            Log.i(TAG, "Received selected users");
+        }
     }
 
     // Method for helping parse a Date format and creating a Date object
@@ -381,7 +389,8 @@ public class CreateEventFragment extends Fragment {
 
     // Method for submitting the user-created event to the Parse database with the correct
     // details
-    private void saveEvent(ParseUser user, String title, String description, Date dateTime, ParseGeoPoint location, String locationName, List<FileExtended> files) {
+    private void saveEvent(ParseUser user, String title, String description, Date dateTime, ParseGeoPoint location,
+                           String locationName, List<FileExtended> files, List<ParseUser> users) {
         Event event = new Event();
         event.setTitle(title);
         event.setDescription(description);
@@ -390,6 +399,7 @@ public class CreateEventFragment extends Fragment {
         event.setLocationName(locationName);
         event.addUnique(Event.KEY_OWNERS, user);
         event.addUnique(Event.KEY_FILES, files);
+        event.addUnique("users", users);
 
         event.saveInBackground(new SaveCallback() {
             @Override
@@ -404,6 +414,7 @@ public class CreateEventFragment extends Fragment {
                 mDescriptionEditText.setText("");
                 mSelectedTimeTextView.setText("");
                 mSelectedDateTextView.setText("");
+                mUsersAdapter.clear();
             }
         });
     }

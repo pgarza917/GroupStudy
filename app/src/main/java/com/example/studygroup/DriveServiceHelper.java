@@ -5,19 +5,29 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
+import android.util.Log;
 import android.util.Pair;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.api.client.googleapis.batch.BatchRequest;
+import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
+import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.http.ByteArrayContent;
+import com.google.api.client.http.HttpHeaders;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import com.google.api.services.drive.model.Permission;
+import com.parse.ParseUser;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -27,6 +37,7 @@ import java.util.concurrent.Executors;
  * file picker UI via Storage Access Framework.
  */
 public class DriveServiceHelper {
+    public static final String TAG = DriveServiceHelper.class.getSimpleName();
     private final Executor mExecutor = Executors.newSingleThreadExecutor();
     private final Drive mDriveService;
 
@@ -96,6 +107,44 @@ public class DriveServiceHelper {
 
             // Update the metadata and contents.
             mDriveService.files().update(fileId, metadata).execute();
+            return null;
+        });
+    }
+
+    public Task<Void> updatePermissions(String fileId, List<ParseUser> users) {
+        return Tasks.call(mExecutor, () -> {
+            JsonBatchCallback<Permission> callback = new JsonBatchCallback<Permission>() {
+                @Override
+                public void onFailure(GoogleJsonError e,
+                                      HttpHeaders responseHeaders)
+                        throws IOException {
+                    // Handle error
+                    System.err.println(e.getMessage());
+                    Log.i(TAG, "Error updating permissions: " + e.getMessage());
+                }
+
+                @Override
+                public void onSuccess(Permission permission,
+                                      HttpHeaders responseHeaders)
+                        throws IOException {
+                    System.out.println("Permission ID: " + permission.getId());
+                    Log.i(TAG, "Success updating permissions");
+                }
+            };
+            BatchRequest batch = mDriveService.batch();
+
+            for(int i = 0; i < users.size(); i++) {
+                String currentEmail = users.get(i).getEmail();
+                Permission userPermission = new Permission()
+                        .setType("user")
+                        .setRole("writer")
+                        .setEmailAddress(currentEmail);
+                mDriveService.permissions().create(fileId, userPermission)
+                        .setFields("id")
+                        .queue(batch, callback);
+            }
+
+            batch.execute();
             return null;
         });
     }

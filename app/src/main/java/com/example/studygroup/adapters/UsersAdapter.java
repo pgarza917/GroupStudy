@@ -87,7 +87,9 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
 
         public void bind(ParseUser user) {
             mDisplayNameTextView.setText(user.getString("displayName"));
-            mEmailTextView.setText(user.getEmail());
+            String email = user.getEmail();
+            mEmailTextView.setText(email);
+            mAddUserCheckBox.setChecked(true);
 
             ParseFile profilePicture = user.getParseFile("profileImage");
             Glide.with(mContext).load(profilePicture.getUrl()).circleCrop().into(mProfilePictureImageView);

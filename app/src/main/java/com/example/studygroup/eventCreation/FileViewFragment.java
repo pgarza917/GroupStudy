@@ -43,21 +43,18 @@ import com.example.studygroup.DriveServiceHelper;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.adapters.FileViewAdapter;
+import com.example.studygroup.adapters.UsersAdapter;
 import com.example.studygroup.models.FileExtended;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.tasks.OnCanceledListener;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
-import com.google.gson.Gson;
+import com.parse.Parse;
 import com.parse.ParseFile;
+import com.parse.ParseUser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -82,8 +79,10 @@ public class FileViewFragment extends Fragment {
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     public static final int RC_REQUEST_PERMISSION_SUCCESS_CONTINUE_FILE_CREATION = 6730;
 
-    private FileViewAdapter mAdapter;
+    private FileViewAdapter mFileViewAdapter;
+    private UsersAdapter mUsersAdapter;
     private List<FileExtended> mFilesList;
+    private List<ParseUser> mEventUsers;
     private DriveServiceHelper mDriveServiceHelper;
     private String mOpenFileId;
 
@@ -140,19 +139,44 @@ public class FileViewFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         Bundle data = getArguments();
+
         List<FileExtended> alreadyAttachedFiles = data.getParcelableArrayList("filesAttached");
-        if(alreadyAttachedFiles != null && !alreadyAttachedFiles.isEmpty()) {
+        if(alreadyAttachedFiles != null) {
+            if(mFilesList == null) mFilesList = new ArrayList<>();
             mFilesList.addAll(alreadyAttachedFiles);
         } else {
             mFilesList = new ArrayList<>();
         }
+
+        List<ParseUser> alreadySelectedUsers = data.getParcelableArrayList("eventUsers");
+        if(alreadySelectedUsers != null) {
+            if(mEventUsers == null) mEventUsers = new ArrayList<>();
+            mEventUsers.addAll(alreadySelectedUsers);
+        } else {
+            mEventUsers = new ArrayList<>();
+        }
+
         mFileViewRecyclerView = view.findViewById(R.id.uploadedFilesRecyclerView);
         mCreateDocImageButton = view.findViewById(R.id.googleDocsImageButton);
         mTakePhotoImageButton = view.findViewById(R.id.takePhotoImageButton);
         mUploadFilesImageButton = view.findViewById(R.id.uploadFilesImageButton);
 
-        mAdapter = new FileViewAdapter(getContext(), mFilesList);
-        mFileViewRecyclerView.setAdapter(mAdapter);
+        UsersAdapter.CheckBoxListener checkBoxListener = new UsersAdapter.CheckBoxListener() {
+            @Override
+            public void onBoxChecked(int position) {
+
+            }
+
+            @Override
+            public void onBoxUnchecked(int position) {
+                ParseUser user = mEventUsers.get(position);
+                mUsersAdapter.remove(user);
+            }
+        };
+        mUsersAdapter = new UsersAdapter(getContext(), mEventUsers, checkBoxListener);
+
+        mFileViewAdapter = new FileViewAdapter(getContext(), mFilesList);
+        mFileViewRecyclerView.setAdapter(mFileViewAdapter);
 
         mFileViewRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -219,11 +243,29 @@ public class FileViewFragment extends Fragment {
         CheckBox addAllEventUsersCheckBox = customDialogLayout.findViewById(R.id.addEventUsersCheckBox);
         ImageButton addOtherUsersImageButton = customDialogLayout.findViewById(R.id.addOtherUsersImageButton);
 
+        addAllEventUsersCheckBox.setChecked(true);
+
+        RecyclerView usersForShareRecyclerView = customDialogLayout.findViewById(R.id.usersForShareRecyclerView);
+        usersForShareRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        usersForShareRecyclerView.setAdapter(mUsersAdapter);
+
         builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 mDriveProgressBar.setVisibility(View.VISIBLE);
                 createDriveDoc();
+            }
+        });
+
+        addAllEventUsersCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean checked = addAllEventUsersCheckBox.isChecked();
+                if(checked) {
+
+                } else {
+
+                }
             }
         });
 
@@ -272,7 +314,7 @@ public class FileViewFragment extends Fragment {
             // Adds the new attached file to the Recycler View so the user knows the file is now
             // attached to their event for upload
             mFilesList.add(0, file);
-            mAdapter.notifyItemInserted(0);
+            mFileViewAdapter.notifyItemInserted(0);
         }
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
@@ -292,7 +334,7 @@ public class FileViewFragment extends Fragment {
                 // Adds the new attached file to the Recycler View so the user knows the file is now
                 // attached to their event for upload
                 mFilesList.add(0, fileToUpload);
-                mAdapter.notifyItemInserted(0);
+                mFileViewAdapter.notifyItemInserted(0);
             } else { // Result was a failure
                 Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
@@ -397,6 +439,12 @@ public class FileViewFragment extends Fragment {
                         mOpenFileId = fileId;
                         mDriveProgressBar.setVisibility(View.INVISIBLE);
 
+                        mDriveServiceHelper.updatePermissions(fileId, mEventUsers)
+                                .addOnSuccessListener((Void) ->
+                                        Log.i(TAG, "Updated permissions"))
+                                .addOnFailureListener(exception ->
+                                        Log.i(TAG, "Failure to update permissions"));
+
                         FileExtended driveFile = new FileExtended();
                         driveFile.setFileName(fileName);
                         driveFile.setFileSize(-1);
@@ -404,7 +452,7 @@ public class FileViewFragment extends Fragment {
                         // Adds the new attached file to the Recycler View so the user knows the file is now
                         // attached to their event for upload
                         mFilesList.add(0, driveFile);
-                        mAdapter.notifyItemInserted(0);
+                        mFileViewAdapter.notifyItemInserted(0);
 
                         // readFile(mOpenFileId);
                     })
@@ -432,7 +480,7 @@ public class FileViewFragment extends Fragment {
                         // Adds the new attached file to the Recycler View so the user knows the file is now
                         // attached to their event for upload
                         mFilesList.add(0, driveFile);
-                        mAdapter.notifyItemInserted(0);
+                        mFileViewAdapter.notifyItemInserted(0);
                     })
                     .addOnFailureListener(exception ->
                             Log.e(TAG, "Couldn't read file.", exception));

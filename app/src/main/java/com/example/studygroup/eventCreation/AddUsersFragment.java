@@ -1,21 +1,29 @@
 package com.example.studygroup.eventCreation;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
 import com.example.studygroup.R;
+import com.example.studygroup.adapters.UserSearchResultAdapter;
 import com.example.studygroup.adapters.UsersAdapter;
 import com.parse.FindCallback;
 import com.parse.ParseQuery;
@@ -34,7 +42,7 @@ public class AddUsersFragment extends Fragment {
 
     private List<ParseUser> mUserSearchResults;
     private List<ParseUser> mSelectedUsers;
-    private UsersAdapter mUsersSearchAdapter;
+    private UserSearchResultAdapter mUsersSearchAdapter;
     private UsersAdapter mSelectedUsersAdapter;
 
     private RecyclerView mUserSearchResultRecyclerView;
@@ -53,6 +61,29 @@ public class AddUsersFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        int id = item.getItemId();
+
+        if(id == R.id.action_check) {
+            Intent intent = new Intent();
+            intent.putParcelableArrayListExtra("eventUsers", (ArrayList<? extends Parcelable>) mSelectedUsers);
+            getTargetFragment().onActivityResult(CreateEventFragment.ADD_USERS_REQUEST_CODE, Activity.RESULT_OK, intent);
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            // This is used so that the state of the previous create-event fragment is
+            // not changed when we return to it
+            fm.popBackStackImmediate();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -65,23 +96,15 @@ public class AddUsersFragment extends Fragment {
             mSelectedUsers.addAll(alreadyAddedUsers);
         }
 
-        UsersAdapter.CheckBoxListener searchCheckBoxListener = new UsersAdapter.CheckBoxListener() {
+        UserSearchResultAdapter.ResultClickListener resultClickListener = new UserSearchResultAdapter.ResultClickListener() {
             @Override
-            public void onBoxChecked(int position) {
+            public void onResultClicked(int position) {
                 ParseUser user = mUserSearchResults.get(position);
-                mUsersSearchAdapter.notifyItemChanged(position);
                 mSelectedUsersAdapter.addAll(Collections.singletonList(user));
-                addUserToEvent();
-            }
-
-            @Override
-            public void onBoxUnchecked(int position) {
-                ParseUser user = mUserSearchResults.get(position);
-                mSelectedUsersAdapter.remove(user);
             }
         };
 
-        UsersAdapter.CheckBoxListener selectedCheckBoxListener = new UsersAdapter.CheckBoxListener() {
+        UsersAdapter.CheckBoxListener checkBoxListener = new UsersAdapter.CheckBoxListener() {
             @Override
             public void onBoxChecked(int position) {
 
@@ -94,8 +117,8 @@ public class AddUsersFragment extends Fragment {
             }
         };
 
-        mUsersSearchAdapter = new UsersAdapter(getContext(), mUserSearchResults, searchCheckBoxListener);
-        mSelectedUsersAdapter = new UsersAdapter(getContext(), mSelectedUsers, selectedCheckBoxListener);
+        mUsersSearchAdapter = new UserSearchResultAdapter(getContext(), mUserSearchResults, resultClickListener);
+        mSelectedUsersAdapter = new UsersAdapter(getContext(), mSelectedUsers, checkBoxListener);
 
 
         SearchView search = view.findViewById(R.id.addUsersSearchView);
@@ -128,10 +151,6 @@ public class AddUsersFragment extends Fragment {
                 return false;
             }
         });
-    }
-
-    private void addUserToEvent() {
-
     }
 
     private void searchUsers(String queryString) {
