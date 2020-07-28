@@ -122,6 +122,7 @@ public class FeedFragment extends Fragment {
         ParseQuery<Event> mainQuery = ParseQuery.or(queries);
         mainQuery.orderByDescending(Event.KEY_CREATED_AT);
         mainQuery.include(Event.KEY_FILES);
+        mainQuery.include(Event.KEY_USERS);
 
         // Using findInBackground to pull events from DB
         mainQuery.findInBackground(new FindCallback<Event>() {

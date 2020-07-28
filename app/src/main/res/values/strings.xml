@@ -5,4 +5,5 @@
     <string name="no_bio">This user has not written a bio yet!</string>
     <string name="intent_scheme">oauth</string>
     <string name="intent_host">studygroup</string>
+    <string name="update_button_text">Update Event</string>
 </resources>

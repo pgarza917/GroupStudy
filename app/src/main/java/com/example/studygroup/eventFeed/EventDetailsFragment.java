@@ -1,5 +1,7 @@
 package com.example.studygroup.eventFeed;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,8 +21,10 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.adapters.FileViewAdapter;
+import com.example.studygroup.eventCreation.CreateEventFragment;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
 import com.parse.ParseUser;
@@ -81,6 +85,26 @@ public class EventDetailsFragment extends Fragment {
     }
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        int id = item.getItemId();
+
+        if(id == R.id.action_edit_event) {
+            Fragment fragment = new CreateEventFragment();
+            Bundle data = new Bundle();
+            data.putParcelable("event", mEvent);
+            fragment.setArguments(data);
+            fragment.setTargetFragment(EventDetailsFragment.this, 123);
+            ((MainActivity) getContext()).getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.frameLayoutContainer, fragment)
+                    .commit();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -101,7 +125,7 @@ public class EventDetailsFragment extends Fragment {
         mLocationTextView.setText(mEvent.getLocationName());
         mDescriptionTextView.setText(mEvent.getDescription());
 
-        setDateTimeText();
+        setDateTimeText(mEvent);
 
         List<FileExtended> files = mEvent.getFiles();
         if(mEventFiles == null) {
@@ -121,8 +145,8 @@ public class EventDetailsFragment extends Fragment {
         Log.i(TAG, "onViewCreated: Successful event details load");
     }
 
-    public void setDateTimeText() {
-        String timeStamp = mEvent.getTime().toString();
+    public void setDateTimeText(Event event) {
+        String timeStamp = event.getTime().toString();
         StringTokenizer tokenizer = new StringTokenizer(timeStamp);
 
         String weekday = tokenizer.nextToken();

@@ -33,17 +33,22 @@ import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.adapters.FileViewAdapter;
 import com.example.studygroup.adapters.UsersAdapter;
+import com.example.studygroup.eventFeed.EventDetailsFragment;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import org.parceler.Parcels;
+
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.StringTokenizer;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -222,7 +227,30 @@ public class CreateEventFragment extends Fragment {
 
         mAddUsersImageButton.setOnClickListener(addUsersListener);
 
-        mSubmitButton.setOnClickListener(new View.OnClickListener() {
+        Fragment prevFragment = getTargetFragment();
+        Event eventToEdit = null;
+        boolean inEdit = false;
+        if(prevFragment != null) {
+            String prevFragmentName = prevFragment.getClass().getSimpleName();
+            if (prevFragmentName.equals(EventDetailsFragment.class.getSimpleName())) {
+                mSubmitButton.setText(R.string.update_button_text);
+
+                eventToEdit = getArguments().getParcelable("event");
+
+                inEdit = true;
+                mTitleEditText.setText(eventToEdit.getTitle());
+                mDescriptionEditText.setText(eventToEdit.getDescription());
+                setDateTime(eventToEdit);
+                mSelectedLocationTextView.setText(eventToEdit.getLocationName());
+                /*
+                mEventFiles.addAll((Collection<? extends FileExtended>) eventToEdit.getFiles().get(0));
+                List<ParseUser> users = eventToEdit.getUsers();
+                mUsersAdapter.addAll(users);
+                 */
+            }
+        }
+
+        View.OnClickListener submitListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String title = mTitleEditText.getText().toString();
@@ -274,7 +302,31 @@ public class CreateEventFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
-        });
+        };
+
+        Event finalEventToEdit = eventToEdit;
+        View.OnClickListener updateListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Date eventDateTime = null;
+                if(mFormattedDate != null && mFormattedTime != null && !mFormattedDate.isEmpty() && !mFormattedTime.isEmpty()) {
+                    String formattedDateTime = mFormattedDate + " " + mFormattedTime;
+                    try {
+                        eventDateTime = stringToDate(formattedDateTime, "dd.MM.yyyy HH:mm", Locale.ENGLISH);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                updateEvent(finalEventToEdit, mTitleEditText.getText().toString(), mDescriptionEditText.getText().toString(),
+                            eventDateTime, mSelectedLocationGeoPoint, mSelectedLocationName, mEventFiles, mEventUsers);
+            }
+        };
+
+        if(inEdit) {
+            mSubmitButton.setOnClickListener(updateListener);
+        } else {
+            mSubmitButton.setOnClickListener(submitListener);
+        }
     }
 
     // This method handles the launching of the Time Picker dialog fragment so users have a nice
@@ -421,6 +473,72 @@ public class CreateEventFragment extends Fragment {
                 mSelectedTimeTextView.setText("");
                 mSelectedDateTextView.setText("");
                 mUsersAdapter.clear();
+            }
+        });
+    }
+
+    private void setDateTime(Event event) {
+        String timeStamp = event.getTime().toString();
+        StringTokenizer tokenizer = new StringTokenizer(timeStamp);
+
+        String weekday = tokenizer.nextToken();
+        String month = tokenizer.nextToken();
+        String day = tokenizer.nextToken();
+
+        String timeInDay = tokenizer.nextToken();
+        String timezone = tokenizer.nextToken();
+        String year = tokenizer.nextToken();
+
+        String date = day + " " + month + " " + year;
+        int hour = Integer.parseInt(timeInDay.substring(0, 2));
+        String time = ((hour == 12) ? 12 : hour % 12) + ":" + timeInDay.substring(3, 5) + " " + ((hour >= 12) ? "PM" : "AM");
+
+        mSelectedDateTextView.setText(date);
+        mSelectedTimeTextView.setText(time);
+    }
+
+    private void updateEvent(Event eventToEdit, String newTitle, String newDescription, Date dateTime, ParseGeoPoint location,
+                             String locationName, List<FileExtended> files, List<ParseUser> users) {
+        if(newTitle != null && !newTitle.isEmpty()) {
+            eventToEdit.setTitle(newTitle);
+        }
+        if(newDescription != null && !newDescription.isEmpty()) {
+            eventToEdit.setDescription(newDescription);
+        }
+        if(dateTime != null) {
+            eventToEdit.setTime(dateTime);
+        }
+        if(location != null) {
+            eventToEdit.setLocation(location);
+        }
+        if(location != null && !locationName.isEmpty()) {
+            eventToEdit.setLocationName(locationName);
+        }
+        if(files != null) {
+            for(int i = 0; i < files.size(); i++) {
+                eventToEdit.put("files", files.get(i));
+            }
+        }
+        if(users != null) {
+            for(int i = 0; i < users.size(); i++) {
+                eventToEdit.put("users", users.get(i));
+            }
+        }
+
+        eventToEdit.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(com.parse.ParseException e) {
+                Toast.makeText(getContext(), "Saved Edits Successfully!", Toast.LENGTH_SHORT).show();
+
+                Fragment fragment = new EventDetailsFragment();
+                Bundle data = new Bundle();
+                data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(eventToEdit));
+                fragment.setArguments(data);
+
+                ((MainActivity) getContext()).getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.frameLayoutContainer, fragment)
+                        .commit();
             }
         });
     }

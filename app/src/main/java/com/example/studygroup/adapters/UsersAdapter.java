@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.studygroup.R;
 import com.example.studygroup.models.Event;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
@@ -99,7 +100,13 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
         }
 
         public void bind(ParseUser user) {
-            mDisplayNameTextView.setText(user.getString("displayName"));
+            String displayName = null;
+            try {
+                displayName = user.fetchIfNeeded().getString("displayName");
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            mDisplayNameTextView.setText(displayName);
             String email = user.getString("openEmail");
             mEmailTextView.setText(email);
             mAddUserCheckBox.setChecked(true);

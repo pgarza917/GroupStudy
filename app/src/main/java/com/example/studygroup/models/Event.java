@@ -22,6 +22,7 @@ public class Event extends ParseObject {
     public static final String KEY_OWNERS = "owners";
     public static final String KEY_LOCATION_NAME = "locationName";
     public static final String KEY_FILES = "files";
+    public static final String KEY_USERS = "users";
 
     public String getTitle() {
         return getString(KEY_TITLE);
@@ -63,11 +64,27 @@ public class Event extends ParseObject {
         put(KEY_LOCATION_NAME, locationName);
     }
 
+    public void setFiles(List<FileExtended> files) {
+        put(KEY_FILES, files);
+    }
+
     public List<FileExtended> getFiles() {
         return (List<FileExtended>) get(KEY_FILES);
     }
 
+    public void setOwners(List<ParseUser> owners) {
+        put(KEY_OWNERS, owners);
+    }
+
     public List<ParseUser> getOwners() {
         return (List<ParseUser>) get(KEY_OWNERS);
+    }
+
+    public void setUsers(List<ParseUser> users) {
+        put(KEY_USERS, users);
+    }
+
+    public List<ParseUser> getUsers() {
+        return (List<ParseUser>) get(KEY_USERS);
     }
 }

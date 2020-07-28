@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.studygroup">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -24,8 +25,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <meta-data android:name="com.applozic.application.key"
-            android:value="@string/applozic_app_id" />
         <activity android:name=".eventCreation.MapActivity"/>
         <activity android:name=".MainActivity"
             android:windowSoftInputMode="adjustPan">
@@ -41,6 +40,7 @@
                     />
             </intent-filter>
         </activity>
+
         <activity android:name=".loginAndRegister.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,6 +48,33 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.applozic.mobicomkit.uiwidgets.conversation.activity.ConversationActivity"
+            android:configChanges="keyboardHidden|screenSize|smallestScreenSize|screenLayout|orientation"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme"
+            tools:node="replace">
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <meta-data
+            android:name="com.applozic.mobicomkit.notification.smallIcon"
+            android:resource="@mipmap/ic_launcher" /> <!-- Replace this with a valid resource name for Launcher white Icon -->
+
+        <meta-data
+            android:name="main_folder_name"
+            android:value=""
+            tools:node="replace" />
+
+        <meta-data android:name="com.applozic.application.key"
+            android:value="@string/applozic_app_id" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.codepath.fileprovider.studygroup"

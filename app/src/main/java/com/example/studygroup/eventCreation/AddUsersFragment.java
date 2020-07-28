@@ -151,6 +151,7 @@ public class AddUsersFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchUsers(query);
+                search.clearFocus();
                 return true;
             }
 
