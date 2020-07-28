@@ -5,12 +5,32 @@
     android:layout_height="match_parent"
     tools:context=".search.SearchFragment">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:id="@+id/spinner_layout"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Category: "/>
+
+        <Spinner
+            android:id="@+id/selectionSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/eventsResultsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0dp" />
+        android:layout_below="@+id/spinner_layout"
+        android:layout_marginTop="4dp" />
 
     <ProgressBar
         android:id="@+id/searchFragmentProgressBar"
@@ -22,5 +42,11 @@
         android:layout_marginTop="30dp"
         android:visibility="invisible" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/usersResultsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/spinner_layout"
+        android:layout_marginTop="4dp"/>
 
 </RelativeLayout>

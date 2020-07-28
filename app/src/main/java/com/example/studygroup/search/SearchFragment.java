@@ -17,15 +17,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.adapters.EventsAdapter;
+import com.example.studygroup.adapters.UserSearchResultAdapter;
 import com.example.studygroup.models.Event;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +43,14 @@ public class SearchFragment extends Fragment {
     public static final String TAG = SearchFragment.class.getSimpleName();
 
     private RecyclerView mEventsResultsRecyclerView;
+    private RecyclerView mUsersResultsRecyclerView;
     private ProgressBar mProgressBar;
 
     private EventsAdapter mEventsAdapter;
     private List<Event> mEventsResultList;
+    private UserSearchResultAdapter mUsersAdapter;
+    private List<ParseUser> mUsersResultsList;
+    private String mSearchCategory;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -59,18 +68,65 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Search");
+        mSearchCategory = "users";
 
         mEventsResultList = new ArrayList<>();
+        mUsersResultsList = new ArrayList<>();
         mEventsAdapter = new EventsAdapter(getContext(), mEventsResultList);
+        mUsersAdapter = new UserSearchResultAdapter(getContext(), mUsersResultsList, new UserSearchResultAdapter.ResultClickListener() {
+            @Override
+            public void onResultClicked(int position) {
+                // Launch profile details
+            }
+        });
 
         mProgressBar = view.findViewById(R.id.searchFragmentProgressBar);
         mEventsResultsRecyclerView = view.findViewById(R.id.eventsResultsRecyclerView);
+        mUsersResultsRecyclerView = view.findViewById(R.id.usersResultsRecyclerView);
+        mEventsResultsRecyclerView.setVisibility(View.GONE);
+        mUsersResultsRecyclerView.setVisibility(View.VISIBLE);
 
         mEventsResultsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mEventsResultsRecyclerView.setAdapter(mEventsAdapter);
 
-        DividerItemDecoration itemDecor = new DividerItemDecoration(mEventsResultsRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
-        mEventsResultsRecyclerView.addItemDecoration(itemDecor);
+        mUsersResultsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mUsersResultsRecyclerView.setAdapter(mUsersAdapter);
+
+        DividerItemDecoration eventsDivider = new DividerItemDecoration(mEventsResultsRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        mEventsResultsRecyclerView.addItemDecoration(eventsDivider);
+
+        DividerItemDecoration usersDivider = new DividerItemDecoration(mUsersResultsRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        mUsersResultsRecyclerView.addItemDecoration(usersDivider);
+
+
+        final Spinner spinner = view.findViewById(R.id.selectionSpinner);
+
+        List<String> options = new ArrayList<String>();
+        options.add("Users");
+        options.add("Events");
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, options);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                if(position == 0) {
+                    mSearchCategory = "users";
+                    mEventsResultsRecyclerView.setVisibility(View.GONE);
+                    mUsersResultsRecyclerView.setVisibility(View.VISIBLE);
+                } else {
+                    mSearchCategory = "events";
+                    mUsersResultsRecyclerView.setVisibility(View.GONE);
+                    mEventsResultsRecyclerView.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
     }
 
@@ -84,7 +140,11 @@ public class SearchFragment extends Fragment {
             public boolean onQueryTextSubmit(String query) {
                 // perform query here
                 mProgressBar.setVisibility(View.VISIBLE);
-                searchEvents(query);
+                if(mSearchCategory.equals("events")) {
+                    searchEvents(query);
+                } else {
+                    searchUsers(query);
+                }
                 // workaround to avoid issues with some emulators and keyboard devices
                 //searchView.clearFocus();
                 return true;
@@ -100,6 +160,35 @@ public class SearchFragment extends Fragment {
         searchView.requestFocus();
 
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    private void searchUsers(String query) {
+        ParseQuery<ParseUser> nameQuery = ParseUser.getQuery();
+        nameQuery.whereContains("lowerDisplayName", query.toLowerCase());
+
+        ParseQuery<ParseUser> emailQuery = ParseUser.getQuery();
+        emailQuery.whereContains("email", query.toLowerCase());
+
+        List<ParseQuery<ParseUser>> userQueries = new ArrayList<ParseQuery<ParseUser>>();
+        userQueries.add(nameQuery);
+        userQueries.add(emailQuery);
+
+        ParseQuery<ParseUser> usersFullQuery = ParseQuery.or(userQueries);
+        usersFullQuery.orderByDescending(Event.KEY_CREATED_AT);
+
+        usersFullQuery.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> users, ParseException e) {
+                if(e != null) {
+                    Log.e(TAG, "Error executing user search query: ", e);
+                    return;
+                }
+                Log.i(TAG, "Success searching for users");
+                mUsersAdapter.clear();
+                mUsersAdapter.addAll(users);
+                mProgressBar.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
     private void searchEvents(String query) {
@@ -118,6 +207,7 @@ public class SearchFragment extends Fragment {
         eventsQueries.add(eventsLocationQuery);
 
         ParseQuery<Event> eventsFullQuery = ParseQuery.or(eventsQueries);
+        eventsFullQuery.orderByDescending(Event.KEY_CREATED_AT);
         eventsFullQuery.include(Event.KEY_FILES);
         eventsFullQuery.include(Event.KEY_USERS);
 
@@ -125,7 +215,7 @@ public class SearchFragment extends Fragment {
             @Override
             public void done(List<Event> events, ParseException e) {
                 if(e != null) {
-                    Log.e(TAG, "Error executing search query: ", e);
+                    Log.e(TAG, "Error executing event search query: ", e);
                     return;
                 }
                 Log.i(TAG, "Success searching for events");

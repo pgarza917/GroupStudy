@@ -97,7 +97,7 @@ public class RegisterFragment extends Fragment {
         ParseUser user = new ParseUser();
         user.setUsername(username);
         user.setPassword(password);
-        user.setEmail(email);
+        user.setEmail(email.toLowerCase());
         user.put("bio", bio);
         user.put("displayName", username);
         user.put("lowerDisplayName", username.toLowerCase());
