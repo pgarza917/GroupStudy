@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -16,10 +17,13 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.studygroup.R;
+import com.example.studygroup.adapters.MessageAdapter;
+import com.example.studygroup.models.Message;
 import com.example.studygroup.models.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,7 +34,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,6 +53,8 @@ public class ConversationFragment extends Fragment {
 
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mDatabaseReference;
+    private List<Message> mMessageList;
+    private MessageAdapter mMessagesAdapter;
 
     public ConversationFragment() {
         // Required empty public constructor
@@ -89,6 +97,11 @@ public class ConversationFragment extends Fragment {
             }
         });
 
+        mConversationMessagesRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setStackFromEnd(true);
+        mConversationMessagesRecyclerView.setLayoutManager(linearLayoutManager);
+
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
 
@@ -102,6 +115,8 @@ public class ConversationFragment extends Fragment {
                 } else {
                     Glide.with(getContext()).load(user.getImageUrl()).into(mToolbarImageView);
                 }
+
+                readMessages(mFirebaseUser.getUid(), userId, user.getImageUrl());
             }
 
             @Override
@@ -121,5 +136,35 @@ public class ConversationFragment extends Fragment {
         hashMap.put("message", message);
 
         reference.child("Chats").push().setValue(hashMap);
+    }
+
+    private void readMessages(String myId, String userId, String imageUrl) {
+        mMessageList = new ArrayList<>();
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mMessageList.clear();
+
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Message message = snapshot.getValue(Message.class);
+
+                    if((message.getReceiver().equals(myId) && message.getSender().equals(userId)) ||
+                            message.getReceiver().equals(userId) && message.getSender().equals(myId)) {
+                        mMessageList.add(message);
+                    }
+                }
+
+                mMessagesAdapter = new MessageAdapter(getContext(), mMessageList, imageUrl);
+                mConversationMessagesRecyclerView.setAdapter(mMessagesAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error reading messages from Firebase: ", error.toException());
+            }
+        });
     }
 }
