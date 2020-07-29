@@ -107,6 +107,7 @@ public class EventDetailsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("");
 
         mTitleTextView = view.findViewById(R.id.eventTitleTextView);
         mDateTextView = view.findViewById(R.id.detailsDateTextView);

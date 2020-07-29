@@ -27,10 +27,14 @@ import com.example.studygroup.R;
 import com.example.studygroup.adapters.EventsAdapter;
 import com.example.studygroup.adapters.UserSearchResultAdapter;
 import com.example.studygroup.models.Event;
+import com.example.studygroup.profile.ProfileDetailsFragment;
+import com.example.studygroup.profile.ProfileFragment;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +81,18 @@ public class SearchFragment extends Fragment {
             @Override
             public void onResultClicked(int position) {
                 // Launch profile details
+                ParseUser selectedUser = mUsersResultsList.get(position);
+
+                Fragment fragment = new ProfileDetailsFragment();
+                Bundle data = new Bundle();
+                data.putParcelable(ParseUser.class.getSimpleName(), Parcels.wrap(selectedUser));
+                fragment.setArguments(data);
+
+                ((MainActivity) getContext()).getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.frameLayoutContainer, fragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 

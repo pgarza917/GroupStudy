@@ -63,7 +63,7 @@ public class FeedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mSwipeContainer = view.findViewById(R.id.swipeContainer);
-
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Events");
 
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
