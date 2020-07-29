@@ -40,4 +40,39 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/conversationMessagesRecyclerView"
+        android:layout_below="@+id/toolbar_messages"
+        android:layout_above="@+id/composeMessageRelativeLayout" />
+    
+    <RelativeLayout
+        android:id="@+id/composeMessageRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:background="#fff"
+        android:layout_alignParentBottom="true">
+
+        <EditText
+            android:id="@+id/composeMessageEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:hint="Type a message..."
+            android:layout_toLeftOf="@+id/messageSendButton"
+            android:layout_centerVertical="true"/>
+
+        <ImageButton
+            android:id="@+id/messageSendButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/ic_baseline_send_48" />
+
+    </RelativeLayout>
+
+
 </RelativeLayout>

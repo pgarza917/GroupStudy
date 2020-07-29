@@ -1,6 +1,7 @@
 package com.example.studygroup.adapters;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +10,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
+import com.example.studygroup.messaging.ConversationFragment;
 import com.example.studygroup.models.User;
 
 import java.util.List;
@@ -45,7 +49,7 @@ public class FirebaseUserAdapter extends RecyclerView.Adapter<FirebaseUserAdapte
         return mUserList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView mProfilePictureImageView;
         private TextView mDisplayNameTextView;
@@ -71,6 +75,22 @@ public class FirebaseUserAdapter extends RecyclerView.Adapter<FirebaseUserAdapte
                     .load(user.getImageUrl())
                     .circleCrop()
                     .into(mProfilePictureImageView);
+        }
+
+
+        @Override
+        public void onClick(View view) {
+            User user = mUserList.get(getAdapterPosition());
+
+            Fragment fragment = new ConversationFragment();
+            Bundle data = new Bundle();
+            data.putString("userId", user.getId());
+            fragment.setArguments(data);
+
+            ((MainActivity) mContext).getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.frameLayoutContainer, fragment)
+                    .commit();
         }
     }
 }
