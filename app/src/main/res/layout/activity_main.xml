@@ -14,7 +14,7 @@
         android:backgroundTint="#25BAF5"
         android:minHeight="?attr/actionBarSize"
         app:title="@string/app_name"
-        app:titleTextColor="@android:color/white"></androidx.appcompat.widget.Toolbar>
+        app:titleTextColor="@android:color/white"/>
 
     <FrameLayout
         android:id="@+id/frameLayoutContainer"

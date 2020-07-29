@@ -8,28 +8,30 @@ import androidx.fragment.app.FragmentManager;
 
 import android.accounts.Account;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.applozic.mobicomkit.Applozic;
-import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
-import com.applozic.mobicomkit.api.account.user.User;
-import com.applozic.mobicomkit.listners.AlLoginHandler;
-import com.applozic.mobicomkit.uiwidgets.conversation.activity.ConversationActivity;
 import com.example.studygroup.eventCreation.CreateEventFragment;
 import com.example.studygroup.eventFeed.FeedFragment;
 import com.example.studygroup.messaging.MessagesFragment;
 import com.example.studygroup.profile.ProfileFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.parse.Parse;
 import com.parse.ParseUser;
+
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
     final FragmentManager mFragmentManager = getSupportFragmentManager();
     private BottomNavigationView mBottomNavigationView;
+    private FirebaseUser mFirebaseUser;
+    private FirebaseAuth mFirebaseAuth;
+    private DatabaseReference mDatabaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Account currentGoogleAccount = GoogleSignIn.getLastSignedInAccount(this).getAccount();
+        mFirebaseAuth = FirebaseAuth.getInstance();
 
         mBottomNavigationView = findViewById(R.id.bottom_navigation);
         mBottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -59,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new CreateEventFragment();
                         break;
                     case R.id.action_messages:
-                        applozicLogin();
+                        firebaseAuthentication();
                         fragment = new MessagesFragment();
                         break;
                     case R.id.action_profile:
@@ -78,36 +84,64 @@ public class MainActivity extends AppCompatActivity {
         mBottomNavigationView.setSelectedItemId(R.id.action_home);
     }
 
-    private void applozicLogin() {
+    private void firebaseAuthentication() {
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-        if(Applozic.isConnected(this)) {
-            Log.i(TAG, "Applozic Connected!");
+        if(mFirebaseUser != null) {
+            Log.i(TAG, "Silent Firebase auto-login successful");
             return;
         }
 
-        ParseUser currentParseUser = ParseUser.getCurrentUser();
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        String username = currentUser.getString("displayName");
+        String email = currentUser.getEmail();
+        String password = currentUser.getObjectId();
+        String imageUrl = currentUser.getParseFile("profileImage").getUrl();
 
-        User user = new User();
-        user.setUserId(currentParseUser.getEmail());
-        user.setDisplayName(currentParseUser.getString("displayName"));
-        user.setEmail(currentParseUser.getEmail());
-        user.setAuthenticationTypeId(User.AuthenticationType.APPLOZIC.getValue());
-        user.setPassword("");
-
-        Applozic.connectUser(this, user, new AlLoginHandler() {
+        mFirebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
-            public void onSuccess(RegistrationResponse registrationResponse, Context context) {
-                Log.i(TAG, "Successfully register/logged in with Applozic Server");
-            }
-
-            @Override
-            public void onFailure(RegistrationResponse registrationResponse, Exception exception) {
-                Log.e(TAG, "Error registering/logging in with Applozic Server: ", exception);
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()) {
+                    Log.i(TAG, "Successful login to Firebase");
+                } else {
+                    firebaseRegister(username, email, password, imageUrl);
+                }
             }
         });
 
-        Intent intent = new Intent(this, ConversationActivity.class);
-        startActivity(intent);
+    }
+
+    private void firebaseRegister(final String username, String email, String password, String imageUrl) {
+        mFirebaseAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()) {
+                            FirebaseUser user = mFirebaseAuth.getCurrentUser();
+                            String userId = user.getUid();
+
+                            mDatabaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
+
+                            HashMap<String, String> hashMap = new HashMap<>();
+                            hashMap.put("id", userId);
+                            hashMap.put("username", username);
+                            hashMap.put("imageUrl", ((imageUrl == null) ? "default" : imageUrl));
+
+                            mDatabaseReference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()) {
+                                        Log.i(TAG, "Successfully set values on Firebase reference");
+                                    } else {
+                                        Log.e(TAG, "Error setting values on Firebase reference: ", task.getException());
+                                    }
+                                }
+                            });
+                        } else {
+                            Log.e(TAG, "Error registering new account in Firebase: ", task.getException());
+                        }
+                    }
+                });
     }
 
     // Helper method for determining if the current device is able to work with Google Play services

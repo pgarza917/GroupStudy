@@ -1,57 +1,55 @@
 package com.example.studygroup.messaging;
 
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
+
 import com.example.studygroup.R;
+import com.example.studygroup.models.User;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link MessageTabFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
  */
 public class MessageTabFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    public static final String TAG = MessageTabFragment.class.getSimpleName();
+    public static final String ARGS_NAME = "position";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private RecyclerView mMessagesRecyclerView;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MessageTabFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MessageTabFragment newInstance(String param1, String param2) {
-        MessageTabFragment fragment = new MessageTabFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private int mTabPosition;
+    private List<User> mUsersList;
 
     public MessageTabFragment() {
         // Required empty public constructor
     }
 
+
+    public static MessageTabFragment newInstance(int position) {
+        MessageTabFragment fragment = new MessageTabFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARGS_NAME, position);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+        Bundle args = getArguments();
+        if(args != null) {
+            mTabPosition = args.getInt(ARGS_NAME);
         }
     }
 
@@ -60,5 +58,18 @@ public class MessageTabFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_message_tab, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mMessagesRecyclerView = view.findViewById(R.id.messagesListRecyclerView);
+
+        if(mTabPosition == 1) {
+
+        } else {
+
+        }
     }
 }
