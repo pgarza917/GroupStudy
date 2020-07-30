@@ -23,9 +23,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -128,6 +131,7 @@ public class CreateEventFragment extends Fragment {
         mDescriptionEditText = view.findViewById(R.id.descriptionEditText);
         mSelectedLocationTextView = view.findViewById(R.id.selectLocationTextView);
         mAddFilesTextView = view.findViewById(R.id.addFilesTextView);
+
         mFileAdapter = new FileViewAdapter(getContext(), mEventFiles);
         mUsersAdapter = new UsersAdapter(getContext(), mEventUsers, checkBoxListener);
 
@@ -140,6 +144,7 @@ public class CreateEventFragment extends Fragment {
         RecyclerView mAttachedFilesRecyclerView = view.findViewById(R.id.attachedFilesRecyclerView);
         RecyclerView mEventUsersRecyclerView = view.findViewById(R.id.eventUsersRecyclerView);
         Button mSubmitButton = view.findViewById(R.id.submitButton);
+        final Spinner privacySpinner = view.findViewById(R.id.privacySelectSpinner);
 
         // Setup for file recycler view
         mAttachedFilesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -155,6 +160,26 @@ public class CreateEventFragment extends Fragment {
         DividerItemDecoration userViewDivider = new DividerItemDecoration(mEventUsersRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
         mEventUsersRecyclerView.addItemDecoration(userViewDivider);
 
+        List<String> spinnerOptions = new ArrayList<String>();
+        spinnerOptions.add("Open");
+        spinnerOptions.add("Closed");
+        final int[] selectedPrivacy = {0};
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, spinnerOptions);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        privacySpinner.setAdapter(spinnerAdapter);
+        privacySpinner.setSelection(0);
+        privacySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                selectedPrivacy[0] = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         View.OnClickListener dateSelectListener = new View.OnClickListener() {
             @Override
@@ -319,7 +344,7 @@ public class CreateEventFragment extends Fragment {
                     }
                 }
                 updateEvent(finalEventToEdit, mTitleEditText.getText().toString(), mDescriptionEditText.getText().toString(),
-                            eventDateTime, mSelectedLocationGeoPoint, mSelectedLocationName, mEventFiles, mEventUsers);
+                            eventDateTime, mSelectedLocationGeoPoint, mSelectedLocationName, mEventFiles, mEventUsers, selectedPrivacy);
             }
         };
 
@@ -499,7 +524,7 @@ public class CreateEventFragment extends Fragment {
     }
 
     private void updateEvent(Event eventToEdit, String newTitle, String newDescription, Date dateTime, ParseGeoPoint location,
-                             String locationName, List<FileExtended> files, List<ParseUser> users) {
+                             String locationName, List<FileExtended> files, List<ParseUser> users, int[] privacySetting) {
         if(newTitle != null && !newTitle.isEmpty()) {
             eventToEdit.setTitle(newTitle);
         }
@@ -523,6 +548,13 @@ public class CreateEventFragment extends Fragment {
         if(users != null) {
             for(int i = 0; i < users.size(); i++) {
                 eventToEdit.put("users", users.get(i));
+            }
+        }
+        if(privacySetting != null) {
+            if(privacySetting[0] == 0) {
+                eventToEdit.put("privacy", "open");
+            } else {
+                eventToEdit.put("privacy", "closed");
             }
         }
 

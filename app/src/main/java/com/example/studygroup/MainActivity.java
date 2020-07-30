@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Account currentGoogleAccount = GoogleSignIn.getLastSignedInAccount(this).getAccount();
+        //Account currentGoogleAccount = GoogleSignIn.getLastSignedInAccount(this).getAccount();
         mFirebaseAuth = FirebaseAuth.getInstance();
 
         mBottomNavigationView = findViewById(R.id.bottom_navigation);

@@ -134,11 +134,13 @@ public class MessageTabFragment extends Fragment {
                     for(String id : mUserIdList) {
                         if(user.getId().equals(id)) {
                             if(!mUsersList.isEmpty()) {
+                                List<User> usersToAdd = new ArrayList<>();
                                 for(User user1 : mUsersList) {
                                     if(!user.getId().equals(user1.getId())) {
-                                        mUsersList.add(user);
+                                        usersToAdd.add(user);
                                     }
                                 }
+                                mUsersList.addAll(usersToAdd);
                             } else {
                                 mUsersList.add(user);
                             }

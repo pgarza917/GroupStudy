@@ -103,7 +103,7 @@
 
     <TextView
         android:id="@+id/selectLocationTextView"
-        android:layout_width="200dp"
+        android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/timePickerImageButton"
         android:layout_marginStart="18dp"
@@ -175,6 +175,15 @@
         android:layout_marginEnd="54dp"
         android:text="Add Users"
         android:textSize="18sp" />
+
+    <Spinner
+        android:id="@+id/privacySelectSpinner"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/timePickerImageButton"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="50dp" />
 
 
 </RelativeLayout>
