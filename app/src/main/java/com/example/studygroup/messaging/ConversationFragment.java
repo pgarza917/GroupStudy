@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.adapters.MessageAdapter;
 import com.example.studygroup.models.Message;
@@ -68,7 +69,20 @@ public class ConversationFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_conversation, container, false);
 
         Toolbar toolbar = view.findViewById(R.id.toolbar_messages);
+        toolbar.setTitle("");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new MessagesFragment();
+                ((MainActivity) getContext()).getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.frameLayoutContainer, fragment)
+                        .commit();
+            }
+        });
 
         return view;
     }
@@ -113,7 +127,10 @@ public class ConversationFragment extends Fragment {
                 if(user.getImageUrl().equals("default")) {
                     mToolbarImageView.setVisibility(View.INVISIBLE);
                 } else {
-                    Glide.with(getContext()).load(user.getImageUrl()).into(mToolbarImageView);
+                    Glide.with(getContext())
+                            .load(user.getImageUrl())
+                            .circleCrop()
+                            .into(mToolbarImageView);
                 }
 
                 readMessages(mFirebaseUser.getUid(), userId, user.getImageUrl());

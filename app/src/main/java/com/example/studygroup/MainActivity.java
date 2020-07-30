@@ -60,13 +60,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 Fragment fragment;
-                switch (menuItem.getItemId()) {
+                int id = menuItem.getItemId();
+                if(id == R.id.action_messages){
+                    firebaseAuthentication();
+                    return true;
+                }
+                setSupportActionBar(toolbar);
+                getSupportActionBar().show();
+                switch (id) {
                     case R.id.action_create_event:
                         fragment = new CreateEventFragment();
-                        break;
-                    case R.id.action_messages:
-                        firebaseAuthentication();
-                        fragment = new MessagesFragment();
                         break;
                     case R.id.action_profile:
                         fragment = new ProfileFragment();
@@ -89,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
 
         if(mFirebaseUser != null) {
             Log.i(TAG, "Silent Firebase auto-login successful");
+            Fragment fragment = new MessagesFragment();
+            mFragmentManager.beginTransaction().replace(R.id.frameLayoutContainer, fragment).commit();
             return;
         }
 
@@ -103,6 +108,8 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
                     Log.i(TAG, "Successful login to Firebase");
+                    Fragment fragment = new MessagesFragment();
+                    mFragmentManager.beginTransaction().replace(R.id.frameLayoutContainer, fragment).commit();
                 } else {
                     firebaseRegister(username, email, password, imageUrl);
                 }
@@ -126,12 +133,15 @@ public class MainActivity extends AppCompatActivity {
                             hashMap.put("id", userId);
                             hashMap.put("username", username);
                             hashMap.put("imageUrl", ((imageUrl == null) ? "default" : imageUrl));
+                            hashMap.put("email", email);
 
                             mDatabaseReference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()) {
                                         Log.i(TAG, "Successfully set values on Firebase reference");
+                                        Fragment fragment = new MessagesFragment();
+                                        mFragmentManager.beginTransaction().replace(R.id.frameLayoutContainer, fragment).commit();
                                     } else {
                                         Log.e(TAG, "Error setting values on Firebase reference: ", task.getException());
                                     }

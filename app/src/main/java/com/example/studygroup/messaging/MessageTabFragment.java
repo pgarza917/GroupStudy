@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 
 import com.example.studygroup.R;
@@ -40,6 +41,7 @@ public class MessageTabFragment extends Fragment {
     public static final String ARGS_NAME = "position";
 
     private RecyclerView mMessagesRecyclerView;
+    private ProgressBar mProgressBar;
 
     private int mTabPosition;
     private List<User> mUsersList;
@@ -76,39 +78,44 @@ public class MessageTabFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_message_tab, container, false);
 
+        mProgressBar = view.findViewById(R.id.conversationsProgressBar);
         mMessagesRecyclerView = view.findViewById(R.id.messagesListRecyclerView);
         mMessagesRecyclerView.setHasFixedSize(true);
         mMessagesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        mUserIdList = new ArrayList<>();
+        if(mTabPosition == 0) {
+            mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference("Chats");
-        mDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mUserIdList.clear();
+            mUserIdList = new ArrayList<>();
 
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Message message = snapshot.getValue(Message.class);
+            mProgressBar.setVisibility(View.VISIBLE);
+            mDatabaseReference = FirebaseDatabase.getInstance().getReference("Chats");
+            mDatabaseReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    mUserIdList.clear();
 
-                    if(message.getSender().equals(mFirebaseUser.getUid())) {
-                        mUserIdList.add(message.getReceiver());
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Message message = snapshot.getValue(Message.class);
+
+                        if (message.getSender().equals(mFirebaseUser.getUid())) {
+                            mUserIdList.add(message.getReceiver());
+                        }
+                        if (message.getReceiver().equals(mFirebaseUser.getUid())) {
+                            mUserIdList.add(message.getSender());
+                        }
                     }
-                    if(message.getReceiver().equals(mFirebaseUser.getUid())) {
-                        mUserIdList.add(message.getSender());
-                    }
+
+                    readChats();
                 }
 
-                readChats();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Error reading Firebase for chats: ", error.toException());
-            }
-        });
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e(TAG, "Error reading Firebase for chats: ", error.toException());
+                }
+            });
+        }
 
         return view;
     }
@@ -138,7 +145,7 @@ public class MessageTabFragment extends Fragment {
                         }
                     }
                 }
-
+                mProgressBar.setVisibility(View.INVISIBLE);
                 mFirebaseUsersAdapter = new FirebaseUserAdapter(getContext(), mUsersList);
                 mMessagesRecyclerView.setAdapter(mFirebaseUsersAdapter);
             }

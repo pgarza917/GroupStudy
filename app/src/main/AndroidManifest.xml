@@ -27,7 +27,7 @@
             android:value="@integer/google_play_services_version" />
         <activity android:name=".eventCreation.MapActivity"/>
         <activity android:name=".MainActivity"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

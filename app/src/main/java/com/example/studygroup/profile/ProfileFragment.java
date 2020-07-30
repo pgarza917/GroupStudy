@@ -30,6 +30,7 @@ import com.example.studygroup.loginAndRegister.LoginActivity;
 import com.example.studygroup.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.firebase.auth.FirebaseAuth;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -141,6 +142,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void logoutUser() {
+        FirebaseAuth.getInstance().signOut();
         ParseUser.logOut();
         Intent intent = new Intent(getContext(), LoginActivity.class);
         startActivity(intent);

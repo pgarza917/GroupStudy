@@ -64,6 +64,8 @@ public class FirebaseUserAdapter extends RecyclerView.Adapter<FirebaseUserAdapte
             mEmailTextView = itemView.findViewById(R.id.userItemEmailTextView);
             mAddUserCheckBox = itemView.findViewById(R.id.addItemUserCheckBox);
 
+            itemView.setOnClickListener(this);
+
             mAddUserCheckBox.setVisibility(View.GONE);
             mEmailTextView.setVisibility(View.GONE);
         }

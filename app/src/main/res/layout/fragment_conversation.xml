@@ -13,6 +13,7 @@
         android:background="?attr/colorPrimary"
         android:backgroundTint="#25BAF5"
         android:minHeight="?attr/actionBarSize"
+        android:padding="4dp"
         app:titleTextColor="@android:color/white">
 
         <LinearLayout
@@ -31,9 +32,11 @@
                 android:id="@+id/toolbarUserNameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
-                android:textSize="18sp"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold"
                 tools:text="Pablo Garza" />
 
         </LinearLayout>
