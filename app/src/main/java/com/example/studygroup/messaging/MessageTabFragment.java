@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -82,6 +83,9 @@ public class MessageTabFragment extends Fragment {
         mMessagesRecyclerView = view.findViewById(R.id.messagesListRecyclerView);
         mMessagesRecyclerView.setHasFixedSize(true);
         mMessagesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        DividerItemDecoration divider = new DividerItemDecoration(mMessagesRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        mMessagesRecyclerView.addItemDecoration(divider);
 
 
         if(mTabPosition == 0) {

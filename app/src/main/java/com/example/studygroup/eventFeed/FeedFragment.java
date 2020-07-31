@@ -9,7 +9,11 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.transition.Fade;
+import androidx.transition.Transition;
+import androidx.transition.TransitionInflater;
 
+import android.transition.AutoTransition;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -68,6 +72,11 @@ public class FeedFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Transition textTransition = TransitionInflater.from(getContext()).inflateTransition(R.transition.text_shared_element_transition);
+
+        //setExitTransition(new Fade());
+        //setSharedElementEnterTransition(textTransition);
+
         mSwipeContainer = view.findViewById(R.id.swipeContainer);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Events");
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -98,8 +107,8 @@ public class FeedFragment extends Fragment {
         // 4. Set the layout manager on the Recycler View
         mEventsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        DividerItemDecoration itemDecor = new DividerItemDecoration(mEventsRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
-        mEventsRecyclerView.addItemDecoration(itemDecor);
+        //DividerItemDecoration itemDecor = new DividerItemDecoration(mEventsRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        //mEventsRecyclerView.addItemDecoration(itemDecor);
 
         mProgressBarLoading = view.findViewById(R.id.progressBarFeedLoading);
         mProgressBarLoading.setVisibility(View.VISIBLE);

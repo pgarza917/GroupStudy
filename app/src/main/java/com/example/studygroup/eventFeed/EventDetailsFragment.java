@@ -6,10 +6,13 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.AutoTransition;
+import androidx.transition.Fade;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -63,6 +66,13 @@ public class EventDetailsFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        postponeEnterTransition();
+        setEnterTransition(new Fade());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -84,6 +94,8 @@ public class EventDetailsFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
@@ -97,6 +109,7 @@ public class EventDetailsFragment extends Fragment {
             fragment.setTargetFragment(EventDetailsFragment.this, 123);
             ((MainActivity) getContext()).getSupportFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
                     .replace(R.id.frameLayoutContainer, fragment)
                     .commit();
         }
@@ -108,6 +121,20 @@ public class EventDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("");
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new FeedFragment();
+                ((MainActivity) getContext()).getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_left)
+                        .replace(R.id.frameLayoutContainer, fragment)
+                        .commit();
+            }
+        });
 
         mTitleTextView = view.findViewById(R.id.eventTitleTextView);
         mDateTextView = view.findViewById(R.id.detailsDateTextView);
@@ -121,10 +148,21 @@ public class EventDetailsFragment extends Fragment {
 
         mEvent = Parcels.unwrap(getArguments().getParcelable(Event.class.getSimpleName()));
         Log.i(TAG, "Received Bundled Event Data!");
+        int position = getArguments().getInt("position");
+
+        String titleTransitionName = getArguments().getString("title" + position);
+        String descriptionTransitionName = getArguments().getString("description" + position);
+        String locationTransitionName = getArguments().getString("locationName" + position);
 
         mTitleTextView.setText(mEvent.getTitle());
         mLocationTextView.setText(mEvent.getLocationName());
         mDescriptionTextView.setText(mEvent.getDescription());
+
+        mTitleTextView.setTransitionName(titleTransitionName);
+        mDescriptionTextView.setTransitionName(descriptionTransitionName);
+        mLocationTextView.setTransitionName(locationTransitionName);
+
+        startPostponedEnterTransition();
 
         setDateTimeText(mEvent);
 

@@ -1,88 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.cardview.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF"
-    android:paddingBottom="12dp">
+    card_view:cardCornerRadius="8dp"
+    card_view:cardElevation="8dp"
+    android:layout_marginTop="12dp"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:focusable="true">
 
-    <TextView
-        android:id="@+id/titleTextView"
-        android:layout_width="wrap_content"
+    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="12dp"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        tools:text="Math 120 Review Session" />
+        android:background="#FFFFFF"
+        android:paddingBottom="12dp">
 
-    <TextView
-        android:id="@+id/descriptionTextView"
-        android:layout_width="320dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/titleTextView"
-        android:layout_alignParentStart="true"
-        android:maxLines="3"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="5dp"
-        tools:text="This review session will cover the material that will appear on the final exam for the Math 120 Multivariable course. We will be going over Greene's and Stoke's Theorem in detail as many student had trouble with these theorems and their applications." />
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="Math 120 Review Session" />
 
-    <ImageButton
-        android:id="@+id/shareImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/titleTextView"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
-        android:layout_toEndOf="@+id/descriptionTextView"
-        android:background="@android:drawable/screen_background_light_transparent"
-        app:srcCompat="@drawable/ic_baseline_share_24" />
+        <TextView
+            android:id="@+id/descriptionTextView"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/titleTextView"
+            android:layout_alignParentStart="true"
+            android:maxLines="3"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="5dp"
+            tools:text="This review session will cover the material that will appear on the final exam for the Math 120 Multivariable course. We will be going over Greene's and Stoke's Theorem in detail as many student had trouble with these theorems and their applications." />
 
-    <ImageButton
-        android:id="@+id/locationPickerImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/descriptionTextView"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="16dp"
-        android:background="@android:drawable/screen_background_light_transparent"
-        app:srcCompat="@drawable/ic_baseline_location_on_24" />
+        <ImageButton
+            android:id="@+id/shareImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/titleTextView"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_toEndOf="@+id/descriptionTextView"
+            android:background="@android:drawable/screen_background_light_transparent"
+            app:srcCompat="@drawable/ic_baseline_share_24" />
 
-    <TextView
-        android:id="@+id/locationTextView"
-        android:layout_width="136dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/descriptionTextView"
-        android:layout_marginStart="4dp"
-        android:maxLines="2"
-        android:layout_marginTop="18dp"
-        android:layout_toEndOf="@+id/locationPickerImageButton"
-        tools:text="Hillhouse 117" />
+        <ImageButton
+            android:id="@+id/locationPickerImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/descriptionTextView"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:drawable/screen_background_light_transparent"
+            app:srcCompat="@drawable/ic_baseline_location_on_24" />
 
-    <ImageButton
-        android:id="@+id/timeImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/descriptionTextView"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="190dp"
-        android:layout_marginTop="16dp"
-        android:background="@android:drawable/screen_background_light_transparent"
-        app:srcCompat="@drawable/ic_baseline_calendar_today_24" />
+        <TextView
+            android:id="@+id/locationTextView"
+            android:layout_width="136dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/descriptionTextView"
+            android:layout_marginStart="4dp"
+            android:maxLines="2"
+            android:layout_marginTop="18dp"
+            android:layout_toEndOf="@+id/locationPickerImageButton"
+            tools:text="Hillhouse 117" />
 
-    <TextView
-        android:id="@+id/timeTextView"
-        android:layout_width="160dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/descriptionTextView"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="18dp"
-        android:layout_toEndOf="@+id/timeImageButton"
-        tools:text="Sept. 17, 2020" />
-</RelativeLayout>
+        <ImageButton
+            android:id="@+id/timeImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/descriptionTextView"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="190dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:drawable/screen_background_light_transparent"
+            app:srcCompat="@drawable/ic_baseline_calendar_today_24" />
+
+        <TextView
+            android:id="@+id/timeTextView"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/descriptionTextView"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="18dp"
+            android:layout_toEndOf="@+id/timeImageButton"
+            tools:text="Sept. 17, 2020" />
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

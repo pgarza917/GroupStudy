@@ -10,8 +10,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.AutoTransition;
+import androidx.transition.Fade;
+import androidx.transition.Transition;
+import androidx.transition.TransitionInflater;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
@@ -109,13 +114,33 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             Event event = mEventsList.get(position);
 
             if(position != RecyclerView.NO_POSITION) {
+
+                View sharedTitle = view.findViewById(R.id.titleTextView);
+                View sharedDescription = view.findViewById(R.id.descriptionTextView);
+                View sharedLocation = view.findViewById(R.id.locationTextView);
+                sharedTitle.setTransitionName("title" + position);
+                sharedDescription.setTransitionName("description" + position);
+                sharedLocation.setTransitionName("location" + position);
+
                 Fragment fragment = new EventDetailsFragment();
 
                 Bundle data = new Bundle();
                 data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(event));
+                data.putInt("position", position);
                 fragment.setArguments(data);
 
-                ((MainActivity) mContext).getSupportFragmentManager().beginTransaction().replace(R.id.frameLayoutContainer, fragment).commit();
+                Transition textTransition = TransitionInflater.from(mContext).inflateTransition(R.transition.text_shared_element_transition);
+                //fragment.setSharedElementEnterTransition(textTransition);
+
+                ((MainActivity) mContext).getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+                        //.addSharedElement(sharedTitle, sharedTitle.getTransitionName())
+                        //.addSharedElement(sharedDescription, sharedDescription.getTransitionName())
+                        //.addSharedElement(sharedLocation, sharedLocation.getTransitionName())
+                        .replace(R.id.frameLayoutContainer, fragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         }
     }
