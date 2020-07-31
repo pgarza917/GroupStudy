@@ -42,7 +42,11 @@ import com.example.studygroup.adapters.UsersAdapter;
 import com.example.studygroup.eventFeed.EventDetailsFragment;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
+import com.example.studygroup.models.Subject;
+import com.parse.FindCallback;
 import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -148,6 +152,7 @@ public class CreateEventFragment extends Fragment {
         RecyclerView mEventUsersRecyclerView = view.findViewById(R.id.eventUsersRecyclerView);
         Button mSubmitButton = view.findViewById(R.id.submitButton);
         final Spinner privacySpinner = view.findViewById(R.id.privacySelectSpinner);
+        final Spinner subjectSpinner = view.findViewById(R.id.subjectSelectSpinner);
 
         // Setup for file recycler view
         mAttachedFilesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -163,14 +168,14 @@ public class CreateEventFragment extends Fragment {
         DividerItemDecoration userViewDivider = new DividerItemDecoration(mEventUsersRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
         mEventUsersRecyclerView.addItemDecoration(userViewDivider);
 
-        List<String> spinnerOptions = new ArrayList<String>();
-        spinnerOptions.add("Open");
-        spinnerOptions.add("Closed");
+        List<String> privacyOptions = new ArrayList<String>();
+        privacyOptions.add("Open");
+        privacyOptions.add("Closed");
         final int[] selectedPrivacy = {0};
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, spinnerOptions);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        privacySpinner.setAdapter(spinnerAdapter);
+        ArrayAdapter<String> privacyAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, privacyOptions);
+        privacyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        privacySpinner.setAdapter(privacyAdapter);
         privacySpinner.setSelection(0);
         privacySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -183,6 +188,32 @@ public class CreateEventFragment extends Fragment {
 
             }
         });
+
+        List<String> subjectOptions = new ArrayList<String>();
+        subjectOptions.add("Physics");
+        subjectOptions.add("History");
+        subjectOptions.add("Psychology");
+        subjectOptions.add("Economics");
+        subjectOptions.add("Geography");
+        subjectOptions.add("Math");
+        final String[] selectedSubject = {"Physics"};
+
+        ArrayAdapter<String> subjectAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, subjectOptions);
+        subjectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        subjectSpinner.setAdapter(subjectAdapter);
+        subjectSpinner.setSelection(0);
+        subjectSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                selectedSubject[0] = subjectOptions.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
 
         View.OnClickListener dateSelectListener = new View.OnClickListener() {
             @Override
@@ -326,7 +357,7 @@ public class CreateEventFragment extends Fragment {
                     }
                     // Finally, we save the entire event to Parse
                     saveEvent(ParseUser.getCurrentUser(), title, description, eventDateTime, mSelectedLocationGeoPoint,
-                                mSelectedLocationName, mEventFiles, mEventUsers);
+                                mSelectedLocationName, mEventFiles, mEventUsers, selectedPrivacy, selectedSubject);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -473,7 +504,7 @@ public class CreateEventFragment extends Fragment {
     // Method for submitting the user-created event to the Parse database with the correct
     // details
     private void saveEvent(ParseUser user, String title, String description, Date dateTime, ParseGeoPoint location,
-                           String locationName, List<FileExtended> files, List<ParseUser> users) {
+                           String locationName, List<FileExtended> files, List<ParseUser> users, int[] privacySetting, String[] subject) {
         Event event = new Event();
         event.setTitle(title);
         event.setDescription(description);
@@ -482,6 +513,8 @@ public class CreateEventFragment extends Fragment {
         event.setLocationName(locationName);
         event.addUnique(Event.KEY_OWNERS, user);
         event.addUnique(Event.KEY_FILES, files);
+        event.setPrivacy(privacySetting[0]);
+
         for(int i = 0; i < users.size(); i++) {
             event.addUnique("users", users.get(i));
         }
@@ -489,22 +522,35 @@ public class CreateEventFragment extends Fragment {
             event.addUnique("files", files.get(i));
         }
 
-        event.saveInBackground(new SaveCallback() {
+        ParseQuery<Subject> query = ParseQuery.getQuery(Subject.class);
+        query.whereEqualTo("subjectName", subject[0]);
+
+        query.findInBackground(new FindCallback<Subject>() {
             @Override
-            public void done(com.parse.ParseException e) {
-                if(e != null) {
-                    Log.e(TAG, "Error saving event", e);
-                    return;
+            public void done(List<Subject> objects, com.parse.ParseException e) {
+                if(objects.size() == 1) {
+                    ParseObject subjectFound = objects.get(0);
+                    event.put("subject", ParseObject.createWithoutData("Subject", subjectFound.getObjectId()));
+                    event.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(com.parse.ParseException e) {
+                            if(e != null) {
+                                Log.e(TAG, "Error saving event", e);
+                                return;
+                            }
+                            Toast.makeText(getContext(), "Event Saved Successfully!", Toast.LENGTH_LONG).show();
+                            // Clear out fields for visual confirmation of save
+                            mTitleEditText.setText("");
+                            mDescriptionEditText.setText("");
+                            mSelectedTimeTextView.setText("");
+                            mSelectedDateTextView.setText("");
+                            mUsersAdapter.clear();
+                        }
+                    });
                 }
-                Toast.makeText(getContext(), "Event Saved Successfully!", Toast.LENGTH_LONG).show();
-                // Clear out fields for visual confirmation of save
-                mTitleEditText.setText("");
-                mDescriptionEditText.setText("");
-                mSelectedTimeTextView.setText("");
-                mSelectedDateTextView.setText("");
-                mUsersAdapter.clear();
             }
         });
+
     }
 
     private void setDateTime(Event event) {

@@ -33,10 +33,10 @@
         android:id="@+id/timePickerImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/descriptionEditText"
+        android:layout_below="@+id/textView2"
         android:layout_alignParentStart="true"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="32dp"
         android:background="@android:drawable/screen_background_light_transparent"
         android:scaleX="2.0"
         android:scaleY="2.0"
@@ -47,10 +47,10 @@
         android:id="@+id/datePickerImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/descriptionEditText"
+        android:layout_below="@+id/textView2"
         android:layout_alignParentStart="true"
         android:layout_marginStart="210dp"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="20dp"
         android:background="@android:drawable/screen_background_light_transparent"
         android:src="@drawable/ic_baseline_access_time_24"
         android:tint="#000" />
@@ -59,9 +59,9 @@
         android:id="@+id/selectTimeTextView"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/descriptionEditText"
+        android:layout_below="@+id/textView2"
         android:layout_marginStart="18dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="32dp"
         android:layout_toEndOf="@+id/timePickerImageButton"
         android:text="Select Time"
         android:textSize="18sp" />
@@ -70,9 +70,9 @@
         android:id="@+id/selectDateTextView"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/descriptionEditText"
+        android:layout_below="@+id/textView2"
         android:layout_marginStart="6dp"
-        android:layout_marginTop="34dp"
+        android:layout_marginTop="32dp"
         android:layout_toEndOf="@+id/datePickerImageButton"
         android:text="Select Date"
         android:textSize="18sp" />
@@ -119,7 +119,7 @@
         android:id="@+id/addFileImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
+        android:layout_below="@+id/locationPickerImageButton"
         android:layout_alignParentStart="true"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
@@ -132,9 +132,9 @@
         android:id="@+id/addFilesTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
+        android:layout_below="@+id/locationPickerImageButton"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="42dp"
+        android:layout_marginTop="38dp"
         android:layout_toEndOf="@+id/addFileImageButton"
         android:text="Add Files"
         android:textSize="18sp" />
@@ -152,7 +152,7 @@
         android:id="@+id/addUsersToEventImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
+        android:layout_below="@+id/locationPickerImageButton"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="146dp"
@@ -173,9 +173,9 @@
         android:id="@+id/addUsersToEventTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
+        android:layout_below="@+id/locationPickerImageButton"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="42dp"
+        android:layout_marginTop="38dp"
         android:layout_marginEnd="54dp"
         android:text="Add Users"
         android:textSize="18sp" />
@@ -184,21 +184,41 @@
         android:id="@+id/privacySelectSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/locationPickerImageButton"
+        android:layout_below="@+id/descriptionEditText"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="16dp"
         android:layout_toEndOf="@+id/textView" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/locationPickerImageButton"
+        android:layout_below="@+id/descriptionEditText"
         android:layout_alignParentStart="true"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="34dp"
+        android:layout_marginTop="16dp"
         android:text="Select Privacy: "
         android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="20dp"
+        android:text="Select Subject: "
+        android:textSize="18sp" />
+
+    <Spinner
+        android:id="@+id/subjectSelectSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:layout_toEndOf="@+id/textView2" />
 
 
 </RelativeLayout>

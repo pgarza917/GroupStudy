@@ -23,14 +23,19 @@ import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.adapters.EventsAdapter;
 import com.example.studygroup.models.Event;
+import com.example.studygroup.models.Subject;
+import com.example.studygroup.models.User;
 import com.example.studygroup.search.SearchFragment;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,6 +49,8 @@ public class FeedFragment extends Fragment {
     protected List<Event> mEventsList;
     protected SwipeRefreshLayout mSwipeContainer;
     private ProgressBar mProgressBarLoading;
+
+    int lastPosition;
 
     public FeedFragment() {
         // Required empty public constructor
@@ -120,7 +127,7 @@ public class FeedFragment extends Fragment {
         queries.add(ownersQuery);
 
         ParseQuery<Event> mainQuery = ParseQuery.or(queries);
-        mainQuery.orderByDescending(Event.KEY_CREATED_AT);
+        mainQuery.orderByDescending(Event.KEY_TIME);
         mainQuery.include(Event.KEY_FILES);
         mainQuery.include(Event.KEY_USERS);
 
@@ -129,18 +136,74 @@ public class FeedFragment extends Fragment {
             @Override
             public void done(List<Event> events, ParseException e) {
                 if(e != null) {
-                    Log.e(TAG, "Issue with getting events from Parse DB", e);
+                    Log.e(TAG, "Issue with getting events from Parse DB: ", e);
                     return;
                 }
                 for(Event event : events) {
                     Log.i(TAG, "Event: " + event.getTitle());
                 }
-                // Update the events data set and notify adapter of the change
-                mEventsAdapter.clear();
-                mEventsAdapter.addAll(events);
+                mEventsList.clear();
+                mEventsList.addAll(events);
+
+                queryPotentialSuggestions();
                 // Now we call setRefreshing(false) to signal refresh has finished
+            }
+        });
+    }
+
+    protected void queryPotentialSuggestions() {
+        ParseQuery<Event> query = ParseQuery.getQuery(Event.class);
+        query.whereNotEqualTo("owners", ParseUser.getCurrentUser());
+        query.whereNotEqualTo("users", ParseUser.getCurrentUser());
+        query.whereEqualTo("privacy", "open");
+
+        query.orderByDescending(Event.KEY_CREATED_AT);
+        query.include(Event.KEY_FILES);
+        query.include(Event.KEY_USERS);
+        query.include("subject");
+
+        query.findInBackground(new FindCallback<Event>() {
+            @Override
+            public void done(List<Event> events, ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "Issue getting suggestion events from Parse DB: ", e);
+                    return;
+                }
+                if (events.size() > 0) {
+                    for (Event event : events) {
+                        addSuggestions(event);
+                    }
+                } else {
+                    mEventsAdapter.notifyDataSetChanged();
+                }
                 mSwipeContainer.setRefreshing(false);
                 mProgressBarLoading.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    private void addSuggestions(final Event event) {
+        ParseUser user = ParseUser.getCurrentUser();
+        ParseRelation<Subject> subjectInterests = user.getRelation("subjectInterests");
+
+        ParseObject subject = event.getParseObject("subject");
+
+        ParseQuery<Subject> query = subjectInterests.getQuery();
+        query.whereEqualTo("objectId", subject.getObjectId());
+
+        query.findInBackground(new FindCallback<Subject>() {
+            @Override
+            public void done(List<Subject> subjects, ParseException e) {
+                if(e != null) {
+                    Log.e(TAG, "Error querying for subject interests: ", e);
+                    return;
+                }
+                if(subjects.size() == 0) {
+                    mEventsList.add(event);
+                } else {
+                    mEventsList.add(0, event);
+                }
+                mEventsAdapter.notifyDataSetChanged();
             }
         });
     }

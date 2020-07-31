@@ -23,6 +23,8 @@ public class Event extends ParseObject {
     public static final String KEY_LOCATION_NAME = "locationName";
     public static final String KEY_FILES = "files";
     public static final String KEY_USERS = "users";
+    public static final String KEY_PRIVACY = "privacy";
+    public static final String KEY_SUBJECT = "subject";
 
     public String getTitle() {
         return getString(KEY_TITLE);
@@ -87,4 +89,15 @@ public class Event extends ParseObject {
     public List<ParseUser> getUsers() {
         return (List<ParseUser>) get(KEY_USERS);
     }
+
+    public void setPrivacy(int setting) {
+        if (setting == 0) {
+            put(KEY_PRIVACY, "open");
+        } else {
+            put(KEY_PRIVACY, "closed");
+        }
+    }
+
+    public String getPrivacy() { return getString(KEY_PRIVACY); }
+
 }
