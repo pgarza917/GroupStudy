@@ -36,11 +36,12 @@
         android:layout_below="@+id/descriptionEditText"
         android:layout_alignParentStart="true"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="54dp"
+        android:layout_marginTop="30dp"
         android:background="@android:drawable/screen_background_light_transparent"
         android:scaleX="2.0"
         android:scaleY="2.0"
-        android:src="@drawable/ic_baseline_calendar_today_24" />
+        android:src="@drawable/ic_baseline_calendar_today_24"
+        android:tint="#000" />
 
     <ImageButton
         android:id="@+id/datePickerImageButton"
@@ -49,9 +50,10 @@
         android:layout_below="@+id/descriptionEditText"
         android:layout_alignParentStart="true"
         android:layout_marginStart="210dp"
-        android:layout_marginTop="38dp"
+        android:layout_marginTop="14dp"
         android:background="@android:drawable/screen_background_light_transparent"
-        android:src="@drawable/ic_baseline_access_time_24" />
+        android:src="@drawable/ic_baseline_access_time_24"
+        android:tint="#000" />
 
     <TextView
         android:id="@+id/selectTimeTextView"
@@ -59,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/descriptionEditText"
         android:layout_marginStart="18dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="36dp"
         android:layout_toEndOf="@+id/timePickerImageButton"
         android:text="Select Time"
         android:textSize="18sp" />
@@ -70,7 +72,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/descriptionEditText"
         android:layout_marginStart="6dp"
-        android:layout_marginTop="58dp"
+        android:layout_marginTop="34dp"
         android:layout_toEndOf="@+id/datePickerImageButton"
         android:text="Select Date"
         android:textSize="18sp" />
@@ -95,11 +97,12 @@
         android:layout_below="@+id/timePickerImageButton"
         android:layout_alignParentStart="true"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="50dp"
         android:background="@android:drawable/screen_background_light_transparent"
         android:scaleX="2.0"
         android:scaleY="2.0"
-        android:src="@drawable/ic_baseline_add_location_24" />
+        android:src="@drawable/ic_baseline_add_location_24"
+        android:tint="#000" />
 
     <TextView
         android:id="@+id/selectLocationTextView"
@@ -107,7 +110,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/timePickerImageButton"
         android:layout_marginStart="18dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="50dp"
         android:layout_toEndOf="@+id/locationPickerImageButton"
         android:text="Select Location"
         android:textSize="18sp" />
@@ -116,22 +119,22 @@
         android:id="@+id/addFileImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/locationPickerImageButton"
+        android:layout_below="@+id/textView"
         android:layout_alignParentStart="true"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="32dp"
         android:background="@android:drawable/screen_background_light_transparent"
         android:backgroundTint="#FFFFFF"
         android:src="@drawable/ic_add"
-        android:tint="#626262" />
+        android:tint="#000000" />
 
     <TextView
         android:id="@+id/addFilesTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/locationPickerImageButton"
+        android:layout_below="@+id/textView"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="71dp"
+        android:layout_marginTop="42dp"
         android:layout_toEndOf="@+id/addFileImageButton"
         android:text="Add Files"
         android:textSize="18sp" />
@@ -149,12 +152,13 @@
         android:id="@+id/addUsersToEventImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/locationPickerImageButton"
+        android:layout_below="@+id/textView"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="146dp"
         android:background="@android:drawable/screen_background_light_transparent"
-        android:src="@drawable/ic_baseline_person_add_48" />
+        android:src="@drawable/ic_baseline_person_add_48"
+        android:tint="#000000" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/eventUsersRecyclerView"
@@ -169,21 +173,32 @@
         android:id="@+id/addUsersToEventTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/locationPickerImageButton"
+        android:layout_below="@+id/textView"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="71dp"
+        android:layout_marginTop="42dp"
         android:layout_marginEnd="54dp"
         android:text="Add Users"
         android:textSize="18sp" />
 
     <Spinner
         android:id="@+id/privacySelectSpinner"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/timePickerImageButton"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="50dp" />
+        android:layout_below="@+id/locationPickerImageButton"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="36dp"
+        android:layout_toEndOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/locationPickerImageButton"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="34dp"
+        android:text="Select Privacy: "
+        android:textSize="18sp" />
 
 
 </RelativeLayout>

@@ -152,6 +152,8 @@ public class FileViewFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Files");
+
         Bundle data = getArguments();
 
         List<FileExtended> alreadyAttachedFiles = data.getParcelableArrayList("filesAttached");

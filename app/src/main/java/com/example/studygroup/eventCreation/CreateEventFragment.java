@@ -6,10 +6,12 @@ import android.content.Intent;
 import java.text.SimpleDateFormat;
 
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Parcelable;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -369,6 +372,7 @@ public class CreateEventFragment extends Fragment {
     private void launchDatePicker() {
         Log.i(TAG, "Launching Date Picker Dialog!");
         DialogFragment datePickerFragment = new DatePickerFragment();
+        datePickerFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AlertDialogCustom);
         datePickerFragment.setTargetFragment(CreateEventFragment.this, DATE_PICKER_REQUEST_CODE);
         datePickerFragment.show(((MainActivity)getContext()).getSupportFragmentManager(), "datePicker");
     }

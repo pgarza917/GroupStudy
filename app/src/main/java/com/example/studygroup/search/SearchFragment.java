@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.adapters.EventsAdapter;
 import com.example.studygroup.adapters.UserSearchResultAdapter;
+import com.example.studygroup.eventFeed.FeedFragment;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.profile.ProfileDetailsFragment;
 import com.example.studygroup.profile.ProfileFragment;
@@ -72,6 +74,19 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Search");
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new FeedFragment();
+                ((MainActivity) getContext()).getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.frameLayoutContainer, fragment)
+                        .commit();
+            }
+        });
+
         mSearchCategory = "users";
 
         mEventsResultList = new ArrayList<>();

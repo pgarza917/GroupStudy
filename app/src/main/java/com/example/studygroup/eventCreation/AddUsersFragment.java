@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
+import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.adapters.UserSearchResultAdapter;
 import com.example.studygroup.adapters.UsersAdapter;
@@ -44,9 +45,6 @@ public class AddUsersFragment extends Fragment {
     private List<ParseUser> mSelectedUsers;
     private UserSearchResultAdapter mUsersSearchAdapter;
     private UsersAdapter mSelectedUsersAdapter;
-
-    private RecyclerView mUserSearchResultRecyclerView;
-    private RecyclerView mSelectedUsersRecyclerView;
 
     public AddUsersFragment() {
         // Required empty public constructor
@@ -95,6 +93,8 @@ public class AddUsersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Add Users");
+
         Bundle data = getArguments();
         List<ParseUser> alreadyAddedUsers = data.getParcelableArrayList("eventUsers");
 
@@ -130,11 +130,11 @@ public class AddUsersFragment extends Fragment {
 
 
         SearchView search = view.findViewById(R.id.addUsersSearchView);
-        mUserSearchResultRecyclerView = view.findViewById(R.id.mUserSearchResultsRecyclerView);
+        RecyclerView mUserSearchResultRecyclerView = view.findViewById(R.id.mUserSearchResultsRecyclerView);
         mUserSearchResultRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mUserSearchResultRecyclerView.setAdapter(mUsersSearchAdapter);
 
-        mSelectedUsersRecyclerView = view.findViewById(R.id.selectedUsersRecyclerView);
+        RecyclerView mSelectedUsersRecyclerView = view.findViewById(R.id.selectedUsersRecyclerView);
         mSelectedUsersRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mSelectedUsersRecyclerView.setAdapter(mSelectedUsersAdapter);
 

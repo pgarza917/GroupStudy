@@ -40,7 +40,6 @@ public class FeedFragment extends Fragment {
 
     public static final String TAG = FeedFragment.class.getSimpleName();
 
-    private RecyclerView mEventsRecyclerView;
     protected EventsAdapter mEventsAdapter;
     protected List<Event> mEventsList;
     protected SwipeRefreshLayout mSwipeContainer;
@@ -64,6 +63,7 @@ public class FeedFragment extends Fragment {
 
         mSwipeContainer = view.findViewById(R.id.swipeContainer);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Events");
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -78,7 +78,7 @@ public class FeedFragment extends Fragment {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        mEventsRecyclerView = view.findViewById(R.id.eventsRecyclerView);
+        RecyclerView mEventsRecyclerView = view.findViewById(R.id.eventsRecyclerView);
         mEventsList = new ArrayList<>();
 
         // Recycler View steps:
