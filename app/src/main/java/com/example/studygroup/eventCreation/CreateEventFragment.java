@@ -44,6 +44,7 @@ import com.example.studygroup.eventFeed.FeedFragment;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
 import com.example.studygroup.models.Subject;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
@@ -548,6 +549,9 @@ public class CreateEventFragment extends Fragment {
                             mUsersAdapter.clear();
                             mEventFiles.clear();
                             mFileAdapter.notifyDataSetChanged();
+
+                            BottomNavigationView bottomNavigationView = getActivity().findViewById(R.id.bottom_navigation);
+                            bottomNavigationView.setSelectedItemId(R.id.action_home);
 
                             Fragment fragment = new FeedFragment();
                             ((MainActivity) getContext()).getSupportFragmentManager()

@@ -15,8 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.provider.ContactsContract;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,16 +25,14 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.adapters.UserSearchResultAdapter;
-import com.example.studygroup.adapters.ViewPagerAdapter;
+import com.example.studygroup.adapters.MessagesViewPagerAdapter;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.User;
 import com.google.android.material.tabs.TabLayout;
@@ -100,7 +96,7 @@ public class MessagesFragment extends Fragment {
         mViewPager = view.findViewById(R.id.viewPager);
         mTabLayout = view.findViewById(R.id.tabLayout);
 
-        mViewPager.setAdapter(new ViewPagerAdapter(getActivity()));
+        mViewPager.setAdapter(new MessagesViewPagerAdapter(getActivity()));
         new TabLayoutMediator(mTabLayout, mViewPager,
                 new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
@@ -161,59 +157,6 @@ public class MessagesFragment extends Fragment {
         final View view = ((MainActivity) getContext()).getLayoutInflater().inflate(R.layout.search_user_dialog_layout, null);
         builder.setView(view);
 
-        SearchView searchView = view.findViewById(R.id.searchUserDialogSearchView);
-        RecyclerView searchResultsRecyclerView = view.findViewById(R.id.dialogSearchResultsRecyclerView);
-        RelativeLayout userItemRelativeLayout = view.findViewById(R.id.selectedUserRelativeLayout);
-
-        userItemRelativeLayout.setVisibility(View.GONE);
-
-        mUserSearchResultsList = new ArrayList<>();
-        mUserResultsAdapter = new UserSearchResultAdapter(getContext(), mUserSearchResultsList, new UserSearchResultAdapter.ResultClickListener() {
-            @Override
-            public void onResultClicked(int position) {
-                ParseUser user = mUserSearchResultsList.get(position);
-                userItemRelativeLayout.setVisibility(View.VISIBLE);
-
-                ((TextView) view.findViewById(R.id.selectedUserNameTextView)).setText(user.getString("displayName"));
-                ((TextView) view.findViewById(R.id.selectedUserEmailTextView)).setText(user.getString("openEmail"));
-                ((CheckBox) view.findViewById(R.id.selectedUserCheckBox)).setChecked(true);
-                ((CheckBox) view.findViewById(R.id.selectedUserCheckBox)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        if(!b) {
-                            userItemRelativeLayout.setVisibility(View.GONE);
-                        }
-                    }
-                });
-
-                Glide.with(getContext()).load(user.getParseFile("profileImage").getUrl())
-                        .circleCrop()
-                        .into((ImageView) view.findViewById(R.id.selectedUserPictureImageView));
-            }
-        });
-
-        searchResultsRecyclerView.setAdapter(mUserResultsAdapter);
-        searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(searchResultsRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
-        searchResultsRecyclerView.addItemDecoration(itemDecoration);
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                if(!query.isEmpty()) {
-                    searchUsers(query);
-                }
-
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-
         builder.setNegativeButton("Cancel", null);
         builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
             @Override
@@ -249,6 +192,64 @@ public class MessagesFragment extends Fragment {
 
         Dialog dialog = builder.create();
         dialog.show();
+
+        ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+
+        SearchView searchView = view.findViewById(R.id.searchUserDialogSearchView);
+        RecyclerView searchResultsRecyclerView = view.findViewById(R.id.dialogSearchResultsRecyclerView);
+        RelativeLayout userItemRelativeLayout = view.findViewById(R.id.selectedUserRelativeLayout);
+
+        userItemRelativeLayout.setVisibility(View.GONE);
+
+        mUserSearchResultsList = new ArrayList<>();
+        mUserResultsAdapter = new UserSearchResultAdapter(getContext(), mUserSearchResultsList, new UserSearchResultAdapter.ResultClickListener() {
+            @Override
+            public void onResultClicked(int position) {
+                ParseUser user = mUserSearchResultsList.get(position);
+                userItemRelativeLayout.setVisibility(View.VISIBLE);
+
+                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+
+                ((TextView) view.findViewById(R.id.selectedUserNameTextView)).setText(user.getString("displayName"));
+                ((TextView) view.findViewById(R.id.selectedUserEmailTextView)).setText(user.getString("openEmail"));
+                ((CheckBox) view.findViewById(R.id.selectedUserCheckBox)).setChecked(true);
+                ((CheckBox) view.findViewById(R.id.selectedUserCheckBox)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        if(!b) {
+                            userItemRelativeLayout.setVisibility(View.GONE);
+                            ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                        }
+                    }
+                });
+
+                Glide.with(getContext()).load(user.getParseFile("profileImage").getUrl())
+                        .circleCrop()
+                        .into((ImageView) view.findViewById(R.id.selectedUserPictureImageView));
+            }
+        });
+
+        searchResultsRecyclerView.setAdapter(mUserResultsAdapter);
+        searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(searchResultsRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        searchResultsRecyclerView.addItemDecoration(itemDecoration);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if(!query.isEmpty()) {
+                    searchUsers(query);
+                }
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 
     private void searchUsers(String query) {

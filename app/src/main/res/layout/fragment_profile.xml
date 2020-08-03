@@ -12,9 +12,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/profilePictureImageView"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="36dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -27,9 +26,11 @@
         android:layout_below="@+id/emailTextView"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="36dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="18dp"
-        android:layout_marginEnd="36dp"
+        android:layout_marginEnd="32dp"
+        android:textAlignment="center"
         tools:text="I am currently a rising junior at Yale University. I really like physics and computer science." />
 
     <ImageView
@@ -45,6 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/profileNameTextView"
+        android:layout_centerHorizontal="true"
         android:layout_marginStart="36dp"
         android:layout_marginTop="18dp"
         tools:text="pgarzamw3@gmail.com" />
@@ -65,18 +67,29 @@
         android:id="@+id/userEventsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/yourEventsTextView"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp" />
+        android:layout_below="@+id/profileDividerImageView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="-1dp"
+        android:layout_marginTop="0dp" />
 
     <ProgressBar
         android:id="@+id/userEventsProgressBar"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/yourEventsTextView"
+        android:layout_below="@+id/profileDividerImageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="16dp" />
+
+    <ImageView
+        android:id="@+id/profileDividerImageView"
+        android:layout_width="420dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/yourEventsTextView"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="#6A6A6A"
+        android:src="?attr/dividerHorizontal" />
 
 </RelativeLayout>

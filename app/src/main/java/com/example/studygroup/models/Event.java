@@ -25,6 +25,7 @@ public class Event extends ParseObject {
     public static final String KEY_USERS = "users";
     public static final String KEY_PRIVACY = "privacy";
     public static final String KEY_SUBJECT = "subject";
+    public boolean suggestion = false;
 
     public String getTitle() {
         return getString(KEY_TITLE);
@@ -99,5 +100,13 @@ public class Event extends ParseObject {
     }
 
     public String getPrivacy() { return getString(KEY_PRIVACY); }
+
+    public void setSuggestion(boolean state) {
+        suggestion = state;
+    }
+
+    public boolean getSuggestion() {
+        return suggestion;
+    }
 
 }

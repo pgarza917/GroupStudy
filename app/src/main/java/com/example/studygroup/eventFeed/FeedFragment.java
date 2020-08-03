@@ -72,11 +72,6 @@ public class FeedFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Transition textTransition = TransitionInflater.from(getContext()).inflateTransition(R.transition.text_shared_element_transition);
-
-        //setExitTransition(new Fade());
-        //setSharedElementEnterTransition(textTransition);
-
         mSwipeContainer = view.findViewById(R.id.swipeContainer);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Events");
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -207,6 +202,7 @@ public class FeedFragment extends Fragment {
                     Log.e(TAG, "Error querying for subject interests: ", e);
                     return;
                 }
+                event.setSuggestion(true);
                 if(subjects.size() == 0) {
                     mEventsList.add(event);
                 } else {

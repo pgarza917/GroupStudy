@@ -27,6 +27,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -84,10 +85,11 @@ public class EditProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mEditProfilePictureImageButton = view.findViewById(R.id.editProfilePictureImageButton);
-        mEditPictureIndicatorImageView = view.findViewById(R.id.editPictureIndicatorImageView);
         mDisplayNameEditText = view.findViewById(R.id.editDisplayNameEditText);
         mPasswordEditText = view.findViewById(R.id.editPasswordEditText);
         mBioEditText = view.findViewById(R.id.editBioEditText);
+
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         ParseFile profilePictureFile = ParseUser.getCurrentUser().getParseFile("profileImage");
 

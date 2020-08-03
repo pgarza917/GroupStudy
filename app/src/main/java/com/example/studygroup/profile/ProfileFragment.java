@@ -161,7 +161,7 @@ public class ProfileFragment extends Fragment {
         queries.add(usersQuery);
 
         ParseQuery<Event> mainQuery = ParseQuery.or(queries);
-        mainQuery.orderByDescending(Event.KEY_CREATED_AT);
+        mainQuery.orderByDescending(Event.KEY_TIME);
         mainQuery.include(Event.KEY_FILES);
 
         mainQuery.findInBackground(new FindCallback<Event>() {

@@ -148,19 +148,10 @@ public class EventDetailsFragment extends Fragment {
 
         mEvent = Parcels.unwrap(getArguments().getParcelable(Event.class.getSimpleName()));
         Log.i(TAG, "Received Bundled Event Data!");
-        int position = getArguments().getInt("position");
-
-        String titleTransitionName = getArguments().getString("title" + position);
-        String descriptionTransitionName = getArguments().getString("description" + position);
-        String locationTransitionName = getArguments().getString("locationName" + position);
 
         mTitleTextView.setText(mEvent.getTitle());
         mLocationTextView.setText(mEvent.getLocationName());
         mDescriptionTextView.setText(mEvent.getDescription());
-
-        mTitleTextView.setTransitionName(titleTransitionName);
-        mDescriptionTextView.setTransitionName(descriptionTransitionName);
-        mLocationTextView.setTransitionName(locationTransitionName);
 
         startPostponedEnterTransition();
 

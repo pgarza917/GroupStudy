@@ -21,6 +21,7 @@ import androidx.transition.TransitionInflater;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.eventFeed.EventDetailsFragment;
+import com.example.studygroup.eventFeed.EventDetailsRootFragment;
 import com.example.studygroup.models.Event;
 
 import org.parceler.Parcels;
@@ -115,29 +116,17 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
             if(position != RecyclerView.NO_POSITION) {
 
-                View sharedTitle = view.findViewById(R.id.titleTextView);
-                View sharedDescription = view.findViewById(R.id.descriptionTextView);
-                View sharedLocation = view.findViewById(R.id.locationTextView);
-                sharedTitle.setTransitionName("title" + position);
-                sharedDescription.setTransitionName("description" + position);
-                sharedLocation.setTransitionName("location" + position);
-
-                Fragment fragment = new EventDetailsFragment();
+                Fragment fragment = new EventDetailsRootFragment();
 
                 Bundle data = new Bundle();
                 data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(event));
                 data.putInt("position", position);
                 fragment.setArguments(data);
 
-                Transition textTransition = TransitionInflater.from(mContext).inflateTransition(R.transition.text_shared_element_transition);
-                //fragment.setSharedElementEnterTransition(textTransition);
 
                 ((MainActivity) mContext).getSupportFragmentManager()
                         .beginTransaction()
                         .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                        //.addSharedElement(sharedTitle, sharedTitle.getTransitionName())
-                        //.addSharedElement(sharedDescription, sharedDescription.getTransitionName())
-                        //.addSharedElement(sharedLocation, sharedLocation.getTransitionName())
                         .replace(R.id.frameLayoutContainer, fragment)
                         .addToBackStack(null)
                         .commit();

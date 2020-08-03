@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardCornerRadius="8dp"
@@ -11,8 +12,7 @@
     android:foreground="?android:attr/selectableItemBackground"
     android:focusable="true">
 
-    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
@@ -52,7 +52,8 @@
             android:layout_marginTop="4dp"
             android:layout_toEndOf="@+id/descriptionTextView"
             android:background="@android:drawable/screen_background_light_transparent"
-            app:srcCompat="@drawable/ic_baseline_share_24" />
+            android:tint="#000"
+            card_view:srcCompat="@drawable/ic_baseline_share_24" />
 
         <ImageButton
             android:id="@+id/locationPickerImageButton"
@@ -63,7 +64,8 @@
             android:layout_marginStart="12dp"
             android:layout_marginTop="16dp"
             android:background="@android:drawable/screen_background_light_transparent"
-            app:srcCompat="@drawable/ic_baseline_location_on_24" />
+            android:tint="#EC0505"
+            card_view:srcCompat="@drawable/ic_baseline_location_on_24" />
 
         <TextView
             android:id="@+id/locationTextView"
@@ -85,7 +87,8 @@
             android:layout_marginStart="190dp"
             android:layout_marginTop="16dp"
             android:background="@android:drawable/screen_background_light_transparent"
-            app:srcCompat="@drawable/ic_baseline_calendar_today_24" />
+            android:tint="#64DD17"
+            card_view:srcCompat="@drawable/ic_baseline_calendar_today_24" />
 
         <TextView
             android:id="@+id/timeTextView"
