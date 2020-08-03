@@ -40,6 +40,7 @@ import com.example.studygroup.R;
 import com.example.studygroup.adapters.FileViewAdapter;
 import com.example.studygroup.adapters.UsersAdapter;
 import com.example.studygroup.eventFeed.EventDetailsFragment;
+import com.example.studygroup.eventFeed.FeedFragment;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
 import com.example.studygroup.models.Subject;
@@ -545,6 +546,14 @@ public class CreateEventFragment extends Fragment {
                             mSelectedTimeTextView.setText("");
                             mSelectedDateTextView.setText("");
                             mUsersAdapter.clear();
+                            mEventFiles.clear();
+                            mFileAdapter.notifyDataSetChanged();
+
+                            Fragment fragment = new FeedFragment();
+                            ((MainActivity) getContext()).getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.frameLayoutContainer, fragment)
+                                    .commit();
                         }
                     });
                 }
