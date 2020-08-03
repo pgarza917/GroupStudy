@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardCornerRadius="8dp"
-    card_view:cardElevation="8dp"
-    android:layout_marginTop="12dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
     android:clickable="true"
+    android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    android:focusable="true">
+    card_view:cardCornerRadius="8dp"
+    card_view:cardElevation="8dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -38,9 +38,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/titleTextView"
             android:layout_alignParentStart="true"
-            android:maxLines="3"
             android:layout_marginStart="12dp"
             android:layout_marginTop="5dp"
+            android:maxLines="3"
             tools:text="This review session will cover the material that will appear on the final exam for the Math 120 Multivariable course. We will be going over Greene's and Stoke's Theorem in detail as many student had trouble with these theorems and their applications." />
 
         <ImageButton
@@ -73,9 +73,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/descriptionTextView"
             android:layout_marginStart="4dp"
-            android:maxLines="2"
             android:layout_marginTop="18dp"
             android:layout_toEndOf="@+id/locationPickerImageButton"
+            android:maxLines="2"
             tools:text="Hillhouse 117" />
 
         <ImageButton
@@ -99,5 +99,18 @@
             android:layout_marginTop="18dp"
             android:layout_toEndOf="@+id/timeImageButton"
             tools:text="Sept. 17, 2020" />
+
+        <TextView
+            android:id="@+id/suggestionTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:text="Suggested"
+            android:textColor="#039BE5"
+            android:textSize="12sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

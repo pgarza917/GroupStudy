@@ -78,6 +78,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         private TextView mLocationTextView;
         private ImageButton mTimeImageButton;
         private TextView mTimeTextView;
+        private TextView mSuggestedTextView;
 
         public ViewHolder(@NonNull View itemView){
             super(itemView);
@@ -89,6 +90,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             mLocationTextView = itemView.findViewById(R.id.locationTextView);
             mTimeImageButton = itemView.findViewById(R.id.timeImageButton);
             mTimeTextView = itemView.findViewById(R.id.timeTextView);
+            mSuggestedTextView = itemView.findViewById(R.id.suggestionTextView);
+
 
             itemView.setOnClickListener(this);
         }
@@ -96,6 +99,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         // Method to help bind the data retrieved and stored in an Event object to the views in
         // each item in the Recycler View
         public void bind(Event event) {
+            if(event.getSuggestion()) {
+                mSuggestedTextView.setVisibility(View.VISIBLE);
+            } else {
+                mSuggestedTextView.setVisibility(View.GONE);
+            }
 
             mTitleTextView.setText(event.getTitle());
             mDescriptionTextView.setText(event.getDescription());
@@ -106,7 +114,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             mTimeTextView.setText(strEventDate);
 
             mLocationTextView.setText(event.getLocationName());
-
         }
 
         @Override

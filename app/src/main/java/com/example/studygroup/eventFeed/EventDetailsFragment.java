@@ -46,7 +46,6 @@ public class EventDetailsFragment extends Fragment {
 
     public static final String TAG = EventDetailsFragment.class.getSimpleName();
 
-    private TextView mTitleTextView;
     private TextView mDateTextView;
     private TextView mTimeTextView;
     private TextView mLocationTextView;
@@ -54,7 +53,6 @@ public class EventDetailsFragment extends Fragment {
     private ImageButton mDateImageButton;
     private ImageButton mTimeImageButton;
     private ImageButton mLocationImageButton;
-    private RecyclerView mEventFilesRecyclerView;
     private Menu mOptionsMenu;
 
     private Event mEvent;
@@ -120,7 +118,6 @@ public class EventDetailsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("");
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
@@ -136,7 +133,6 @@ public class EventDetailsFragment extends Fragment {
             }
         });
 
-        mTitleTextView = view.findViewById(R.id.eventTitleTextView);
         mDateTextView = view.findViewById(R.id.detailsDateTextView);
         mTimeTextView = view.findViewById(R.id.detailsTimeTextView);
         mLocationTextView = view.findViewById(R.id.detailsLocationTextView);
@@ -144,12 +140,10 @@ public class EventDetailsFragment extends Fragment {
         mDateImageButton = view.findViewById(R.id.detailsCalendarImageButton);
         mTimeImageButton = view.findViewById(R.id.detailsTimeImageButton);
         mLocationImageButton = view.findViewById(R.id.detailsLocationImageButton);
-        mEventFilesRecyclerView = view.findViewById(R.id.detailsFilesRecyclerView);
 
         mEvent = Parcels.unwrap(getArguments().getParcelable(Event.class.getSimpleName()));
         Log.i(TAG, "Received Bundled Event Data!");
 
-        mTitleTextView.setText(mEvent.getTitle());
         mLocationTextView.setText(mEvent.getLocationName());
         mDescriptionTextView.setText(mEvent.getDescription());
 
@@ -166,11 +160,6 @@ public class EventDetailsFragment extends Fragment {
         }
 
         mFileViewAdapter = new FileViewAdapter(getContext(), mEventFiles);
-        mEventFilesRecyclerView.setAdapter(mFileViewAdapter);
-        mEventFilesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        DividerItemDecoration itemDecor = new DividerItemDecoration(mEventFilesRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
-        mEventFilesRecyclerView.addItemDecoration(itemDecor);
 
         Log.i(TAG, "onViewCreated: Successful event details load");
     }

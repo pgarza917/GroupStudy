@@ -8,106 +8,137 @@
     android:backgroundTint="#FFFFFF"
     tools:context=".eventFeed.EventDetailsFragment">
 
-
-    <TextView
-        android:id="@+id/eventTitleTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="32dp"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        tools:text="Physics Review Session" />
-
-    <ImageButton
-        android:id="@+id/detailsCalendarImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/eventTitleTextView"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="40dp"
-        android:backgroundTint="@color/quantum_white_100"
-        android:src="@drawable/ic_baseline_calendar_today_24" />
-
-    <TextView
-        android:id="@+id/detailsDateTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/eventTitleTextView"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="52dp"
-        android:layout_toEndOf="@+id/detailsCalendarImageButton"
-        android:text="2 Oct 2019"
-        android:textSize="18sp" />
-
-    <ImageButton
-        android:id="@+id/detailsTimeImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/eventTitleTextView"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="190dp"
-        android:layout_marginTop="40dp"
-        android:backgroundTint="#FFFFFF"
-        android:src="@drawable/ic_baseline_access_time_small" />
-
-    <TextView
-        android:id="@+id/detailsTimeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/eventTitleTextView"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="52dp"
-        android:layout_toEndOf="@+id/detailsTimeImageButton"
-        android:textSize="18sp"
-        tools:text="3:00 PM" />
-
-    <TextView
-        android:id="@+id/detailsDescriptionTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/detailsCalendarImageButton"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="36dp"
-        android:textSize="18sp"
-        tools:text="In this review session, we will be covering Hermitian Operators and their applications. This is meant to help with the upcoming midterm." />
-
-    <ImageButton
-        android:id="@+id/detailsLocationImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/detailsDescriptionTextView"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="26dp"
-        android:layout_marginTop="56dp"
-        android:backgroundTint="@color/quantum_white_100"
-        android:src="@drawable/ic_baseline_location_on_24" />
-
-    <TextView
-        android:id="@+id/detailsLocationTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/detailsDescriptionTextView"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="66dp"
-        android:layout_toEndOf="@+id/detailsLocationImageButton"
-        android:textSize="18sp"
-        tools:text="Sterling Memorial Library" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/detailsFilesRecyclerView"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/logisticsCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/detailsLocationImageButton"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="44dp"
-        android:layout_marginEnd="16dp" />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
+        android:layout_below="@+id/descriptionCardView"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="8dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/detailsCalendarImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="@color/quantum_white_100"
+                android:src="@drawable/ic_baseline_calendar_today_24"
+                android:tint="#64DD17" />
+
+            <TextView
+                android:id="@+id/detailsDateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="22dp"
+                android:layout_toEndOf="@+id/detailsCalendarImageButton"
+                android:text="2 Oct 2019"
+                android:textSize="18sp" />
+
+            <ImageButton
+                android:id="@+id/detailsLocationImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/detailsCalendarImageButton"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="12dp"
+                android:backgroundTint="@color/quantum_white_100"
+                android:src="@drawable/ic_baseline_location_on_24"
+                android:tint="@color/red" />
+
+            <TextView
+                android:id="@+id/detailsLocationTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/detailsCalendarImageButton"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="12dp"
+                android:layout_toEndOf="@+id/detailsLocationImageButton"
+                android:textSize="18sp"
+                tools:text="Sterling Memorial Library" />
+
+            <ImageButton
+                android:id="@+id/detailsTimeImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="4dp"
+                android:layout_toStartOf="@+id/detailsTimeTextView"
+                android:backgroundTint="#FFFFFF"
+                android:src="@drawable/ic_baseline_access_time_small"
+                android:tint="#000" />
+
+            <TextView
+                android:id="@+id/detailsTimeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="22dp"
+                android:layout_marginEnd="80dp"
+                android:textSize="18sp"
+                tools:text="3:00 PM" />
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/descriptionCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="8dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/descriptionStringTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:text="Description:"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/detailsDescriptionTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/descriptionStringTextView"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="28dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="28dp"
+                android:layout_marginBottom="10dp"
+                android:textSize="18sp"
+                tools:text="In this review session, we will be covering Hermitian Operators and their applications. This is meant to help with the upcoming midterm." />
+
+        </RelativeLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
 
 </RelativeLayout>
