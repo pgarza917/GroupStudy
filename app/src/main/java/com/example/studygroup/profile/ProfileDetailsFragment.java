@@ -15,7 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
+import com.example.studygroup.eventFeed.FeedFragment;
+import com.example.studygroup.search.SearchFragment;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
@@ -47,6 +50,19 @@ public class ProfileDetailsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new SearchFragment();
+                ((MainActivity) getContext()).getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.frameLayoutContainer, fragment)
+                        .commit();
+            }
+        });
+
 
 
         mUser = Parcels.unwrap(getArguments().getParcelable(ParseUser.class.getSimpleName()));

@@ -106,8 +106,7 @@ public class SearchFragment extends Fragment {
                 ((MainActivity) getContext()).getSupportFragmentManager()
                         .beginTransaction()
                         .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                        .add(R.id.frameLayoutContainer, fragment)
-                        .addToBackStack(null)
+                        .replace(R.id.frameLayoutContainer, fragment)
                         .commit();
             }
         });

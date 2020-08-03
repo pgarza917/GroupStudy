@@ -1,5 +1,6 @@
 package com.example.studygroup.eventCreation;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -7,6 +8,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +17,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -217,7 +220,13 @@ public class FileViewFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Log.i(TAG, "Launching camera activity");
-                onLaunchCamera(view);
+                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                            != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA}, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                    onLaunchCamera(view);
+                } else {
+                    onLaunchCamera(view);
+                }
             }
         });
 
@@ -237,6 +246,19 @@ public class FileViewFragment extends Fragment {
                 }
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.i(TAG, "Camera Permission Granted");
+            } else {
+                Log.i(TAG, "Camera Permission Denied");
+            }
+        }
     }
 
     private void gsuiteConfigureCreateDialog() {
