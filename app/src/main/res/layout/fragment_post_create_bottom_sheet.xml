@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFF"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    tools:context=".eventFeed.PostCreateBottomSheetFragment">
+
+    <EditText
+        android:id="@+id/postCreateContentEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/createPostStringTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:hint="What's on your mind?"
+        android:maxLines="4" />
+
+    <CheckBox
+        android:id="@+id/notifyUsersCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/postCreateContentEditText"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="Would you like to notify event users?" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/postAddedFilesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/notifyUsersCheckBox"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:layout_toEndOf="@+id/postAddFilesImageButton" />
+
+    <ImageButton
+        android:id="@+id/postAddFilesImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/notifyUsersCheckBox"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:src="@drawable/ic_add" />
+
+    <TextView
+        android:id="@+id/createPostStringTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Create Post"
+        android:textColor="#000"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+
+</RelativeLayout>

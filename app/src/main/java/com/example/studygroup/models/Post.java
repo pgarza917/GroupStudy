@@ -15,6 +15,7 @@ public class Post extends ParseObject {
     public static final String KEY_FILES = "files";
     public static final String KEY_CREATOR = "creator";
     public static final String KEY_EDITED = "editedEvent";
+    public static final String KEY_EVENT = "event";
 
     public String getText() {
         return getString(KEY_TEXT);
@@ -46,5 +47,13 @@ public class Post extends ParseObject {
 
     public void setEdited(boolean edited) {
         put(KEY_EDITED, edited);
+    }
+
+    public Event getEvent() {
+        return (Event) getParseObject(KEY_EVENT);
+    }
+
+    public void setEvent(Event event) {
+        put(KEY_EVENT, event);
     }
 }
