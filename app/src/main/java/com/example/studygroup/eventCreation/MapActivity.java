@@ -66,7 +66,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mConfirmSelectionButton = findViewById(R.id.confirmSelectionButton);
 
         if(!Places.isInitialized()) {
-            Places.initialize(this, getString(R.string.api_key_google));
+            Places.initialize(this, getString(R.string.google_api_key));
         }
         mPlacesClient = Places.createClient(this);
 

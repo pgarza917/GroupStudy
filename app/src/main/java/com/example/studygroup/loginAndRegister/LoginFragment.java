@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.studygroup.BuildConfig;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -42,6 +43,7 @@ public class LoginFragment extends Fragment {
 
     public static final String TAG = LoginFragment.class.getSimpleName();
     public static final int GOOGLE_SIGN_IN_REQUEST_CODE = 5456;
+    public static final String OAUTH_CLIENT_ID = BuildConfig.CONSUMER_KEY;
 
     private GoogleSignInClient mGoogleSignInClient;
 
@@ -69,7 +71,7 @@ public class LoginFragment extends Fragment {
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.oauth2_0clientid))
+                .requestIdToken(OAUTH_CLIENT_ID)
                 .requestEmail()
                 .build();
 
