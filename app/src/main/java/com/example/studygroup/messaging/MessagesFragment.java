@@ -32,7 +32,6 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
-import com.applozic.mobicomkit.Applozic;
 import com.bumptech.glide.Glide;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;

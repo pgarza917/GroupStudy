@@ -50,32 +50,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="com.applozic.mobicomkit.uiwidgets.conversation.activity.ConversationActivity"
-            android:configChanges="keyboardHidden|screenSize|smallestScreenSize|screenLayout|orientation"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme"
-            tools:node="replace">
-            <!-- Parent activity meta-data to support API level 7+ -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-
-        <meta-data
-            android:name="com.applozic.mobicomkit.notification.smallIcon"
-            android:resource="@mipmap/ic_launcher" /> <!-- Replace this with a valid resource name for Launcher white Icon -->
-
-        <meta-data
-            android:name="main_folder_name"
-            android:value=""
-            tools:node="replace" />
-
-        <meta-data android:name="com.applozic.application.key"
-            android:value="@string/applozic_app_id" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.codepath.fileprovider.studygroup"
