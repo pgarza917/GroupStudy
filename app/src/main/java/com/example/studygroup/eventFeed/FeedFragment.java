@@ -54,7 +54,7 @@ public class FeedFragment extends Fragment {
     protected SwipeRefreshLayout mSwipeContainer;
     private ProgressBar mProgressBarLoading;
 
-    int lastPosition;
+    int lastPosition = 0;
 
     public FeedFragment() {
         // Required empty public constructor
@@ -203,10 +203,11 @@ public class FeedFragment extends Fragment {
                     return;
                 }
                 event.setSuggestion(true);
+                lastPosition = ThreadLocalRandom.current().nextInt(lastPosition, mEventsList.size() - 1);
                 if(subjects.size() == 0) {
                     mEventsList.add(event);
                 } else {
-                    mEventsList.add(0, event);
+                    mEventsList.add(lastPosition, event);
                 }
                 mEventsAdapter.notifyDataSetChanged();
             }
