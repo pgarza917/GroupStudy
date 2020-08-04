@@ -306,9 +306,14 @@ public class CreateEventFragment extends Fragment {
                 setDateTime(eventToEdit);
                 mSelectedLocationTextView.setText(eventToEdit.getLocationName());
 
-                mEventFiles.addAll((Collection<? extends FileExtended>) eventToEdit.getFiles().get(0));
+                List<FileExtended> files = eventToEdit.getFiles();
+                if(files != null) {
+                    mEventFiles.addAll(files);
+                }
                 List<ParseUser> users = eventToEdit.getUsers();
-                mUsersAdapter.addAll(users);
+                if(users != null) {
+                    mUsersAdapter.addAll(users);
+                }
             }
         }
 
@@ -604,12 +609,12 @@ public class CreateEventFragment extends Fragment {
         }
         if(files != null) {
             for(int i = 0; i < files.size(); i++) {
-                eventToEdit.put("files", files.get(i));
+                eventToEdit.addUnique("files", files.get(i));
             }
         }
         if(users != null) {
             for(int i = 0; i < users.size(); i++) {
-                eventToEdit.put("users", users.get(i));
+                eventToEdit.addUnique("users", users.get(i));
             }
         }
         if(privacySetting != null) {
