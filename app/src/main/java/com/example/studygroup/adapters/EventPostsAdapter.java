@@ -24,10 +24,12 @@ public class EventPostsAdapter extends RecyclerView.Adapter<EventPostsAdapter.Vi
 
     private List<Post> mPosts;
     private Context mContext;
+    private Event mEvent;
 
-    public EventPostsAdapter(List<Post> mPosts, Context mContext) {
+    public EventPostsAdapter(List<Post> mPosts, Context mContext, Event event) {
         this.mPosts = mPosts;
         this.mContext = mContext;
+        this.mEvent = event;
     }
 
     @NonNull
@@ -89,7 +91,7 @@ public class EventPostsAdapter extends RecyclerView.Adapter<EventPostsAdapter.Vi
         public void bind(Post post) {
             mUsernameTextView.setText(post.getCreator().getString("displayName"));
             mContentTextView.setText(post.getText());
-            mDateTextView.setText(getDateText(post.getEvent()));
+            mDateTextView.setText(getDateText(post.getCreatedAt().toString()));
 
             if(post.getEdited()) {
                 mEditedEventTextView.setVisibility(View.VISIBLE);
@@ -98,15 +100,14 @@ public class EventPostsAdapter extends RecyclerView.Adapter<EventPostsAdapter.Vi
             }
 
             List<FileExtended> filesToAdd = post.getFiles();
-            if(filesToAdd.size() > 0) {
+            if(filesToAdd != null && filesToAdd.size() > 0) {
                 mFilesList.addAll(filesToAdd);
                 mFilesAdapter.notifyDataSetChanged();
             }
         }
     }
 
-    public String getDateText(Event event) {
-        String timeStamp = event.getTime().toString();
+    public String getDateText(String timeStamp) {
         StringTokenizer tokenizer = new StringTokenizer(timeStamp);
 
         String weekday = tokenizer.nextToken();

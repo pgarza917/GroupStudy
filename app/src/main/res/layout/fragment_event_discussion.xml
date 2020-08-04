@@ -27,4 +27,14 @@
         android:clickable="true"
         android:src="@drawable/ic_baseline_add_120" />
 
+    <ProgressBar
+        android:id="@+id/discussionPostsProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:visibility="invisible"/>
+
 </RelativeLayout>

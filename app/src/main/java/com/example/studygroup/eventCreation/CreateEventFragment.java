@@ -40,6 +40,7 @@ import com.example.studygroup.R;
 import com.example.studygroup.adapters.FileViewAdapter;
 import com.example.studygroup.adapters.UsersAdapter;
 import com.example.studygroup.eventFeed.EventDetailsFragment;
+import com.example.studygroup.eventFeed.EventDetailsRootFragment;
 import com.example.studygroup.eventFeed.FeedFragment;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
@@ -304,11 +305,10 @@ public class CreateEventFragment extends Fragment {
                 mDescriptionEditText.setText(eventToEdit.getDescription());
                 setDateTime(eventToEdit);
                 mSelectedLocationTextView.setText(eventToEdit.getLocationName());
-                /*
+
                 mEventFiles.addAll((Collection<? extends FileExtended>) eventToEdit.getFiles().get(0));
                 List<ParseUser> users = eventToEdit.getUsers();
                 mUsersAdapter.addAll(users);
-                 */
             }
         }
 
@@ -514,7 +514,6 @@ public class CreateEventFragment extends Fragment {
         event.setLocation(location);
         event.setLocationName(locationName);
         event.addUnique(Event.KEY_OWNERS, user);
-        event.addUnique(Event.KEY_FILES, files);
         event.setPrivacy(privacySetting[0]);
 
         for(int i = 0; i < users.size(); i++) {
@@ -626,7 +625,7 @@ public class CreateEventFragment extends Fragment {
             public void done(com.parse.ParseException e) {
                 Toast.makeText(getContext(), "Saved Edits Successfully!", Toast.LENGTH_SHORT).show();
 
-                Fragment fragment = new EventDetailsFragment();
+                Fragment fragment = new EventDetailsRootFragment();
                 Bundle data = new Bundle();
                 data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(eventToEdit));
                 fragment.setArguments(data);

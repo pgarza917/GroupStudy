@@ -255,6 +255,70 @@ public class FileViewFragment extends Fragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        if(requestCode == FILE_PICKER_REQUEST_CODE) {
+            // Retrieves the URI of the file the user has picked
+            Uri uri = data.getData();
+            ContentResolver contentResolver = getContext().getContentResolver();
+
+            String filename = queryName(contentResolver, uri);
+            File fileToUpload = createTempFile(filename, getContext());
+            fileToUpload = saveContentToFile(uri, fileToUpload, contentResolver);
+
+            Date lastModDate = new Date(fileToUpload.lastModified());
+
+            ParseFile parseFile = new ParseFile(fileToUpload, filename);
+            long fileSize = fileToUpload.length();
+            FileExtended file = new FileExtended();
+
+            // Sets the necessary fields of the FileExtended object so that it can be uploaded
+            // to the Parse DB
+            file.setFile(parseFile);
+            file.setFileName(filename);
+            file.setFileSize(fileSize);
+            file.setLastModified(lastModDate);
+
+            // Adds the new attached file to the Recycler View so the user knows the file is now
+            // attached to their event for upload
+            mFilesList.add(0, file);
+            mFileViewAdapter.notifyItemInserted(0);
+        }
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            // by this point we have the camera photo on disk
+            Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+
+            String filename = photoFile.getName();
+            ParseFile fileData = new ParseFile(photoFile, filename);
+            FileExtended fileToUpload = new FileExtended();
+
+            // Sets the necessary fields of the FileExtended object so that it can be uploaded
+            // to the Parse DB
+            fileToUpload.setFileName(filename);
+            fileToUpload.setFile(fileData);
+            fileToUpload.setFileSize(photoFile.length());
+
+            // Adds the new attached file to the Recycler View so the user knows the file is now
+            // attached to their event for upload
+            mFilesList.add(0, fileToUpload);
+            mFileViewAdapter.notifyItemInserted(0);
+        }
+        if(requestCode == RC_REQUEST_PERMISSION_SUCCESS_CONTINUE_FILE_CREATION) {
+            gsuiteConfigureCreateDialog();
+        }
+        if(requestCode == ADD_USERS_REQUEST_CODE) {
+            mFileDialog.show();
+            List<ParseUser> newUsers = data.getParcelableArrayListExtra("eventUsers");
+            mUsersAdapter.clear();
+            mUsersAdapter.addAll(newUsers);
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
@@ -334,70 +398,6 @@ public class FileViewFragment extends Fragment {
             }
         });
 
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(resultCode != Activity.RESULT_OK) {
-            return;
-        }
-        if(requestCode == FILE_PICKER_REQUEST_CODE) {
-            // Retrieves the URI of the file the user has picked
-            Uri uri = data.getData();
-            ContentResolver contentResolver = getContext().getContentResolver();
-
-            String filename = queryName(contentResolver, uri);
-            File fileToUpload = createTempFile(filename, getContext());
-            fileToUpload = saveContentToFile(uri, fileToUpload, contentResolver);
-
-            Date lastModDate = new Date(fileToUpload.lastModified());
-
-            ParseFile parseFile = new ParseFile(fileToUpload, filename);
-            long fileSize = fileToUpload.length();
-            FileExtended file = new FileExtended();
-
-            // Sets the necessary fields of the FileExtended object so that it can be uploaded
-            // to the Parse DB
-            file.setFile(parseFile);
-            file.setFileName(filename);
-            file.setFileSize(fileSize);
-            file.setLastModified(lastModDate);
-
-            // Adds the new attached file to the Recycler View so the user knows the file is now
-            // attached to their event for upload
-            mFilesList.add(0, file);
-            mFileViewAdapter.notifyItemInserted(0);
-        }
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            // by this point we have the camera photo on disk
-            Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-
-            String filename = photoFile.getName();
-            ParseFile fileData = new ParseFile(photoFile, filename);
-            FileExtended fileToUpload = new FileExtended();
-
-            // Sets the necessary fields of the FileExtended object so that it can be uploaded
-            // to the Parse DB
-            fileToUpload.setFileName(filename);
-            fileToUpload.setFile(fileData);
-            fileToUpload.setFileSize(photoFile.length());
-
-            // Adds the new attached file to the Recycler View so the user knows the file is now
-            // attached to their event for upload
-            mFilesList.add(0, fileToUpload);
-            mFileViewAdapter.notifyItemInserted(0);
-        }
-        if(requestCode == RC_REQUEST_PERMISSION_SUCCESS_CONTINUE_FILE_CREATION) {
-            gsuiteConfigureCreateDialog();
-        }
-        if(requestCode == ADD_USERS_REQUEST_CODE) {
-            mFileDialog.show();
-            List<ParseUser> newUsers = data.getParcelableArrayListExtra("eventUsers");
-            mUsersAdapter.clear();
-            mUsersAdapter.addAll(newUsers);
-        }
     }
 
     // This method helps in determining the filename from a content URI using a content resolver

@@ -22,6 +22,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +57,7 @@ public class EventDiscussionFragment extends Fragment {
 
     private FloatingActionButton mCreatePostButton;
     private RecyclerView mPostsRecyclerView;
+    private ProgressBar mProgressBar;
 
     private List<Post> mPostsList;
     private EventPostsAdapter mPostsAdapter;
@@ -79,15 +81,16 @@ public class EventDiscussionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mEvent = Parcels.unwrap(getArguments().getParcelable(Event.class.getSimpleName()));
+
         mCreatePostButton = view.findViewById(R.id.createPostFloatingActionButton);
         mPostsRecyclerView = view.findViewById(R.id.discussionRecyclerView);
+        mProgressBar = view.findViewById(R.id.discussionPostsProgressBar);
 
         mPostsList = new ArrayList<>();
-        mPostsAdapter = new EventPostsAdapter(mPostsList, getContext());
+        mPostsAdapter = new EventPostsAdapter(mPostsList, getContext(), mEvent);
         mPostsRecyclerView.setAdapter(mPostsAdapter);
         mPostsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        mEvent = Parcels.unwrap(getArguments().getParcelable(Event.class.getSimpleName()));
 
         mCreatePostButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,9 +177,13 @@ public class EventDiscussionFragment extends Fragment {
     }
 
     private void queryEventPosts() {
+        mProgressBar.setVisibility(View.VISIBLE);
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.whereEqualTo("event", mEvent.getObjectId());
+        query.whereEqualTo("event", mEvent);
         query.orderByDescending(Event.KEY_CREATED_AT);
+
+        query.include("creator");
+        query.include("files");
 
         query.findInBackground(new FindCallback<Post>() {
             @Override
@@ -185,7 +192,9 @@ public class EventDiscussionFragment extends Fragment {
                     Log.e(TAG, "Error querying event posts: ", e);
                     return;
                 }
+                mPostsAdapter.clear();
                 mPostsAdapter.addAll(posts);
+                mProgressBar.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -193,7 +202,9 @@ public class EventDiscussionFragment extends Fragment {
     private void saveNewFiles(List<FileExtended> mPostFilesList) {
         for(FileExtended file : mPostFilesList) {
             file.saveInBackground();
+            mEvent.addUnique("files", file);
         }
+        mEvent.saveInBackground();
     }
 
     private void launchFileSelect() {
@@ -240,6 +251,7 @@ public class EventDiscussionFragment extends Fragment {
                 }
                 Toast.makeText(getContext(), "Post Created!", Toast.LENGTH_SHORT).show();
                 mCreatePostDialog.dismiss();
+                queryEventPosts();
             }
         });
     }

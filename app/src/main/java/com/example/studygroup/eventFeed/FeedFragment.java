@@ -203,7 +203,9 @@ public class FeedFragment extends Fragment {
                     return;
                 }
                 event.setSuggestion(true);
-                lastPosition = ThreadLocalRandom.current().nextInt(lastPosition, mEventsList.size() - 1);
+                if(lastPosition < mEventsList.size() - 1) {
+                    lastPosition = ThreadLocalRandom.current().nextInt(lastPosition, mEventsList.size() - 1);
+                }
                 if(subjects.size() == 0) {
                     mEventsList.add(event);
                 } else {

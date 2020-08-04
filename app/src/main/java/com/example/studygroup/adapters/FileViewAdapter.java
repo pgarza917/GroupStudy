@@ -46,14 +46,12 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mFileNameTextView;
-        private TextView mFileTimestampTextView;
         private TextView mFileSizeTextView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             mFileNameTextView = itemView.findViewById(R.id.fileNameTextView);
-            mFileTimestampTextView = itemView.findViewById(R.id.fileTimestampTextView);
             mFileSizeTextView = itemView.findViewById(R.id.fileSizeTextView);
 
         }

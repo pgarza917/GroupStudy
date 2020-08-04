@@ -156,7 +156,7 @@ public class EventDetailsFragment extends Fragment {
             mEventFiles = new ArrayList<>();
         }
         if(files != null) {
-            mEventFiles.addAll((Collection<? extends FileExtended>) files.get(0));
+            mEventFiles.addAll((Collection<? extends FileExtended>) files);
         }
 
         mFileViewAdapter = new FileViewAdapter(getContext(), mEventFiles);
