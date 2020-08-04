@@ -3,19 +3,31 @@ package com.example.studygroup;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.app.Dialog;
+import android.app.DownloadManager;
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.MenuItem;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
+import com.example.studygroup.adapters.FileViewAdapter;
 import com.example.studygroup.eventCreation.CreateEventFragment;
 import com.example.studygroup.eventFeed.FeedFragment;
 import com.example.studygroup.messaging.MessagesFragment;
+import com.example.studygroup.models.FileExtended;
 import com.example.studygroup.profile.ProfileFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.common.ConnectionResult;
@@ -29,6 +41,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.parse.Parse;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
 
 import java.util.HashMap;
@@ -43,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser mFirebaseUser;
     private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseReference;
+    private FileExtended mDownloadFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +99,67 @@ public class MainActivity extends AppCompatActivity {
 
         // Set default selection as home action icon
         mBottomNavigationView.setSelectedItemId(R.id.action_home);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == FileViewAdapter.WRITE_PERMISSION) {
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                downloadFile(mDownloadFile);
+            } else {
+                Toast.makeText(this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void checkDownloadPermissions(FileExtended file) {
+        mDownloadFile = file;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                downloadFile(file);
+            } else {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, FileViewAdapter.WRITE_PERMISSION);
+            }
+        } else {
+            downloadFile(file);
+        }
+    }
+
+    public void downloadFile(FileExtended file) {
+        ParseFile parseFile = file.getParseFile("fileData");
+        Uri downloadUri = Uri.parse(parseFile.getUrl());
+        String filename = file.getFileName();
+
+        DownloadManager manager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        try {
+            if(manager != null) {
+                DownloadManager.Request request = new DownloadManager.Request(downloadUri);
+                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE)
+                        .setTitle(filename)
+                        .setDescription("Downloading: " + filename)
+                        .setAllowedOverMetered(true)
+                        .setAllowedOverRoaming(true)
+                        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                        .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
+                        .setMimeType(getMimeType(downloadUri));
+                manager.enqueue(request);
+            } else {
+                // In case of a null download manager, the user will be able to open the link
+                // in a browser
+                Intent intent = new Intent(Intent.ACTION_VIEW, downloadUri);
+                startActivity(intent);
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Error with downloading file", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error downloading file: ", e);
+        }
+    }
+
+    public String getMimeType(Uri uri) {
+        ContentResolver resolver = getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(resolver.getType(uri));
     }
 
     private void firebaseAuthentication() {

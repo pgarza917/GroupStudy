@@ -82,10 +82,6 @@ public class EventPostsAdapter extends RecyclerView.Adapter<EventPostsAdapter.Vi
             mFilesAdapter = new FileViewAdapter(mContext, mFilesList);
             mFilesRecyclerView.setAdapter(mFilesAdapter);
             mFilesRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-
-            DividerItemDecoration divider = new DividerItemDecoration(mFilesRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
-            mFilesRecyclerView.addItemDecoration(divider);
-
         }
 
         public void bind(Post post) {

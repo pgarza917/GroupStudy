@@ -1,14 +1,23 @@
 package com.example.studygroup.adapters;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.models.FileExtended;
 import com.parse.ParseQuery;
@@ -17,6 +26,7 @@ import java.util.List;
 
 public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHolder> {
 
+    public static final int WRITE_PERMISSION = 2390;
     private Context mContext;
     private List<FileExtended> mFilesList;
 
@@ -47,18 +57,20 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
 
         private TextView mFileNameTextView;
         private TextView mFileSizeTextView;
+        private ImageButton mDownloadFileButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             mFileNameTextView = itemView.findViewById(R.id.fileNameTextView);
             mFileSizeTextView = itemView.findViewById(R.id.fileSizeTextView);
+            mDownloadFileButton = itemView.findViewById(R.id.downloadFileImageButton);
 
         }
 
         public void bind(FileExtended file) {
-            mFileNameTextView.setText(file.getFileName());
-
+            String filename = file.getFileName();
+            mFileNameTextView.setText(filename);
             long fileSize = file.getFileSize();
             String fileSizeString;
             if(fileSize >= 0) {
@@ -66,10 +78,30 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
             } else {
                 fileSizeString = "Google Document";
             }
-
             mFileSizeTextView.setText(fileSizeString);
+
+            mDownloadFileButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                    builder.setTitle("Would you like to download " + filename + "?");
+
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            ((MainActivity) mContext).checkDownloadPermissions(file);
+                        }
+                    });
+                    builder.setNegativeButton("No", null);
+
+                    Dialog dialog = builder.create();
+                    dialog.show();
+                }
+            });
         }
     }
+
+
 
     // This method is for formatting the size of files, which is in bytes, into a more
     // user-friendly and readable form, e.g. 503296 --> "503.00 KB"
