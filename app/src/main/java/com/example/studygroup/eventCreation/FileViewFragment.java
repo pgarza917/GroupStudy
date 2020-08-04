@@ -48,6 +48,7 @@ import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.adapters.FileViewAdapter;
 import com.example.studygroup.adapters.UsersAdapter;
+import com.example.studygroup.eventFeed.EventDiscussionFragment;
 import com.example.studygroup.models.FileExtended;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.common.api.Scope;
@@ -56,10 +57,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
-import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseFile;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.io.File;
@@ -126,9 +124,9 @@ public class FileViewFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
         Fragment fragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainer);
         String fragmentName = fragment.getClass().getSimpleName();
+
         if(fragmentName.equals(FileViewFragment.class.getSimpleName())) {
             switch(item.getItemId()) {
                 case R.id.action_check:
@@ -136,7 +134,15 @@ public class FileViewFragment extends Fragment {
                     // added to the event back to the create event fragment for upload of the event
                     Intent intent = new Intent();
                     intent.putParcelableArrayListExtra("uploadFiles", (ArrayList<? extends Parcelable>) mFilesList);
-                    getTargetFragment().onActivityResult(CreateEventFragment.FILE_UPLOAD_REQUEST_CODE, Activity.RESULT_OK, intent);
+
+                    String targetFragmentName = getTargetFragment().getClass().getSimpleName();
+
+                    if(targetFragmentName.equals(CreateEventFragment.class.getSimpleName())) {
+                        getTargetFragment().onActivityResult(CreateEventFragment.FILE_UPLOAD_REQUEST_CODE, Activity.RESULT_OK, intent);
+                    } else {
+                        getTargetFragment().onActivityResult(EventDiscussionFragment.FILE_ADD_REQUEST_CODE, Activity.RESULT_OK, intent);
+                    }
+
                     FragmentManager fm = getActivity().getSupportFragmentManager();
                     // This is used so that the state of the previous create-event fragment is
                     // not changed when we return to it
