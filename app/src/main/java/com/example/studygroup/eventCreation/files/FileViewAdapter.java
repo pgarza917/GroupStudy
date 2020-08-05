@@ -1,12 +1,9 @@
-package com.example.studygroup.adapters;
+package com.example.studygroup.eventCreation.files;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +11,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.models.FileExtended;
-import com.parse.ParseQuery;
 
 import java.util.List;
 

@@ -28,14 +28,11 @@ import android.widget.Toast;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
-import com.example.studygroup.adapters.EventPostsAdapter;
-import com.example.studygroup.adapters.FileViewAdapter;
-import com.example.studygroup.eventCreation.FileViewFragment;
+import com.example.studygroup.eventCreation.files.FileViewAdapter;
+import com.example.studygroup.eventCreation.files.FileViewFragment;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
 import com.example.studygroup.models.Post;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;

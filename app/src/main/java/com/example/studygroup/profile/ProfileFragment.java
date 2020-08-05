@@ -22,9 +22,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.studygroup.adapters.EventsAdapter;
+import com.example.studygroup.eventFeed.EventsAdapter;
 import com.example.studygroup.models.Event;
-import com.example.studygroup.profile.EditProfileFragment;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.loginAndRegister.LoginActivity;
 import com.example.studygroup.R;
@@ -33,7 +32,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;

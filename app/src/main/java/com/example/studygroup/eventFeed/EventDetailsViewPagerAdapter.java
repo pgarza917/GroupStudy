@@ -1,4 +1,4 @@
-package com.example.studygroup.adapters;
+package com.example.studygroup.eventFeed;
 
 import android.os.Bundle;
 
@@ -9,7 +9,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.studygroup.eventFeed.EventDetailsFragment;
 import com.example.studygroup.eventFeed.EventDiscussionFragment;
-import com.example.studygroup.messaging.MessageTabFragment;
 import com.example.studygroup.models.Event;
 
 import org.parceler.Parcels;

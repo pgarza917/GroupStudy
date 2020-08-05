@@ -1,6 +1,5 @@
 package com.example.studygroup.messaging;
 
-import android.animation.FloatEvaluator;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,11 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
 
 import com.example.studygroup.R;
-import com.example.studygroup.adapters.FirebaseUserAdapter;
-import com.example.studygroup.adapters.UsersAdapter;
 import com.example.studygroup.models.Message;
 import com.example.studygroup.models.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,9 +32,9 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MessageTabFragment extends Fragment {
+public class MessageListFragment extends Fragment {
 
-    public static final String TAG = MessageTabFragment.class.getSimpleName();
+    public static final String TAG = MessageListFragment.class.getSimpleName();
     public static final String ARGS_NAME = "position";
 
     private RecyclerView mMessagesRecyclerView;
@@ -51,13 +47,13 @@ public class MessageTabFragment extends Fragment {
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mDatabaseReference;
 
-    public MessageTabFragment() {
+    public MessageListFragment() {
         // Required empty public constructor
     }
 
 
-    public static MessageTabFragment newInstance(int position) {
-        MessageTabFragment fragment = new MessageTabFragment();
+    public static MessageListFragment newInstance(int position) {
+        MessageListFragment fragment = new MessageListFragment();
         Bundle args = new Bundle();
         args.putInt(ARGS_NAME, position);
         fragment.setArguments(args);

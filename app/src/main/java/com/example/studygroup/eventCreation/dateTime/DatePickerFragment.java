@@ -1,4 +1,4 @@
-package com.example.studygroup.eventCreation;
+package com.example.studygroup.eventCreation.dateTime;
 
 import android.app.Activity;
 import android.app.AlertDialog;

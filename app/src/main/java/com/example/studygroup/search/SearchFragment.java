@@ -25,12 +25,10 @@ import android.widget.Spinner;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
-import com.example.studygroup.adapters.EventsAdapter;
-import com.example.studygroup.adapters.UserSearchResultAdapter;
+import com.example.studygroup.eventFeed.EventsAdapter;
 import com.example.studygroup.eventFeed.FeedFragment;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.profile.ProfileDetailsFragment;
-import com.example.studygroup.profile.ProfileFragment;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;

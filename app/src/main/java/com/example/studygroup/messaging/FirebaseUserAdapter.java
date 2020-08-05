@@ -1,6 +1,7 @@
-package com.example.studygroup.adapters;
+package com.example.studygroup.messaging;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,56 +10,42 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
-import com.parse.ParseFile;
-import com.parse.ParseUser;
+import com.example.studygroup.models.User;
 
 import java.util.List;
 
-public class UserSearchResultAdapter extends RecyclerView.Adapter<UserSearchResultAdapter.ViewHolder> {
+public class FirebaseUserAdapter extends RecyclerView.Adapter<FirebaseUserAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<ParseUser> mUserList;
-    private ResultClickListener listener;
+    private List<User> mUserList;
 
-    public UserSearchResultAdapter(Context mContext, List<ParseUser> mUserList, ResultClickListener listener) {
+    public FirebaseUserAdapter(Context mContext, List<User> mUserList) {
         this.mContext = mContext;
         this.mUserList = mUserList;
-        this.listener = listener;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view =  LayoutInflater.from(mContext).inflate(R.layout.item_user, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_user, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ParseUser user = mUserList.get(position);
+        User user = mUserList.get(position);
         holder.bind(user);
     }
 
     @Override
     public int getItemCount() {
         return mUserList.size();
-    }
-
-    // Clear all items from Recycler View
-    public void clear() {
-        mUserList.clear();
-        notifyDataSetChanged();
-    }
-
-    // Add a list of items (users)
-    public void addAll(List<ParseUser> users) {
-        mUserList.addAll(users);
-        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -68,7 +55,6 @@ public class UserSearchResultAdapter extends RecyclerView.Adapter<UserSearchResu
         private TextView mEmailTextView;
         private CheckBox mAddUserCheckBox;
 
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -76,29 +62,36 @@ public class UserSearchResultAdapter extends RecyclerView.Adapter<UserSearchResu
             mDisplayNameTextView = itemView.findViewById(R.id.userDisplayNameTextView);
             mEmailTextView = itemView.findViewById(R.id.userItemEmailTextView);
             mAddUserCheckBox = itemView.findViewById(R.id.addItemUserCheckBox);
-            itemView.setBackgroundColor(mContext.getResources().getColor(R.color.white));
 
             itemView.setOnClickListener(this);
 
             mAddUserCheckBox.setVisibility(View.GONE);
+            mEmailTextView.setVisibility(View.GONE);
         }
 
-        public void bind(ParseUser user) {
-            mDisplayNameTextView.setText(user.getString("displayName"));
-            mEmailTextView.setText(user.getString("openEmail"));
+        public void bind(User user) {
+            mDisplayNameTextView.setText(user.getUsername());
 
-            ParseFile profilePicture = user.getParseFile("profileImage");
-            Glide.with(mContext).load(profilePicture.getUrl()).circleCrop().into(mProfilePictureImageView);
+            Glide.with(mContext)
+                    .load(user.getImageUrl())
+                    .circleCrop()
+                    .into(mProfilePictureImageView);
         }
+
 
         @Override
         public void onClick(View view) {
-            view.setBackgroundColor(mContext.getResources().getColor(R.color.transparent_green));
-            listener.onResultClicked(getAdapterPosition());
-        }
-    }
+            User user = mUserList.get(getAdapterPosition());
 
-    public interface ResultClickListener {
-        void onResultClicked(int position);
+            Fragment fragment = new ConversationFragment();
+            Bundle data = new Bundle();
+            data.putString("userId", user.getId());
+            fragment.setArguments(data);
+
+            ((MainActivity) mContext).getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.frameLayoutContainer, fragment)
+                    .commit();
+        }
     }
 }

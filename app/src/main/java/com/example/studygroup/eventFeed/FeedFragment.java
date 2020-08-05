@@ -5,15 +5,10 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.transition.Fade;
-import androidx.transition.Transition;
-import androidx.transition.TransitionInflater;
 
-import android.transition.AutoTransition;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,10 +20,8 @@ import android.widget.ProgressBar;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
-import com.example.studygroup.adapters.EventsAdapter;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.Subject;
-import com.example.studygroup.models.User;
 import com.example.studygroup.search.SearchFragment;
 import com.parse.FindCallback;
 import com.parse.ParseException;

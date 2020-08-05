@@ -1,4 +1,4 @@
-package com.example.studygroup.eventCreation;
+package com.example.studygroup.eventCreation.users;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -24,8 +24,9 @@ import android.widget.SearchView;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
-import com.example.studygroup.adapters.UserSearchResultAdapter;
-import com.example.studygroup.adapters.UsersAdapter;
+import com.example.studygroup.search.UserSearchResultAdapter;
+import com.example.studygroup.eventCreation.CreateEventFragment;
+import com.example.studygroup.eventCreation.files.FileViewFragment;
 import com.parse.FindCallback;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;

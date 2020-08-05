@@ -1,11 +1,11 @@
-package com.example.studygroup.adapters;
+package com.example.studygroup.messaging;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.studygroup.messaging.MessageTabFragment;
+import com.example.studygroup.messaging.MessageListFragment;
 
 public class MessagesViewPagerAdapter extends FragmentStateAdapter {
 
@@ -18,7 +18,7 @@ public class MessagesViewPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        return MessageTabFragment.newInstance(position);
+        return MessageListFragment.newInstance(position);
     }
 
     @Override

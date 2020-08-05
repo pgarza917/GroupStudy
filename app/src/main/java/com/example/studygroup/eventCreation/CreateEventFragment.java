@@ -6,12 +6,10 @@ import android.content.Intent;
 import java.text.SimpleDateFormat;
 
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -19,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Parcelable;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,8 +34,13 @@ import android.widget.Toast;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
-import com.example.studygroup.adapters.FileViewAdapter;
-import com.example.studygroup.adapters.UsersAdapter;
+import com.example.studygroup.eventCreation.files.FileViewAdapter;
+import com.example.studygroup.eventCreation.users.UsersAdapter;
+import com.example.studygroup.eventCreation.dateTime.DatePickerFragment;
+import com.example.studygroup.eventCreation.dateTime.TimePickerFragment;
+import com.example.studygroup.eventCreation.files.FileViewFragment;
+import com.example.studygroup.eventCreation.location.MapActivity;
+import com.example.studygroup.eventCreation.users.AddUsersFragment;
 import com.example.studygroup.eventFeed.EventDetailsFragment;
 import com.example.studygroup.eventFeed.EventDetailsRootFragment;
 import com.example.studygroup.eventFeed.FeedFragment;
@@ -57,7 +59,6 @@ import org.parceler.Parcels;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -396,34 +397,6 @@ public class CreateEventFragment extends Fragment {
         }
     }
 
-    // This method handles the launching of the Time Picker dialog fragment so users have a nice
-    // UI to select the event time
-    private void launchTimePicker() {
-        Log.i(TAG, "Launching Time Picker Dialog!");
-        DialogFragment timePickerFragment = new TimePickerFragment();
-        timePickerFragment.setTargetFragment(CreateEventFragment.this, TIME_PICKER_REQUEST_CODE);
-        timePickerFragment.show(((MainActivity)getContext()).getSupportFragmentManager(), "timePicker");
-    }
-
-    // This method handles the launching of the Date Picker dialog fragment so users have a nice
-    // UI to select and event date
-    private void launchDatePicker() {
-        Log.i(TAG, "Launching Date Picker Dialog!");
-        DialogFragment datePickerFragment = new DatePickerFragment();
-        datePickerFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AlertDialogCustom);
-        datePickerFragment.setTargetFragment(CreateEventFragment.this, DATE_PICKER_REQUEST_CODE);
-        datePickerFragment.show(((MainActivity)getContext()).getSupportFragmentManager(), "datePicker");
-    }
-
-    // This method handles the launching of a Map activity where users will be able to view a map
-    // and search/select a location for their event
-    private void launchMapActivity() {
-        if(((MainActivity) getContext()).isGoogleServicesOk()) {
-            Intent intent = new Intent(getActivity(), MapActivity.class);
-            startActivityForResult(intent, LOCATION_SELECT_REQUEST_CODE);
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(resultCode != Activity.RESULT_OK){
@@ -484,17 +457,54 @@ public class CreateEventFragment extends Fragment {
             // Retrieving the list of files a user would like to upload attached to their event
             // that they selected in the file view fragment
             List<FileExtended> files = data.getParcelableArrayListExtra("uploadFiles");
-            mEventFiles.addAll(files);
-            mFileAdapter.notifyDataSetChanged();
+            if(files != null) {
+                mEventFiles.addAll(files);
+                mFileAdapter.notifyDataSetChanged();
+            }
+
+            List<ParseUser> newUsers = data.getParcelableArrayListExtra("newUsers");
+            if(newUsers != null) {
+                mUsersAdapter.addUnique(newUsers);
+            }
 
             mAddFilesTextView.setText("Selected Files: ");
             Log.i(TAG, "Received selected files");
         }
         if(requestCode == ADD_USERS_REQUEST_CODE) {
             List<ParseUser> users = data.getParcelableArrayListExtra("eventUsers");
-            mUsersAdapter.addUnique(users);
+            if(users != null) {
+                mUsersAdapter.addUnique(users);
+            }
 
             Log.i(TAG, "Received selected users");
+        }
+    }
+
+    // This method handles the launching of the Time Picker dialog fragment so users have a nice
+    // UI to select the event time
+    private void launchTimePicker() {
+        Log.i(TAG, "Launching Time Picker Dialog!");
+        DialogFragment timePickerFragment = new TimePickerFragment();
+        timePickerFragment.setTargetFragment(CreateEventFragment.this, TIME_PICKER_REQUEST_CODE);
+        timePickerFragment.show(((MainActivity)getContext()).getSupportFragmentManager(), "timePicker");
+    }
+
+    // This method handles the launching of the Date Picker dialog fragment so users have a nice
+    // UI to select and event date
+    private void launchDatePicker() {
+        Log.i(TAG, "Launching Date Picker Dialog!");
+        DialogFragment datePickerFragment = new DatePickerFragment();
+        datePickerFragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.AlertDialogCustom);
+        datePickerFragment.setTargetFragment(CreateEventFragment.this, DATE_PICKER_REQUEST_CODE);
+        datePickerFragment.show(((MainActivity)getContext()).getSupportFragmentManager(), "datePicker");
+    }
+
+    // This method handles the launching of a Map activity where users will be able to view a map
+    // and search/select a location for their event
+    private void launchMapActivity() {
+        if(((MainActivity) getContext()).isGoogleServicesOk()) {
+            Intent intent = new Intent(getActivity(), MapActivity.class);
+            startActivityForResult(intent, LOCATION_SELECT_REQUEST_CODE);
         }
     }
 

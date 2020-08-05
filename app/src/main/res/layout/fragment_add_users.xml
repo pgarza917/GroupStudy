@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:backgroundTint="#FFFFFF"
-    tools:context=".eventCreation.AddUsersFragment">
+    tools:context=".eventCreation.users.AddUsersFragment">
 
 
     <androidx.recyclerview.widget.RecyclerView

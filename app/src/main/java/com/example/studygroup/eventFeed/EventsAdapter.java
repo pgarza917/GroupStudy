@@ -1,4 +1,4 @@
-package com.example.studygroup.adapters;
+package com.example.studygroup.eventFeed;
 
 import android.content.Context;
 
@@ -10,18 +10,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.AutoTransition;
-import androidx.transition.Fade;
-import androidx.transition.Transition;
-import androidx.transition.TransitionInflater;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
-import com.example.studygroup.eventFeed.EventDetailsFragment;
-import com.example.studygroup.eventFeed.EventDetailsRootFragment;
 import com.example.studygroup.models.Event;
 
 import org.parceler.Parcels;

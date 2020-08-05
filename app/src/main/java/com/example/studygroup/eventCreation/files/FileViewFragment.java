@@ -1,4 +1,4 @@
-package com.example.studygroup.eventCreation;
+package com.example.studygroup.eventCreation.files;
 
 import android.Manifest;
 import android.accounts.Account;
@@ -36,18 +36,22 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.studygroup.DriveServiceHelper;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
-import com.example.studygroup.adapters.FileViewAdapter;
-import com.example.studygroup.adapters.UsersAdapter;
+import com.example.studygroup.eventCreation.users.UsersAdapter;
+import com.example.studygroup.eventCreation.users.AddUsersFragment;
+import com.example.studygroup.eventCreation.CreateEventFragment;
 import com.example.studygroup.eventFeed.EventDiscussionFragment;
 import com.example.studygroup.models.FileExtended;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -88,16 +92,13 @@ public class FileViewFragment extends Fragment {
     private UsersAdapter mUsersAdapter;
     private List<FileExtended> mFilesList;
     private List<ParseUser> mEventUsers;
+    private List<ParseUser> mNewEventUsers;
+    private List<ParseUser> mUsers;
     private DriveServiceHelper mDriveServiceHelper;
     private String mOpenFileId;
     private AlertDialog mFileDialog;
 
-    private RecyclerView mFileViewRecyclerView;
-    private ImageButton mCreateDocImageButton;
-    private ImageButton mTakePhotoImageButton;
-    private ImageButton mUploadFilesImageButton;
     private EditText mFileTitleEditText;
-    private ProgressBar mDriveProgressBar;
 
     // Member variables for camera functionality
     public String photoFileName = "photo.jpg";
@@ -134,6 +135,7 @@ public class FileViewFragment extends Fragment {
                     // added to the event back to the create event fragment for upload of the event
                     Intent intent = new Intent();
                     intent.putParcelableArrayListExtra("uploadFiles", (ArrayList<? extends Parcelable>) mFilesList);
+                    intent.putParcelableArrayListExtra("newUsers", (ArrayList<? extends Parcelable>) mNewEventUsers);
 
                     String targetFragmentName = getTargetFragment().getClass().getSimpleName();
 
@@ -181,10 +183,13 @@ public class FileViewFragment extends Fragment {
             mEventUsers = new ArrayList<>();
         }
 
-        mFileViewRecyclerView = view.findViewById(R.id.uploadedFilesRecyclerView);
-        mCreateDocImageButton = view.findViewById(R.id.googleDocsImageButton);
-        mTakePhotoImageButton = view.findViewById(R.id.takePhotoImageButton);
-        mUploadFilesImageButton = view.findViewById(R.id.uploadFilesImageButton);
+        mUsers = new ArrayList<>();
+        mNewEventUsers = new ArrayList<>();
+
+        RecyclerView mFileViewRecyclerView = view.findViewById(R.id.uploadedFilesRecyclerView);
+        ImageButton mCreateDocImageButton = view.findViewById(R.id.googleDocsImageButton);
+        ImageButton mTakePhotoImageButton = view.findViewById(R.id.takePhotoImageButton);
+        ImageButton mUploadFilesImageButton = view.findViewById(R.id.uploadFilesImageButton);
 
         UsersAdapter.CheckBoxListener checkBoxListener = new UsersAdapter.CheckBoxListener() {
             @Override
@@ -198,7 +203,7 @@ public class FileViewFragment extends Fragment {
                 mUsersAdapter.remove(user);
             }
         };
-        mUsersAdapter = new UsersAdapter(getContext(), mEventUsers, checkBoxListener);
+        mUsersAdapter = new UsersAdapter(getContext(), mUsers, checkBoxListener);
 
         mFileViewAdapter = new FileViewAdapter(getContext(), mFilesList);
         mFileViewRecyclerView.setAdapter(mFileViewAdapter);
@@ -313,8 +318,12 @@ public class FileViewFragment extends Fragment {
         if(requestCode == ADD_USERS_REQUEST_CODE) {
             mFileDialog.show();
             List<ParseUser> newUsers = data.getParcelableArrayListExtra("eventUsers");
-            mUsersAdapter.clear();
-            mUsersAdapter.addAll(newUsers);
+            if(newUsers != null) {
+                addNewUsers(newUsers);
+
+                mUsersAdapter.clear();
+                mUsersAdapter.addAll(newUsers);
+            }
         }
     }
 
@@ -347,8 +356,8 @@ public class FileViewFragment extends Fragment {
         builder.setView(customDialogLayout);
 
         mFileTitleEditText = customDialogLayout.findViewById(R.id.dialogFileTitleEditText);
-        mDriveProgressBar = customDialogLayout.findViewById(R.id.progressBarDriveLoading);
         CheckBox addAllEventUsersCheckBox = customDialogLayout.findViewById(R.id.addEventUsersCheckBox);
+        Spinner typeSelectSpinner = customDialogLayout.findViewById(R.id.googleFileTypeSpinner);
         LinearLayout addOtherUsersLinearLayout = customDialogLayout.findViewById(R.id.addOtherUsersLinearLayout);
 
         addAllEventUsersCheckBox.setChecked(true);
@@ -357,22 +366,52 @@ public class FileViewFragment extends Fragment {
         usersForShareRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         usersForShareRecyclerView.setAdapter(mUsersAdapter);
 
-        builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+        List<String> fileTypeOptions = new ArrayList<String>();
+        fileTypeOptions.add("Select File Type");
+        fileTypeOptions.add("Doc");
+        fileTypeOptions.add("Sheet");
+        fileTypeOptions.add("Slide");
+
+        int[] fileType = {0};
+
+        ArrayAdapter<String> fileTypeSpinnerAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, fileTypeOptions);
+        fileTypeSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        typeSelectSpinner.setAdapter(fileTypeSpinnerAdapter);
+        typeSelectSpinner.setSelection(0);
+        typeSelectSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                mDriveProgressBar.setVisibility(View.VISIBLE);
-                createDriveDoc();
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                fileType[0] = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
 
-        addAllEventUsersCheckBox.setOnClickListener(new View.OnClickListener() {
+        builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                boolean checked = addAllEventUsersCheckBox.isChecked();
-                if(checked) {
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if(fileType[0] == 0) {
+                    Toast.makeText(getContext(), "Please Select a File Type", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if(fileType[0] == 1) {
+                    createDriveDoc();
+                } else if(fileType[0] == 2) {
 
                 } else {
 
+                }
+            }
+        });
+
+        addAllEventUsersCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b) {
+                    mUsersAdapter.addAll(mEventUsers);
+                } else {
+                    mUsersAdapter.removeAll(mEventUsers);
                 }
             }
         });
@@ -493,7 +532,6 @@ public class FileViewFragment extends Fragment {
             mDriveServiceHelper.createDoc(fileName)
                     .addOnSuccessListener(fileId -> {
                         mOpenFileId = fileId;
-                        mDriveProgressBar.setVisibility(View.INVISIBLE);
 
                         mDriveServiceHelper.updatePermissions(fileId, mEventUsers)
                                 .addOnSuccessListener((Void) ->
@@ -557,6 +595,18 @@ public class FileViewFragment extends Fragment {
                             Toast.makeText(getContext(), "Drive File Created!", Toast.LENGTH_SHORT).show())
                     .addOnFailureListener(exception ->
                             Log.e(TAG, "Unable to save file via REST.", exception));
+        }
+    }
+
+    private void addNewUsers(List<ParseUser> newUsers) {
+        for(ParseUser user : newUsers) {
+            int i = 0;
+            while(i < mEventUsers.size() && !user.getObjectId().equals(mEventUsers.get(i).getObjectId())) {
+                i++;
+            }
+            if(i != mEventUsers.size()) {
+                mNewEventUsers.add(user);
+            }
         }
     }
 }

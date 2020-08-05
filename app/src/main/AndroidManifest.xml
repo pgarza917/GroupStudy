@@ -26,7 +26,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_api_key"/>
-        <activity android:name=".eventCreation.MapActivity"/>
+        <activity android:name=".eventCreation.location.MapActivity"/>
         <activity android:name=".MainActivity"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

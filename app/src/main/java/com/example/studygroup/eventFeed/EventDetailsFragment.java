@@ -1,17 +1,11 @@
 package com.example.studygroup.eventFeed;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.AutoTransition;
 import androidx.transition.Fade;
 
 import android.util.Log;
@@ -26,7 +20,7 @@ import android.widget.TextView;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
-import com.example.studygroup.adapters.FileViewAdapter;
+import com.example.studygroup.eventCreation.files.FileViewAdapter;
 import com.example.studygroup.eventCreation.CreateEventFragment;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;

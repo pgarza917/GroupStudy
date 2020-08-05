@@ -1,4 +1,4 @@
-package com.example.studygroup.eventCreation;
+package com.example.studygroup.eventCreation.location;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

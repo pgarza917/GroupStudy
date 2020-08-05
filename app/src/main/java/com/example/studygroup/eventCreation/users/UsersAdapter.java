@@ -1,4 +1,4 @@
-package com.example.studygroup.adapters;
+package com.example.studygroup.eventCreation.users;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.studygroup.R;
-import com.example.studygroup.models.Event;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -64,6 +63,13 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
 
     public void remove(ParseUser user) {
         mUserList.remove(user);
+        notifyDataSetChanged();
+    }
+
+    public void removeAll(List<ParseUser> users) {
+        for(ParseUser user : users) {
+            mUserList.remove(user);
+        }
         notifyDataSetChanged();
     }
 

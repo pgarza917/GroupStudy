@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
-import android.accounts.Account;
 import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.ContentResolver;
@@ -23,13 +22,12 @@ import android.view.MenuItem;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
-import com.example.studygroup.adapters.FileViewAdapter;
+import com.example.studygroup.eventCreation.files.FileViewAdapter;
 import com.example.studygroup.eventCreation.CreateEventFragment;
 import com.example.studygroup.eventFeed.FeedFragment;
 import com.example.studygroup.messaging.MessagesFragment;
 import com.example.studygroup.models.FileExtended;
 import com.example.studygroup.profile.ProfileFragment;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -40,7 +38,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.parse.Parse;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
