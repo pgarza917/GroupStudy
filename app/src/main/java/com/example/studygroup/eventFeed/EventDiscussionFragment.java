@@ -3,11 +3,17 @@ package com.example.studygroup.eventFeed;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,6 +50,7 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -57,7 +64,7 @@ public class EventDiscussionFragment extends Fragment {
     private ProgressBar mProgressBar;
 
     private List<Post> mPostsList;
-    private EventPostsAdapter mPostsAdapter;
+    private PostsAdapter mPostsAdapter;
     private Event mEvent;
     private List<FileExtended> mPostFilesList;
     private FileViewAdapter mPostFilesAdapter;
@@ -85,7 +92,7 @@ public class EventDiscussionFragment extends Fragment {
         mProgressBar = view.findViewById(R.id.discussionPostsProgressBar);
 
         mPostsList = new ArrayList<>();
-        mPostsAdapter = new EventPostsAdapter(mPostsList, getContext(), mEvent);
+        mPostsAdapter = new PostsAdapter(mPostsList, getContext(), mEvent);
         mPostsRecyclerView.setAdapter(mPostsAdapter);
         mPostsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -133,6 +140,7 @@ public class EventDiscussionFragment extends Fragment {
 
 
         final boolean[] notifyUsers = {false};
+        final boolean[] eventDetailsEdited = {false};
         mPostFilesList = new ArrayList<>();
         mPostFilesAdapter = new FileViewAdapter(getContext(), mPostFilesList);
 
@@ -155,6 +163,7 @@ public class EventDiscussionFragment extends Fragment {
         addFilesImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                eventDetailsEdited[0] = true;
                 mCreatePostDialog.hide();
                 launchFileSelect();
             }
@@ -165,7 +174,7 @@ public class EventDiscussionFragment extends Fragment {
             public void onClick(View view) {
                 String content = postContentEditText.getText().toString();
                 saveNewFiles(mPostFilesList);
-                savePost(content, mPostFilesList, notifyUsers[0]);
+                savePost(content, mPostFilesList, eventDetailsEdited[0]);
             }
         });
 
@@ -222,7 +231,7 @@ public class EventDiscussionFragment extends Fragment {
                 .commit();
     }
 
-    private void savePost(String content, List<FileExtended> files, boolean notifyUsers) {
+    private void savePost(String content, List<FileExtended> files, boolean eventDetailsEdited) {
         if(content == null || content.isEmpty()) {
             Toast.makeText(getContext(), "Please Enter a Caption for the Post", Toast.LENGTH_SHORT).show();
             return;
@@ -232,7 +241,7 @@ public class EventDiscussionFragment extends Fragment {
 
         post.setCreator(ParseUser.getCurrentUser());
         post.setEvent(mEvent);
-        post.setEdited(notifyUsers);
+        post.setEdited(eventDetailsEdited);
         post.setText(content);
 
         for(FileExtended file : files) {
@@ -248,8 +257,47 @@ public class EventDiscussionFragment extends Fragment {
                 }
                 Toast.makeText(getContext(), "Post Created!", Toast.LENGTH_SHORT).show();
                 mCreatePostDialog.dismiss();
+                sendEventUpdateNotification();
                 queryEventPosts();
             }
         });
+    }
+
+    private void sendEventUpdateNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "GroupStudyChannel";
+            String description = "Channel for notifications from Group Study";
+            String CHANNEL_ID = "studyGroup";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getContext().getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+
+            // Sets an ID for the notification
+            int mNotificationId = 210;
+            // Build Notification , setOngoing keeps the notification always in status bar
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(getContext(), CHANNEL_ID)
+                            .setSmallIcon(R.drawable.ic_baseline_calendar_today_24)
+                            .setContentTitle("Stop LDB")
+                            .setContentText("Click to stop LDB")
+                            .setOngoing(true);
+
+            // Create pending intent, mention the Activity which needs to be
+            //triggered when user clicks on notification(StopScript.class in this case)
+
+            PendingIntent contentIntent = PendingIntent.getActivity(getContext(), 0,
+                    new Intent(getContext(), MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+            mBuilder.setContentIntent(contentIntent);
+
+
+            // Builds the notification and issues it.
+            notificationManager.notify(mNotificationId, mBuilder.build());
+        }
     }
 }

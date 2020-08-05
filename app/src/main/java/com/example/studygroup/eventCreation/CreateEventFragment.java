@@ -35,11 +35,11 @@ import android.widget.Toast;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.eventCreation.files.FileViewAdapter;
+import com.example.studygroup.eventCreation.location.MapsActivity;
 import com.example.studygroup.eventCreation.users.UsersAdapter;
 import com.example.studygroup.eventCreation.dateTime.DatePickerFragment;
 import com.example.studygroup.eventCreation.dateTime.TimePickerFragment;
 import com.example.studygroup.eventCreation.files.FileViewFragment;
-import com.example.studygroup.eventCreation.location.MapActivity;
 import com.example.studygroup.eventCreation.users.AddUsersFragment;
 import com.example.studygroup.eventFeed.EventDetailsFragment;
 import com.example.studygroup.eventFeed.EventDetailsRootFragment;
@@ -503,7 +503,7 @@ public class CreateEventFragment extends Fragment {
     // and search/select a location for their event
     private void launchMapActivity() {
         if(((MainActivity) getContext()).isGoogleServicesOk()) {
-            Intent intent = new Intent(getActivity(), MapActivity.class);
+            Intent intent = new Intent(getActivity(), MapsActivity.class);
             startActivityForResult(intent, LOCATION_SELECT_REQUEST_CODE);
         }
     }

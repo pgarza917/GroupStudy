@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".eventCreation.location.MapsActivity" />
+
+    <ImageButton
+        android:id="@+id/gpsIconImageButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="100dp"
+        android:layout_marginRight="20dp"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_gps"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/whiteBorderImageView"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="22dp"
+        android:elevation="10dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/white_border" />
+
+    <Button
+        android:id="@+id/confirmSelectionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="#FFFFFF"
+        android:visibility="gone"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="120dp"
+        android:backgroundTint="#69F0AE"
+        android:text="Confirm Selection" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/mapSearchRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:elevation="20dp"
+        android:padding="15dp">
+
+        <fragment
+            android:id="@+id/autocompleteFragment"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</RelativeLayout>
