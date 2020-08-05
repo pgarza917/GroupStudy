@@ -43,6 +43,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -99,6 +100,7 @@ public class FileViewFragment extends Fragment {
     private AlertDialog mFileDialog;
 
     private EditText mFileTitleEditText;
+    private ProgressBar mProgressBar;
 
     // Member variables for camera functionality
     public String photoFileName = "photo.jpg";
@@ -135,11 +137,11 @@ public class FileViewFragment extends Fragment {
                     // added to the event back to the create event fragment for upload of the event
                     Intent intent = new Intent();
                     intent.putParcelableArrayListExtra("uploadFiles", (ArrayList<? extends Parcelable>) mFilesList);
-                    intent.putParcelableArrayListExtra("newUsers", (ArrayList<? extends Parcelable>) mNewEventUsers);
 
                     String targetFragmentName = getTargetFragment().getClass().getSimpleName();
 
                     if(targetFragmentName.equals(CreateEventFragment.class.getSimpleName())) {
+                        intent.putParcelableArrayListExtra("newUsers", (ArrayList<? extends Parcelable>) mNewEventUsers);
                         getTargetFragment().onActivityResult(CreateEventFragment.FILE_UPLOAD_REQUEST_CODE, Activity.RESULT_OK, intent);
                     } else {
                         getTargetFragment().onActivityResult(EventDiscussionFragment.FILE_ADD_REQUEST_CODE, Activity.RESULT_OK, intent);
@@ -186,6 +188,7 @@ public class FileViewFragment extends Fragment {
         mUsers = new ArrayList<>();
         mNewEventUsers = new ArrayList<>();
 
+        mProgressBar = view.findViewById(R.id.fileViewProgressBar);
         RecyclerView mFileViewRecyclerView = view.findViewById(R.id.uploadedFilesRecyclerView);
         ImageButton mCreateDocImageButton = view.findViewById(R.id.googleDocsImageButton);
         ImageButton mTakePhotoImageButton = view.findViewById(R.id.takePhotoImageButton);
@@ -396,11 +399,11 @@ public class FileViewFragment extends Fragment {
                     Toast.makeText(getContext(), "Please Select a File Type", Toast.LENGTH_SHORT).show();
                     return;
                 } else if(fileType[0] == 1) {
-                    createDriveDoc();
+                    createDriveFile("application/vnd.google-apps.document", -1);
                 } else if(fileType[0] == 2) {
-
+                    createDriveFile("application/vnd.google-apps.spreadsheet", -2);
                 } else {
-
+                    createDriveFile("application/vnd.google-apps.presentation", -3);
                 }
             }
         });
@@ -523,78 +526,40 @@ public class FileViewFragment extends Fragment {
     /**
      * Creates a new file via the Drive REST API.
      */
-    private void createDriveDoc() {
+    private void createDriveFile(String mimeType, int googleType) {
         if (mDriveServiceHelper != null) {
+            mProgressBar.setVisibility(View.VISIBLE);
             Log.d(TAG, "Creating a file.");
 
-            final String fileName = mFileTitleEditText.getText().toString();
+            String fileName = mFileTitleEditText.getText().toString();
+            if(fileName.isEmpty()) {
+                fileName = "Untitled";
+            }
 
-            mDriveServiceHelper.createDoc(fileName)
+            final String finalFileName = fileName;
+            final int finalGoogleType = googleType;
+            mDriveServiceHelper.createFile(fileName, mimeType)
                     .addOnSuccessListener(fileId -> {
                         mOpenFileId = fileId;
 
-                        mDriveServiceHelper.updatePermissions(fileId, mEventUsers)
+                        mDriveServiceHelper.updatePermissions(fileId, mUsers)
                                 .addOnSuccessListener((Void) ->
                                         Log.i(TAG, "Updated permissions"))
                                 .addOnFailureListener(exception ->
                                         Log.i(TAG, "Failure to update permissions"));
 
                         FileExtended driveFile = new FileExtended();
-                        driveFile.setFileName(fileName);
-                        driveFile.setFileSize(-1);
+                        driveFile.setFileName(finalFileName);
+                        driveFile.setFileSize(finalGoogleType);
 
                         // Adds the new attached file to the Recycler View so the user knows the file is now
                         // attached to their event for upload
                         mFilesList.add(0, driveFile);
                         mFileViewAdapter.notifyItemInserted(0);
-
-                        // readFile(mOpenFileId);
+                        mProgressBar.setVisibility(View.INVISIBLE);
                     })
                     .addOnFailureListener(exception ->
                             Log.e(TAG, "Couldn't create file.", exception));
-        }
-    }
-
-    /**
-     * Retrieves the title and content of a file identified by {@code fileId} and populates the UI.
-     */
-    private void readFile(String fileId) {
-        if (mDriveServiceHelper != null) {
-            Log.d(TAG, "Reading file " + fileId);
-
-            mDriveServiceHelper.readFile(fileId)
-                    .addOnSuccessListener(nameAndContent -> {
-                        String name = nameAndContent.first;
-
-                        FileExtended driveFile = new FileExtended();
-                        driveFile.setFileName(name);
-                        driveFile.setFileSize(-1);
-                        driveFile.setFile(null);
-
-                        // Adds the new attached file to the Recycler View so the user knows the file is now
-                        // attached to their event for upload
-                        mFilesList.add(0, driveFile);
-                        mFileViewAdapter.notifyItemInserted(0);
-                    })
-                    .addOnFailureListener(exception ->
-                            Log.e(TAG, "Couldn't read file.", exception));
-        }
-    }
-
-    /**
-     * Saves the currently opened file created if one exists.
-     */
-    private void saveFile() {
-        if (mDriveServiceHelper != null && mOpenFileId != null) {
-            Log.i(TAG, "Saving " + mOpenFileId);
-
-            String fileName = mFileTitleEditText.getText().toString();
-
-            mDriveServiceHelper.saveFile(mOpenFileId, fileName)
-                    .addOnSuccessListener((Void) ->
-                            Toast.makeText(getContext(), "Drive File Created!", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(exception ->
-                            Log.e(TAG, "Unable to save file via REST.", exception));
         }
     }
 

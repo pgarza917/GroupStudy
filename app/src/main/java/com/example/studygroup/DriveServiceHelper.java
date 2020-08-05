@@ -48,18 +48,18 @@ public class DriveServiceHelper {
     /**
      * Creates a text file in the user's My Drive folder and returns its file ID.
      */
-    public Task<String> createDoc(String fileName) {
+    public Task<String> createFile(String fileName, String googleMimeType) {
         return Tasks.call(mExecutor, () -> {
             String finalFileName;
             if(fileName == null || fileName.isEmpty())
             {
-                finalFileName = "Untitled File";
+                finalFileName = "Untitled Doc";
             } else {
                 finalFileName = fileName;
             }
             File metadata = new File()
                     .setParents(Collections.singletonList("root"))
-                    .setMimeType("application/vnd.google-apps.document")
+                    .setMimeType(googleMimeType)
                     .setName(finalFileName);
 
             File googleFile = mDriveService.files().create(metadata).execute();

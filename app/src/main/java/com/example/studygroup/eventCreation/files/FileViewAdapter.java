@@ -71,7 +71,13 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
             if(fileSize >= 0) {
                 fileSizeString = getSize(fileSize);
             } else {
-                fileSizeString = "Google Document";
+                if(fileSize == - 1) {
+                    fileSizeString = "Google Document";
+                } else if(fileSize == -2) {
+                    fileSizeString = "Google Sheet";
+                } else {
+                    fileSizeString = "Google Slide";
+                }
             }
             mFileSizeTextView.setText(fileSizeString);
 

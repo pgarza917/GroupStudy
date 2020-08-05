@@ -24,10 +24,12 @@ import android.widget.SearchView;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
+import com.example.studygroup.models.Event;
 import com.example.studygroup.search.UserSearchResultAdapter;
 import com.example.studygroup.eventCreation.CreateEventFragment;
 import com.example.studygroup.eventCreation.files.FileViewFragment;
 import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -164,16 +166,27 @@ public class AddUsersFragment extends Fragment {
     }
 
     private void searchUsers(String queryString) {
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereContains("displayName", queryString);
-        query.setLimit(10);
-        query.findInBackground(new FindCallback<ParseUser>() {
+        ParseQuery<ParseUser> nameQuery = ParseUser.getQuery();
+        nameQuery.whereContains("lowerDisplayName", queryString.toLowerCase());
+
+        ParseQuery<ParseUser> emailQuery = ParseUser.getQuery();
+        emailQuery.whereContains("email", queryString.toLowerCase());
+
+        List<ParseQuery<ParseUser>> userQueries = new ArrayList<ParseQuery<ParseUser>>();
+        userQueries.add(nameQuery);
+        userQueries.add(emailQuery);
+
+        ParseQuery<ParseUser> usersFullQuery = ParseQuery.or(userQueries);
+        usersFullQuery.orderByDescending(Event.KEY_CREATED_AT);
+
+        usersFullQuery.findInBackground(new FindCallback<ParseUser>() {
             @Override
-            public void done(List<ParseUser> users, com.parse.ParseException e) {
+            public void done(List<ParseUser> users, ParseException e) {
                 if(e != null) {
-                    Log.e(TAG, "Error querying Parse for users: ", e);
+                    Log.e(TAG, "Error executing user search query: ", e);
                     return;
                 }
+                Log.i(TAG, "Success searching for users");
                 mUsersSearchAdapter.clear();
                 mUsersSearchAdapter.addAll(users);
             }
