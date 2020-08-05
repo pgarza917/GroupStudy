@@ -65,6 +65,13 @@ public class ConversationFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_conversation, container, false);
 
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         Toolbar toolbar = view.findViewById(R.id.toolbar_messages);
         toolbar.setTitle("");
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
@@ -76,17 +83,11 @@ public class ConversationFragment extends Fragment {
                 Fragment fragment = new MessagesFragment();
                 ((MainActivity) getContext()).getSupportFragmentManager()
                         .beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right)
                         .replace(R.id.frameLayoutContainer, fragment)
                         .commit();
             }
         });
-
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
         mToolbarImageView = view.findViewById(R.id.toolbarProfilePictureImageView);
         mToolbarTextView = view.findViewById(R.id.toolbarUserNameTextView);

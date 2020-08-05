@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseReference;
     private FileExtended mDownloadFile;
+    private int mCurrentTabPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,18 +79,22 @@ public class MainActivity extends AppCompatActivity {
                 }
                 setSupportActionBar(toolbar);
                 getSupportActionBar().show();
+                int newPosition;
                 switch (id) {
                     case R.id.action_create_event:
                         fragment = new CreateEventFragment();
+                        newPosition = 1;
                         break;
                     case R.id.action_profile:
                         fragment = new ProfileFragment();
+                        newPosition = 3;
                         break;
                     default:
                         fragment = new FeedFragment();
+                        newPosition = 0;
                         break;
                 }
-                mFragmentManager.beginTransaction().replace(R.id.frameLayoutContainer, fragment).commit();
+                loadFragment(fragment, newPosition);
                 return true;
             }
         });
@@ -108,6 +113,35 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Permission Denied!", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private boolean loadFragment(Fragment fragment, int newPosition) {
+        if(fragment != null) {
+            if(newPosition == mCurrentTabPosition) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.frameLayoutContainer, fragment).commit();
+
+            }
+            if(mCurrentTabPosition > newPosition) {
+                mFragmentManager
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right)
+                        .replace(R.id.frameLayoutContainer, fragment).commit();
+
+            }
+            if(mCurrentTabPosition < newPosition) {
+                mFragmentManager
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                        .replace(R.id.frameLayoutContainer, fragment).commit();
+
+            }
+            mCurrentTabPosition = newPosition;
+            return true;
+        }
+
+        return false;
     }
 
     public void checkDownloadPermissions(FileExtended file) {
@@ -165,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
         if(mFirebaseUser != null) {
             Log.i(TAG, "Silent Firebase auto-login successful");
             Fragment fragment = new MessagesFragment();
-            mFragmentManager.beginTransaction().replace(R.id.frameLayoutContainer, fragment).commit();
+            loadFragment(fragment, 2);
             return;
         }
 
@@ -181,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
                 if(task.isSuccessful()) {
                     Log.i(TAG, "Successful login to Firebase");
                     Fragment fragment = new MessagesFragment();
-                    mFragmentManager.beginTransaction().replace(R.id.frameLayoutContainer, fragment).commit();
+                    loadFragment(fragment, 2);
                 } else {
                     firebaseRegister(username, email, password, imageUrl);
                 }

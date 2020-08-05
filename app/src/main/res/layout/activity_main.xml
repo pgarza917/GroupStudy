@@ -13,6 +13,7 @@
         android:background="?attr/colorPrimary"
         android:backgroundTint="#25BAF5"
         android:minHeight="?attr/actionBarSize"
+        android:elevation="16dp"
         app:title="@string/app_name"
         app:titleTextColor="@android:color/white"/>
 

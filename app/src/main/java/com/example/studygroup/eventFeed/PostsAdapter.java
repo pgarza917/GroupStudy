@@ -66,6 +66,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         private TextView mDateTextView;
         private TextView mContentTextView;
         private TextView mEditedEventTextView;
+        private RecyclerView mFilesRecyclerView;
 
         private FileViewAdapter mFilesAdapter;
         private List<FileExtended> mFilesList;
@@ -75,18 +76,20 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             mUsernameTextView = itemView.findViewById(R.id.postUserNameTextView);
             mDateTextView = itemView.findViewById(R.id.postDateTextView);
             mContentTextView = itemView.findViewById(R.id.postContentTextView);
-            RecyclerView mFilesRecyclerView = itemView.findViewById(R.id.postFilesRecyclerView);
+            mFilesRecyclerView = itemView.findViewById(R.id.postFilesRecyclerView);
             mEditedEventTextView = itemView.findViewById(R.id.eventEditedTextView);
 
+        }
+
+        public void bind(Post post) {
             mFilesList = new ArrayList<>();
             mFilesAdapter = new FileViewAdapter(mContext, mFilesList);
             mFilesRecyclerView.setAdapter(mFilesAdapter);
             mFilesRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        }
 
-        public void bind(Post post) {
             mUsernameTextView.setText(post.getCreator().getString("displayName"));
-            mContentTextView.setText(post.getText());
+            String content = post.getText();
+            mContentTextView.setText(content);
             mDateTextView.setText(getDateText(post.getCreatedAt().toString()));
 
             if(post.getEdited()) {

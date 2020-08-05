@@ -257,7 +257,7 @@ public class EventDiscussionFragment extends Fragment {
                 }
                 Toast.makeText(getContext(), "Post Created!", Toast.LENGTH_SHORT).show();
                 mCreatePostDialog.dismiss();
-                sendEventUpdateNotification();
+                //sendEventUpdateNotification();
                 queryEventPosts();
             }
         });

@@ -1,6 +1,8 @@
 package com.example.studygroup.eventCreation.location;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -38,7 +40,7 @@ import com.google.common.collect.Maps;
 
 import java.util.Arrays;
 
-public class MapsActivity extends FragmentActivity
+public class MapsActivity extends AppCompatActivity
         implements
         GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener,
@@ -53,7 +55,6 @@ public class MapsActivity extends FragmentActivity
     public static final int LOCATION_PERMISSION_REQUEST_CODE = 1254;
     public static final float DEFAULT_ZOOM = 17f;
 
-    private ImageButton mGpsImageButton;
     private AutocompleteSupportFragment mAutoCompleteSupportFragment;
     private Button mConfirmSelectionButton;
     private View mMapView;
@@ -74,7 +75,18 @@ public class MapsActivity extends FragmentActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        mGpsImageButton = findViewById(R.id.gpsIconImageButton);
+
+        Toolbar toolbar = findViewById(R.id.mapActivityToolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
         mConfirmSelectionButton = findViewById(R.id.confirmSelectionButton);
         mMapView = mapFragment.getView();
 

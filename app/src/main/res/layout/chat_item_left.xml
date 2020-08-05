@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_toRightOf="@+id/chatItemImageView"
+        android:textColor="@color/black"
         tools:text="Hello message"
         android:textSize="18sp"
         android:padding="8dp"

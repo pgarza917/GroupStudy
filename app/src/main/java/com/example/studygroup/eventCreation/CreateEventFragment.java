@@ -341,7 +341,7 @@ public class CreateEventFragment extends Fragment {
                     Toast.makeText(getContext(), "Please select a date for the event!", Toast.LENGTH_LONG).show();
                     return;
                 }
-                if(mSelectedLocationGeoPoint == null && mSelectedLocationName == null) {
+                if(mSelectedLocationGeoPoint == null || mSelectedLocationName == null) {
                     Toast.makeText(getContext(), "Please select a location for the event!", Toast.LENGTH_LONG).show();
                     return;
                 }
