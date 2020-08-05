@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,6 +87,25 @@ public class ConversationFragment extends Fragment {
                         .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right)
                         .replace(R.id.frameLayoutContainer, fragment)
                         .commit();
+            }
+        });
+
+        ConversationFragment fragment = (ConversationFragment) getFragmentManager().findFragmentByTag("convoFragment");
+        fragment.getView().setFocusableInTouchMode(true);
+        fragment.getView().requestFocus();
+        fragment.getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                if(keyCode == KeyEvent.KEYCODE_BACK) {
+                    Fragment fragment = new MessagesFragment();
+                    ((MainActivity) getContext()).getSupportFragmentManager()
+                            .beginTransaction()
+                            .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right)
+                            .replace(R.id.frameLayoutContainer, fragment)
+                            .commit();
+                    return true;
+                }
+                return false;
             }
         });
 

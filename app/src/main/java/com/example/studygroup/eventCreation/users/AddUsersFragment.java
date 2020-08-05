@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -72,20 +73,8 @@ public class AddUsersFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         int id = item.getItemId();
-        String targetClassName = getTargetFragment().getClass().getSimpleName();
-
         if(id == R.id.action_check) {
-            Intent intent = new Intent();
-            intent.putParcelableArrayListExtra("eventUsers", (ArrayList<? extends Parcelable>) mSelectedUsers);
-            if(targetClassName.equals(CreateEventFragment.class.getSimpleName())) {
-                getTargetFragment().onActivityResult(CreateEventFragment.ADD_USERS_REQUEST_CODE, Activity.RESULT_OK, intent);
-            } else {
-                getTargetFragment().onActivityResult(FileViewFragment.ADD_USERS_REQUEST_CODE, Activity.RESULT_OK, intent);
-            }
-            FragmentManager fm = getActivity().getSupportFragmentManager();
-            // This is used so that the state of the previous create-event fragment is
-            // not changed when we return to it
-            fm.popBackStackImmediate();
+            endUserSelection();
             return true;
         }
 
@@ -163,6 +152,20 @@ public class AddUsersFragment extends Fragment {
                 return false;
             }
         });
+
+        AddUsersFragment fragment = (AddUsersFragment) getFragmentManager().findFragmentByTag(AddUsersFragment.class.getSimpleName());
+        fragment.getView().setFocusableInTouchMode(true);
+        fragment.getView().requestFocus();
+        fragment.getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                if(keyCode == KeyEvent.KEYCODE_BACK) {
+                    endUserSelection();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void searchUsers(String queryString) {
@@ -191,5 +194,21 @@ public class AddUsersFragment extends Fragment {
                 mUsersSearchAdapter.addAll(users);
             }
         });
+    }
+
+    private void endUserSelection() {
+        String targetClassName = getTargetFragment().getClass().getSimpleName();
+
+        Intent intent = new Intent();
+        intent.putParcelableArrayListExtra("eventUsers", (ArrayList<? extends Parcelable>) mSelectedUsers);
+        if(targetClassName.equals(CreateEventFragment.class.getSimpleName())) {
+            getTargetFragment().onActivityResult(CreateEventFragment.ADD_USERS_REQUEST_CODE, Activity.RESULT_OK, intent);
+        } else {
+            getTargetFragment().onActivityResult(FileViewFragment.ADD_USERS_REQUEST_CODE, Activity.RESULT_OK, intent);
+        }
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        // This is used so that the state of the previous create-event fragment is
+        // not changed when we return to it
+        fm.popBackStackImmediate();
     }
 }

@@ -250,7 +250,7 @@ public class CreateEventFragment extends Fragment {
                 data.putParcelableArrayList("eventUsers", (ArrayList<? extends Parcelable>) mEventUsers);
                 fragment.setArguments(data);
                 ((MainActivity) getContext()).getSupportFragmentManager()
-                        .beginTransaction().add(R.id.frameLayoutContainer, fragment)
+                        .beginTransaction().add(R.id.frameLayoutContainer, fragment, FileViewFragment.class.getSimpleName())
                         .addToBackStack(null)
                         .commit();
             }
@@ -265,7 +265,7 @@ public class CreateEventFragment extends Fragment {
                 data.putParcelableArrayList("eventUsers", (ArrayList<? extends Parcelable>) mEventUsers);
                 fragment.setArguments(data);
                 ((MainActivity) getContext()).getSupportFragmentManager()
-                        .beginTransaction().add(R.id.frameLayoutContainer, fragment)
+                        .beginTransaction().add(R.id.frameLayoutContainer, fragment, AddUsersFragment.class.getSimpleName())
                         .addToBackStack(null)
                         .commit();
             }

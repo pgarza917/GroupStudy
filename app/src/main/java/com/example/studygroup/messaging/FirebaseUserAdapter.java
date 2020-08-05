@@ -91,7 +91,8 @@ public class FirebaseUserAdapter extends RecyclerView.Adapter<FirebaseUserAdapte
             ((MainActivity) mContext).getSupportFragmentManager()
                     .beginTransaction()
                     .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left)
-                    .replace(R.id.frameLayoutContainer, fragment)
+                    .replace(R.id.frameLayoutContainer, fragment, "convoFragment")
+                    .addToBackStack(null)
                     .commit();
         }
     }

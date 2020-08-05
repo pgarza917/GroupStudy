@@ -115,6 +115,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        FeedFragment feedFragment = new FeedFragment();
+        loadFragment(feedFragment, 0);
+        mBottomNavigationView.setSelectedItemId(R.id.action_home);
+    }
+
     private boolean loadFragment(Fragment fragment, int newPosition) {
         if(fragment != null) {
             if(newPosition == mCurrentTabPosition) {

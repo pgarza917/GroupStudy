@@ -30,6 +30,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -54,6 +55,8 @@ import com.example.studygroup.eventCreation.users.UsersAdapter;
 import com.example.studygroup.eventCreation.users.AddUsersFragment;
 import com.example.studygroup.eventCreation.CreateEventFragment;
 import com.example.studygroup.eventFeed.EventDiscussionFragment;
+import com.example.studygroup.messaging.ConversationFragment;
+import com.example.studygroup.messaging.MessagesFragment;
 import com.example.studygroup.models.FileExtended;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.common.api.Scope;
@@ -133,24 +136,7 @@ public class FileViewFragment extends Fragment {
         if(fragmentName.equals(FileViewFragment.class.getSimpleName())) {
             switch(item.getItemId()) {
                 case R.id.action_check:
-                    // This case implementation handles the returning of the list of files that the user has
-                    // added to the event back to the create event fragment for upload of the event
-                    Intent intent = new Intent();
-                    intent.putParcelableArrayListExtra("uploadFiles", (ArrayList<? extends Parcelable>) mFilesList);
-
-                    String targetFragmentName = getTargetFragment().getClass().getSimpleName();
-
-                    if(targetFragmentName.equals(CreateEventFragment.class.getSimpleName())) {
-                        intent.putParcelableArrayListExtra("newUsers", (ArrayList<? extends Parcelable>) mNewEventUsers);
-                        getTargetFragment().onActivityResult(CreateEventFragment.FILE_UPLOAD_REQUEST_CODE, Activity.RESULT_OK, intent);
-                    } else {
-                        getTargetFragment().onActivityResult(EventDiscussionFragment.FILE_ADD_REQUEST_CODE, Activity.RESULT_OK, intent);
-                    }
-
-                    FragmentManager fm = getActivity().getSupportFragmentManager();
-                    // This is used so that the state of the previous create-event fragment is
-                    // not changed when we return to it
-                    fm.popBackStackImmediate();
+                    endFileSelection();
                     return true;
                 default:
                     return super.onOptionsItemSelected(item);
@@ -258,6 +244,20 @@ public class FileViewFragment extends Fragment {
                 } else {
                     gsuiteConfigureCreateDialog();
                 }
+            }
+        });
+
+        FileViewFragment fragment = (FileViewFragment) getFragmentManager().findFragmentByTag(FileViewFragment.class.getSimpleName());
+        fragment.getView().setFocusableInTouchMode(true);
+        fragment.getView().requestFocus();
+        fragment.getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                if(keyCode == KeyEvent.KEYCODE_BACK) {
+                    endFileSelection();
+                    return true;
+                }
+                return false;
             }
         });
     }
@@ -434,7 +434,7 @@ public class FileViewFragment extends Fragment {
                 data.putParcelableArrayList("eventUsers", (ArrayList<? extends Parcelable>) mEventUsers);
                 fragment.setArguments(data);
                 ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()
-                        .add(R.id.frameLayoutContainer, fragment)
+                        .add(R.id.frameLayoutContainer, fragment, AddUsersFragment.class.getSimpleName())
                         .addToBackStack(null)
                         .commit();
             }
@@ -573,5 +573,26 @@ public class FileViewFragment extends Fragment {
                 mNewEventUsers.add(user);
             }
         }
+    }
+
+    private void endFileSelection() {
+        // This case implementation handles the returning of the list of files that the user has
+        // added to the event back to the create event fragment for upload of the event
+        Intent intent = new Intent();
+        intent.putParcelableArrayListExtra("uploadFiles", (ArrayList<? extends Parcelable>) mFilesList);
+
+        String targetFragmentName = getTargetFragment().getClass().getSimpleName();
+
+        if(targetFragmentName.equals(CreateEventFragment.class.getSimpleName())) {
+            intent.putParcelableArrayListExtra("newUsers", (ArrayList<? extends Parcelable>) mNewEventUsers);
+            getTargetFragment().onActivityResult(CreateEventFragment.FILE_UPLOAD_REQUEST_CODE, Activity.RESULT_OK, intent);
+        } else {
+            getTargetFragment().onActivityResult(EventDiscussionFragment.FILE_ADD_REQUEST_CODE, Activity.RESULT_OK, intent);
+        }
+
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        // This is used so that the state of the previous create-event fragment is
+        // not changed when we return to it
+        fm.popBackStackImmediate();
     }
 }

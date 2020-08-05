@@ -226,7 +226,7 @@ public class EventDiscussionFragment extends Fragment {
 
         ((MainActivity) getContext()).getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.frameLayoutContainer, fragment)
+                .add(R.id.frameLayoutContainer, fragment, FileViewFragment.class.getSimpleName())
                 .addToBackStack(null)
                 .commit();
     }
