@@ -73,6 +73,7 @@ public class MessagesFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
         inflater.inflate(R.menu.new_message_menu, menu);
     }
 
@@ -93,6 +94,7 @@ public class MessagesFragment extends Fragment {
         ((MainActivity) getActivity()).getSupportActionBar().show();
 
         ((MainActivity) getContext()).getSupportActionBar().setTitle("Messages");
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         mViewPager = view.findViewById(R.id.viewPager);
         mTabLayout = view.findViewById(R.id.tabLayout);
@@ -162,8 +164,8 @@ public class MessagesFragment extends Fragment {
         builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
                 if(mSelectedUser != null) {
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
                     String email = mSelectedUser.getString("openEmail");
                     Query query = reference.orderByChild("email").equalTo(email);
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -180,7 +182,7 @@ public class MessagesFragment extends Fragment {
                             fragment.setArguments(data);
                             ((MainActivity) getContext()).getSupportFragmentManager()
                                     .beginTransaction()
-                                    .replace(R.id.frameLayoutContainer, fragment)
+                                    .replace(R.id.frameLayoutContainer, fragment, ConversationFragment.class.getSimpleName())
                                     .commit();
                         }
 

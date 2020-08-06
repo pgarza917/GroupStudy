@@ -14,7 +14,7 @@ import com.example.studygroup.models.Event;
 import org.parceler.Parcels;
 
 public class EventDetailsViewPagerAdapter extends FragmentStateAdapter {
-    public static final int EVENT_DETAILS_ITEM_SIZE = 2;
+    public static final int EVENT_DETAILS_ITEM_SIZE = 3;
 
     Event mEvent;
 
@@ -34,8 +34,13 @@ public class EventDetailsViewPagerAdapter extends FragmentStateAdapter {
             fragment.setArguments(data);
 
             return fragment;
-        } else {
+        } else if(position == 1) {
             Fragment fragment = new EventDiscussionFragment();
+            fragment.setArguments(data);
+
+            return fragment;
+        } else {
+            Fragment fragment = new EventFilesFragment();
             fragment.setArguments(data);
 
             return fragment;

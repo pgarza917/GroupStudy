@@ -60,8 +60,10 @@ public class EventDetailsRootFragment extends Fragment {
                     public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                         if(position == 0) {
                             tab.setText("Details");
-                        } else {
+                        } else if(position == 1) {
                             tab.setText("Discussion");
+                        } else {
+                            tab.setText("Files");
                         }
                     }
                 }).attach();

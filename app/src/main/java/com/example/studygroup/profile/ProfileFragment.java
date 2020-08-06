@@ -77,6 +77,7 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Profile");
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         mUserEventList = new ArrayList<>();
         mSubjectList = new ArrayList<>();
@@ -140,6 +141,7 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.profile_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }

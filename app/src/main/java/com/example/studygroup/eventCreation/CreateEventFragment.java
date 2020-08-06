@@ -48,6 +48,7 @@ import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
 import com.example.studygroup.models.Subject;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.common.collect.Maps;
 import com.parse.FindCallback;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
@@ -115,6 +116,7 @@ public class CreateEventFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Create");
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         if(mEventFiles == null) {
             mEventFiles = new ArrayList<>();

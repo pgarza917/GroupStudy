@@ -90,7 +90,7 @@ public class ConversationFragment extends Fragment {
             }
         });
 
-        ConversationFragment fragment = (ConversationFragment) getFragmentManager().findFragmentByTag("convoFragment");
+        ConversationFragment fragment = (ConversationFragment) getFragmentManager().findFragmentByTag(ConversationFragment.class.getSimpleName());
         fragment.getView().setFocusableInTouchMode(true);
         fragment.getView().requestFocus();
         fragment.getView().setOnKeyListener(new View.OnKeyListener() {

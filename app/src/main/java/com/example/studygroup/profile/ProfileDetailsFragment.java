@@ -1,5 +1,8 @@
 package com.example.studygroup.profile;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,8 +26,17 @@ import com.bumptech.glide.Glide;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.eventFeed.FeedFragment;
+import com.example.studygroup.messaging.ConversationFragment;
 import com.example.studygroup.models.Subject;
+import com.example.studygroup.models.User;
 import com.example.studygroup.search.SearchFragment;
+import com.google.common.collect.Iterables;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -116,11 +128,57 @@ public class ProfileDetailsFragment extends Fragment {
         mMessageUserImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                launchNewMessageDialog();
             }
         });
 
         queryUserSubjects();
+    }
+
+    private void launchNewMessageDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Would you like to message " + mUser.getString("displayName") + "?");
+
+        builder.setNegativeButton("No", null);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                launchConversation();
+            }
+        });
+
+        Dialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void launchConversation() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+        String email = mUser.getString("openEmail");
+        Query query = reference.orderByChild("email").equalTo(email);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DataSnapshot snapshot = Iterables.get(dataSnapshot.getChildren(), 0);
+
+                User user = snapshot.getValue(User.class);
+                String uid = user.getId();
+
+                Fragment fragment = new ConversationFragment();
+                Bundle data = new Bundle();
+                data.putString("userId", uid);
+                fragment.setArguments(data);
+                ((MainActivity) getContext()).getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                        .replace(R.id.frameLayoutContainer, fragment, ConversationFragment.class.getSimpleName())
+                        .commit();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error querying selected user: ", error.toException());
+            }
+        });
     }
 
     private void queryUserSubjects() {
