@@ -170,6 +170,7 @@ public class LoginFragment extends Fragment {
                         user.setEmail(account.getEmail());
                         user.setUsername(account.getId());
                         user.put("displayName", account.getDisplayName());
+                        user.put("openEmail", account.getEmail());
                         user.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {

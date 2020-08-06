@@ -200,6 +200,8 @@ public class CreateEventFragment extends Fragment {
         subjectOptions.add("Economics");
         subjectOptions.add("Geography");
         subjectOptions.add("Math");
+        subjectOptions.add("Political Science");
+        subjectOptions.add("Literature");
         final String[] selectedSubject = {"Physics"};
 
         ArrayAdapter<String> subjectAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, subjectOptions);

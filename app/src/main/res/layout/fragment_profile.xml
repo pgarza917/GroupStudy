@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/profilePictureImageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="16dp"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -28,7 +28,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:textAlignment="center"
         tools:text="I am currently a rising junior at Yale University. I really like physics and computer science." />
@@ -38,7 +38,7 @@
         android:layout_width="125dp"
         android:layout_height="125dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="16dp"
         tools:src="@tools:sample/avatars" />
 
     <TextView
@@ -48,16 +48,16 @@
         android:layout_below="@+id/profileNameTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="16dp"
         tools:text="pgarzamw3@gmail.com" />
 
     <TextView
         android:id="@+id/yourEventsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profileBioTextView"
+        android:layout_below="@+id/subjectsRecyclerView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="16dp"
         android:text="Your Events"
         android:textColor="@color/black"
         android:textSize="18sp"
@@ -91,5 +91,15 @@
         android:layout_marginTop="10dp"
         android:background="#6A6A6A"
         android:src="?attr/dividerHorizontal" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/subjectsRecyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_below="@+id/profileBioTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="false"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal" />
 
 </RelativeLayout>

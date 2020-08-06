@@ -9,4 +9,12 @@
     <color name="white">#FFFFFF</color>
     <color name="red">#FF0000</color>
     <color name="transparentBlue">#66DBFF</color>
+    <color name="aqua">#00FFFF</color>
+    <color name="blue">#0000FF</color>
+    <color name="fuchsia">#FF0080</color>
+    <color name="grey">#808080</color>
+    <color name="maroon">#800000</color>
+    <color name="olive">#808000</color>
+    <color name="purple">#800080</color>
+    <color name="teal">#008080</color>
 </resources>

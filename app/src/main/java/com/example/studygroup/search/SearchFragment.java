@@ -180,7 +180,14 @@ public class SearchFragment extends Fragment {
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public boolean onQueryTextChange(String query) {
+                if (!query.isEmpty()){
+                    if (mSearchCategory.equals("events")) {
+                        searchEvents(query);
+                    } else {
+                        searchUsers(query);
+                    }
+                }
                 return false;
             }
         });

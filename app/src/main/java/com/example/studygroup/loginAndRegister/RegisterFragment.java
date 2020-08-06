@@ -101,6 +101,7 @@ public class RegisterFragment extends Fragment {
         user.put("bio", bio);
         user.put("displayName", username);
         user.put("lowerDisplayName", username.toLowerCase());
+        user.put("openEmail", email.toLowerCase());
         user.signUpInBackground(new SignUpCallback() {
             @Override
             public void done(ParseException e) {

@@ -149,6 +149,9 @@ public class AddUsersFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String s) {
+                if (!s.isEmpty()) {
+                    searchUsers(s);
+                }
                 return false;
             }
         });

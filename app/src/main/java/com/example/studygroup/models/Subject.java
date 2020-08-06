@@ -11,8 +11,17 @@ import org.parceler.Parcel;
 public class Subject extends ParseObject {
 
     public static final String KEY_SUBJECT_NAME = "subjectName";
+    public boolean editMode;
 
     public String getSubjectName() {
         return getString(KEY_SUBJECT_NAME);
+    }
+
+    public boolean isEditMode() {
+        return editMode;
+    }
+
+    public void setEditMode(boolean editMode) {
+        this.editMode = editMode;
     }
 }

@@ -27,6 +27,7 @@ import com.example.studygroup.models.Event;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.loginAndRegister.LoginActivity;
 import com.example.studygroup.R;
+import com.example.studygroup.models.Subject;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -35,6 +36,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -52,10 +54,13 @@ public class ProfileFragment extends Fragment {
     private ImageView mProfilePictureImageView;
     private TextView mEmailTextView;
     private RecyclerView mUserEventsRecyclerView;
+    private RecyclerView mSubjectRecyclerView;
     private ProgressBar mUserEventsProgressBar;
 
     private EventsAdapter mUserEventsAdapter;
+    private SubjectAdapter mSubjectAdapter;
     private List<Event> mUserEventList;
+    private List<Subject> mSubjectList;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -75,17 +80,23 @@ public class ProfileFragment extends Fragment {
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Profile");
 
         mUserEventList = new ArrayList<>();
+        mSubjectList = new ArrayList<>();
         mUserEventsAdapter = new EventsAdapter(getContext(), mUserEventList);
+        mSubjectAdapter = new SubjectAdapter(getContext(), mSubjectList);
 
         mProfileNameTextView = view.findViewById(R.id.profileNameTextView);
         mBioTextView = view.findViewById(R.id.profileBioTextView);
         mProfilePictureImageView = view.findViewById(R.id.profilePictureImageView);
         mEmailTextView = view.findViewById(R.id.emailTextView);
         mUserEventsRecyclerView = view.findViewById(R.id.userEventsRecyclerView);
+        mSubjectRecyclerView = view.findViewById(R.id.subjectsRecyclerView);
         mUserEventsProgressBar = view.findViewById(R.id.userEventsProgressBar);
 
         mUserEventsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mUserEventsRecyclerView.setAdapter(mUserEventsAdapter);
+
+        mSubjectRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        mSubjectRecyclerView.setAdapter(mSubjectAdapter);
 
         DividerItemDecoration itemDecor = new DividerItemDecoration(mUserEventsRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
         mUserEventsRecyclerView.addItemDecoration(itemDecor);
@@ -111,9 +122,23 @@ public class ProfileFragment extends Fragment {
         }
         mEmailTextView.setText(currentUser.getEmail());
 
-        mUserEventsProgressBar.setVisibility(View.VISIBLE);
+        ParseRelation<Subject> subjectRelation = currentUser.getRelation("subjectInterests");
 
-        getUserEvents();
+        subjectRelation.getQuery().findInBackground(new FindCallback<Subject>() {
+            @Override
+            public void done(List<Subject> subjects, ParseException e) {
+                if(e != null) {
+                    Log.e(TAG, "Error querying Parse for user subjects: ", e);
+                    return;
+                }
+                mSubjectList.clear();
+                mSubjectList.addAll(subjects);
+                mSubjectAdapter.notifyDataSetChanged();
+
+                mUserEventsProgressBar.setVisibility(View.VISIBLE);
+                getUserEvents();
+            }
+        });
     }
 
     @Override
