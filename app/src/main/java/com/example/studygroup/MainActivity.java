@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
+import com.example.studygroup.eventCreation.CreateFragment;
 import com.example.studygroup.eventCreation.files.FileViewAdapter;
 import com.example.studygroup.eventCreation.CreateEventFragment;
 import com.example.studygroup.eventFeed.FeedFragment;
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                         newPosition = 1;
                         break;
                     case R.id.action_create_event:
-                        fragment = new CreateEventFragment();
+                        fragment = new CreateFragment();
                         newPosition = 2;
                         break;
                     case R.id.action_profile:

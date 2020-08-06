@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".eventCreation.CreateFragment">
+
+
+    <TextView
+        android:id="@+id/askCreateTypeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:text="What would you like to create?"
+        android:textColor="#000"
+        android:textSize="24sp" />
+
+    <ImageButton
+        android:id="@+id/createEventImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/askCreateTypeTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="64dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_baseline_event_96"
+        android:tint="#7CB342" />
+
+    <ImageButton
+        android:id="@+id/createGroupImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/createEventTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="64dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_baseline_group_add_96"
+        android:tint="#1E88E5" />
+
+    <TextView
+        android:id="@+id/createEventTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/createEventImageButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:text="Event"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/createGroupTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/createGroupImageButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="Group"
+        android:textSize="18sp" />
+
+</RelativeLayout>

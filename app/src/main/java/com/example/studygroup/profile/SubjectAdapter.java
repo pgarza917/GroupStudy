@@ -1,23 +1,13 @@
 package com.example.studygroup.profile;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -25,10 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.studygroup.R;
 import com.example.studygroup.models.Subject;
-import com.parse.ParseException;
-import com.parse.ParseRelation;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import java.util.HashMap;
 import java.util.List;
