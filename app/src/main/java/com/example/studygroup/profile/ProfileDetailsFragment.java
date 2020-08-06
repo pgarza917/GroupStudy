@@ -7,33 +7,54 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.eventFeed.FeedFragment;
+import com.example.studygroup.models.Subject;
 import com.example.studygroup.search.SearchFragment;
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
 
 import org.parceler.Parcels;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ProfileDetailsFragment extends Fragment {
 
+    public static final String TAG = ProfileDetailsFragment.class.getSimpleName();
+
     private ImageView mUserPictureImageView;
     private TextView mUserNameTextView;
     private TextView mUserEmailTextView;
     private TextView mUserBioTextView;
+    private TextView mUserSubjectsTextView;
+    private RecyclerView mUserSubjectsRecyclerView;
+    private ProgressBar mProgressBar;
+    private ImageButton mFriendUserImageButton;
+    private ImageButton mMessageUserImageButton;
 
+    private List<Subject> mUserSubjects;
+    private SubjectAdapter mSubjectsAdapter;
     private ParseUser mUser;
 
     public ProfileDetailsFragment() {
@@ -63,22 +84,61 @@ public class ProfileDetailsFragment extends Fragment {
             }
         });
 
-
-
+        mUserSubjects = new ArrayList<>();
+        mSubjectsAdapter = new SubjectAdapter(getContext(), mUserSubjects, null);
         mUser = Parcels.unwrap(getArguments().getParcelable(ParseUser.class.getSimpleName()));
 
         mUserPictureImageView = view.findViewById(R.id.profileDetailsPictureImageView);
         mUserNameTextView = view.findViewById(R.id.profileDetailsNameTextView);
         mUserEmailTextView = view.findViewById(R.id.profileDetailsEmailTextView);
         mUserBioTextView = view.findViewById(R.id.profileDetailsBioTextView);
+        mUserSubjectsRecyclerView = view.findViewById(R.id.userSubjectTagsRecyclerView);
+        mUserSubjectsTextView = view.findViewById(R.id.userSubjectTagsTextView);
+        mProgressBar = view.findViewById(R.id.profileDetailsProgressBar);
+        mFriendUserImageButton = view.findViewById(R.id.friendUserImageButton);
+        mMessageUserImageButton = view.findViewById(R.id.messageUserImageButton);
+
+        mUserSubjectsRecyclerView.setAdapter(mSubjectsAdapter);
+        mUserSubjectsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        mProgressBar.setVisibility(View.VISIBLE);
 
         mUserNameTextView.setText(mUser.getString("displayName"));
         mUserEmailTextView.setText(mUser.getString("openEmail"));
         mUserBioTextView.setText(mUser.getString("bio"));
 
-        ParseFile userPicture = mUser.getParseFile("profileImage");
+        String subjectsTextViewText = mUser.getString("displayName") + "'s Tags";
+        mUserSubjectsTextView.setText(subjectsTextViewText);
 
+        ParseFile userPicture = mUser.getParseFile("profileImage");
         Glide.with(getContext()).load(userPicture.getUrl()).circleCrop().into(mUserPictureImageView);
 
+        mMessageUserImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        queryUserSubjects();
+    }
+
+    private void queryUserSubjects() {
+        ParseRelation<Subject> subjectsRelation = mUser.getRelation("subjectInterests");
+
+        subjectsRelation.getQuery().findInBackground(new FindCallback<Subject>() {
+            @Override
+            public void done(List<Subject> subjects, ParseException e) {
+                if(e != null) {
+                    Log.e(TAG, "Error querying Parse for user subjects: ", e);
+                    return;
+                }
+                mUserSubjects.clear();
+                mUserSubjects.addAll(subjects);
+                mSubjectsAdapter.notifyDataSetChanged();
+
+                mProgressBar.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 }

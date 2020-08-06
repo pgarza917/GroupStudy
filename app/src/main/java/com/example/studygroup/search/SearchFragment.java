@@ -175,7 +175,7 @@ public class SearchFragment extends Fragment {
                     searchUsers(query);
                 }
                 // workaround to avoid issues with some emulators and keyboard devices
-                //searchView.clearFocus();
+                searchView.clearFocus();
                 return true;
             }
 
@@ -187,7 +187,7 @@ public class SearchFragment extends Fragment {
                     } else {
                         searchUsers(query);
                     }
-                }
+                 }
                 return false;
             }
         });

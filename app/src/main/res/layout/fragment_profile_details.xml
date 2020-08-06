@@ -12,10 +12,8 @@
         android:id="@+id/profileDetailsPictureImageView"
         android:layout_width="125dp"
         android:layout_height="125dp"
-        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="136dp"
         android:layout_marginTop="16dp"
         tools:src="@tools:sample/avatars" />
 
@@ -24,9 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/profileDetailsPictureImageView"
-        android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="151dp"
         android:layout_marginTop="32dp"
         android:textColor="@color/black"
         android:textSize="24sp"
@@ -38,9 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/profileDetailsNameTextView"
-        android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="140dp"
         android:layout_marginTop="18dp"
         tools:text="john123@gmail.com" />
 
@@ -58,14 +52,55 @@
         tools:text="Hey my name is John and I'm a new user on this platform. Nice to meet you!" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/friendUserImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userSubjectTagsRecyclerView"
+        android:layout_marginStart="90dp"
+        android:layout_marginTop="64dp"
+        android:background="@color/white"
+        android:src="@drawable/ic_baseline_person_add_48"
+        android:tint="#000" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/userSubjectTagsRecyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_below="@+id/userSubjectTagsTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal" />
+
+    <TextView
+        android:id="@+id/userSubjectTagsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/profileDetailsBioTextView"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="70dp"
-        android:layout_marginTop="95dp"
-        android:background="@color/white"
-        android:src="@drawable/ic_baseline_person_add_48" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="44dp"
+        android:textColor="#000"
+        tools:text="John's Tags" />
+
+    <ProgressBar
+        android:id="@+id/profileDetailsProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:visibility="invisible" />
+
+    <ImageButton
+        android:id="@+id/messageUserImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userSubjectTagsRecyclerView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="90dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_baseline_message_48"
+        android:tint="#000" />
 
 </RelativeLayout>

@@ -27,6 +27,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.studygroup.MainActivity;
@@ -63,6 +64,7 @@ public class MessagesFragment extends Fragment {
 
     private List<ParseUser> mUserSearchResultsList;
     private UserSearchResultAdapter mUserResultsAdapter;
+    private ParseUser mSelectedUser;
 
     public MessagesFragment() {
         // Required empty public constructor
@@ -161,31 +163,35 @@ public class MessagesFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
-                String email = ((TextView) view.findViewById(R.id.userItemEmailTextView)).getText().toString();
-                Query query = reference.orderByChild("email").equalTo(email);
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        DataSnapshot snapshot = Iterables.get(dataSnapshot.getChildren(), 0);
+                if(mSelectedUser != null) {
+                    String email = mSelectedUser.getString("openEmail");
+                    Query query = reference.orderByChild("email").equalTo(email);
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            DataSnapshot snapshot = Iterables.get(dataSnapshot.getChildren(), 0);
 
-                        User user = snapshot.getValue(User.class);
-                        String uid = user.getId();
+                            User user = snapshot.getValue(User.class);
+                            String uid = user.getId();
 
-                        Fragment fragment = new ConversationFragment();
-                        Bundle data = new Bundle();
-                        data.putString("userId", uid);
-                        fragment.setArguments(data);
-                        ((MainActivity) getContext()).getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.frameLayoutContainer, fragment)
-                                .commit();
-                    }
+                            Fragment fragment = new ConversationFragment();
+                            Bundle data = new Bundle();
+                            data.putString("userId", uid);
+                            fragment.setArguments(data);
+                            ((MainActivity) getContext()).getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.frameLayoutContainer, fragment)
+                                    .commit();
+                        }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e(TAG, "Error querying selected user: ", error.toException());
-                    }
-                });
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e(TAG, "Error querying selected user: ", error.toException());
+                        }
+                    });
+                } else {
+                    Toast.makeText(getContext(), "Please Search and Select a User to Message!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -204,13 +210,13 @@ public class MessagesFragment extends Fragment {
         mUserResultsAdapter = new UserSearchResultAdapter(getContext(), mUserSearchResultsList, new UserSearchResultAdapter.ResultClickListener() {
             @Override
             public void onResultClicked(int position) {
-                ParseUser user = mUserSearchResultsList.get(position);
+                mSelectedUser = mUserSearchResultsList.get(position);
                 userItemRelativeLayout.setVisibility(View.VISIBLE);
 
                 ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
 
-                ((TextView) view.findViewById(R.id.selectedUserNameTextView)).setText(user.getString("displayName"));
-                ((TextView) view.findViewById(R.id.selectedUserEmailTextView)).setText(user.getString("openEmail"));
+                ((TextView) view.findViewById(R.id.selectedUserNameTextView)).setText(mSelectedUser.getString("displayName"));
+                ((TextView) view.findViewById(R.id.selectedUserEmailTextView)).setText(mSelectedUser.getString("openEmail"));
                 ((CheckBox) view.findViewById(R.id.selectedUserCheckBox)).setChecked(true);
                 ((CheckBox) view.findViewById(R.id.selectedUserCheckBox)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -222,7 +228,7 @@ public class MessagesFragment extends Fragment {
                     }
                 });
 
-                Glide.with(getContext()).load(user.getParseFile("profileImage").getUrl())
+                Glide.with(getContext()).load(mSelectedUser.getParseFile("profileImage").getUrl())
                         .circleCrop()
                         .into((ImageView) view.findViewById(R.id.selectedUserPictureImageView));
             }
