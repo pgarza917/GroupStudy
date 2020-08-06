@@ -17,4 +17,12 @@
     <color name="olive">#808000</color>
     <color name="purple">#800080</color>
     <color name="teal">#008080</color>
+    <color name="warmPink">#ff7373</color>
+    <color name="seaGreen">#B4EEB4</color>
+    <color name="goldenRod">#DAA520</color>
+    <color name="darkGreen">#008000</color>
+    <color name="orange">#FFA500</color>
+    <color name="navyBlue">#000080</color>
+    <color name="lushLava">#FF4500</color>
+    <color name="limeGreen">#00FF00</color>
 </resources>

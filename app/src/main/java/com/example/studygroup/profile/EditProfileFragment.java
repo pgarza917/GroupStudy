@@ -2,6 +2,7 @@ package com.example.studygroup.profile;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -28,19 +31,27 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.eventCreation.files.FileViewFragment;
+import com.example.studygroup.models.Event;
+import com.example.studygroup.models.Subject;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseQuery;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,6 +69,10 @@ public class EditProfileFragment extends Fragment {
     private EditText mBioEditText;
 
     private ParseFile mNewPhotoFile;
+    private List<Subject> mUserSubjectList;
+    private List<Subject> mAddSubjectList;
+    private SubjectAdapter mUserSubjectsAdapter;
+    private SubjectAdapter mAddSubjectsAdapter;
 
     // Member variables for camera functionality
     public String photoFileName = "photo.jpg";
@@ -79,15 +94,39 @@ public class EditProfileFragment extends Fragment {
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
         mEditProfilePictureImageButton = view.findViewById(R.id.editProfilePictureImageButton);
         mDisplayNameEditText = view.findViewById(R.id.editDisplayNameEditText);
         mPasswordEditText = view.findViewById(R.id.editPasswordEditText);
         mBioEditText = view.findViewById(R.id.editBioEditText);
+        RecyclerView mUserSubjectRecyclerView = view.findViewById(R.id.yourTagsRecyclerView);
+        RecyclerView mAddSubjectRecyclerView = view.findViewById(R.id.addTagsRecyclerView);
 
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        SubjectAdapter.OnClickListener userSubjectListener = new SubjectAdapter.OnClickListener() {
+            @Override
+            public void onClick(int position) {
+                launchDeleteTagDialog(position);
+            }
+        };
+
+        SubjectAdapter.OnClickListener addSubjectListener = new SubjectAdapter.OnClickListener() {
+            @Override
+            public void onClick(int position) {
+                addSubject(position);
+            }
+        };
+
+        mUserSubjectList = new ArrayList<>();
+        mAddSubjectList = new ArrayList<>();
+        mUserSubjectsAdapter = new SubjectAdapter(getContext(), mUserSubjectList, userSubjectListener);
+        mAddSubjectsAdapter = new SubjectAdapter(getContext(), mAddSubjectList, addSubjectListener);
+        mUserSubjectRecyclerView.setAdapter(mUserSubjectsAdapter);
+        mAddSubjectRecyclerView.setAdapter(mAddSubjectsAdapter);
+        mUserSubjectRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        mAddSubjectRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         ParseFile profilePictureFile = ParseUser.getCurrentUser().getParseFile("profileImage");
-
         Glide.with(getContext()).load(profilePictureFile.getUrl()).circleCrop().into(mEditProfilePictureImageButton);
 
         final DialogInterface.OnClickListener uploadListener = new DialogInterface.OnClickListener() {
@@ -127,6 +166,8 @@ public class EditProfileFragment extends Fragment {
                 dialog.show();
             }
         });
+
+        queryUserSubjects();
     }
 
     @Override
@@ -184,6 +225,44 @@ public class EditProfileFragment extends Fragment {
             Glide.with(getContext()).load(takenImage).circleCrop().into(mEditProfilePictureImageButton);
         }
     }
+
+    private void queryUserSubjects() {
+        ParseRelation<Subject> userSubjectsRelation = ParseUser.getCurrentUser().getRelation("subjectInterests");
+
+        userSubjectsRelation.getQuery().findInBackground(new FindCallback<Subject>() {
+            @Override
+            public void done(List<Subject> userSubjects, ParseException e) {
+                if(e != null) {
+                    Log.e(TAG, "Error querying Parse for user subjects: ", e);
+                    return;
+                }
+                mUserSubjectList.clear();
+                mUserSubjectList.addAll(userSubjects);
+                mUserSubjectsAdapter.notifyDataSetChanged();
+
+                queryAllSubjects();
+            }
+        });
+    }
+
+    private void queryAllSubjects() {
+        ParseQuery<Subject> subjectsQuery = ParseQuery.getQuery(Subject.class);
+        subjectsQuery.orderByAscending("subjectName");
+
+        subjectsQuery.findInBackground(new FindCallback<Subject>() {
+            @Override
+            public void done(List<Subject> subjects, ParseException e) {
+                if(e != null) {
+                    Log.e(TAG, "Error querying Parse for all subjects: ", e);
+                    return;
+                }
+                mAddSubjectList.clear();
+                mAddSubjectList.addAll(subjects);
+                mAddSubjectsAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
 
     private void updateCurrentUserSettings(String newDisplayName, String newPassword, String newBio) {
         ParseUser currentUser = ParseUser.getCurrentUser();
@@ -253,5 +332,63 @@ public class EditProfileFragment extends Fragment {
         File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
 
         return file;
+    }
+
+    private void launchDeleteTagDialog(int position) {
+        Subject subject = mUserSubjectList.get(position);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Would you like to remove " + subject.getSubjectName() + " from your subject tags?") ;
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                ParseRelation<Subject> relation = ParseUser.getCurrentUser().getRelation("subjectInterests");
+                relation.remove(subject);
+                ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e != null) {
+                            Log.e(TAG, "Error saving edited user-subject relation to Parse: ", e);
+                            return;
+                        }
+                        Toast.makeText(getContext(), "Subject Tag Removed!", Toast.LENGTH_SHORT).show();
+                        mUserSubjectList.remove(position);
+                        mUserSubjectsAdapter.notifyItemRemoved(position);
+                    }
+                });
+            }
+        });
+        builder.setNegativeButton("No", null);
+
+        Dialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void addSubject(int position) {
+        Subject newSubject = mAddSubjectList.get(position);
+
+        int i = 0;
+        while(i < mUserSubjectList.size() &&
+                !newSubject.getObjectId().equals(mUserSubjectList.get(i).getObjectId())) {
+            i++;
+        }
+        if(i == mUserSubjectList.size()) {
+            ParseRelation<Subject> userSubjectsRelation = ParseUser.getCurrentUser().getRelation("subjectInterests");
+            userSubjectsRelation.add(newSubject);
+            ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if(e != null) {
+                        Log.e(TAG, "Error adding subject to user relation: ", e);
+                        return;
+                    }
+                    Toast.makeText(getContext(), "Subject Tag Added!", Toast.LENGTH_SHORT).show();
+                    mUserSubjectList.add(0, newSubject);
+                    mUserSubjectsAdapter.notifyItemInserted(0);
+                }
+            });
+        }
     }
 }

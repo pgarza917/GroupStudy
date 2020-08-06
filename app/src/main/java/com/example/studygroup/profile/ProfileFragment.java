@@ -52,7 +52,6 @@ public class ProfileFragment extends Fragment {
     private TextView mProfileNameTextView;
     private TextView mBioTextView;
     private ImageView mProfilePictureImageView;
-    private TextView mEmailTextView;
     private RecyclerView mUserEventsRecyclerView;
     private RecyclerView mSubjectRecyclerView;
     private ProgressBar mUserEventsProgressBar;
@@ -82,12 +81,11 @@ public class ProfileFragment extends Fragment {
         mUserEventList = new ArrayList<>();
         mSubjectList = new ArrayList<>();
         mUserEventsAdapter = new EventsAdapter(getContext(), mUserEventList);
-        mSubjectAdapter = new SubjectAdapter(getContext(), mSubjectList);
+        mSubjectAdapter = new SubjectAdapter(getContext(), mSubjectList, null);
 
         mProfileNameTextView = view.findViewById(R.id.profileNameTextView);
         mBioTextView = view.findViewById(R.id.profileBioTextView);
         mProfilePictureImageView = view.findViewById(R.id.profilePictureImageView);
-        mEmailTextView = view.findViewById(R.id.emailTextView);
         mUserEventsRecyclerView = view.findViewById(R.id.userEventsRecyclerView);
         mSubjectRecyclerView = view.findViewById(R.id.subjectsRecyclerView);
         mUserEventsProgressBar = view.findViewById(R.id.userEventsProgressBar);
@@ -120,7 +118,6 @@ public class ProfileFragment extends Fragment {
         } else {
             mProfilePictureImageView.setVisibility(View.GONE);
         }
-        mEmailTextView.setText(currentUser.getEmail());
 
         ParseRelation<Subject> subjectRelation = currentUser.getRelation("subjectInterests");
 

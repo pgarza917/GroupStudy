@@ -38,11 +38,13 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHold
 
     private List<Subject> mSubjectsList;
     private Context mContext;
+    private OnClickListener mClickListener;
     private HashMap<String, Integer> mColorMap;
 
-    public SubjectAdapter(Context mContext, List<Subject> mSubjectsList) {
+    public SubjectAdapter(Context mContext, List<Subject> mSubjectsList, OnClickListener listener) {
         this.mSubjectsList = mSubjectsList;
         this.mContext = mContext;
+        this.mClickListener = listener;
         createColorMap();
     }
 
@@ -74,6 +76,15 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHold
         mColorMap.put("Math", R.color.maroon);
         mColorMap.put("Political Science", R.color.olive);
         mColorMap.put("Literature", R.color.purple);
+        mColorMap.put("Art", R.color.warmPink);
+        mColorMap.put("Chemistry", R.color.seaGreen);
+        mColorMap.put("Law", R.color.goldenRod);
+        mColorMap.put("Biology", R.color.darkGreen);
+        mColorMap.put("Language", R.color.darkGrey);
+        mColorMap.put("Philosophy", R.color.orange);
+        mColorMap.put("Statistics", R.color.navyBlue);
+        mColorMap.put("Engineering", R.color.lushLava);
+        mColorMap.put("Computer Science", R.color.limeGreen);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -84,7 +95,7 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHold
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mSubjectNameTextView = itemView.findViewById(R.id.subjectNameTextView);
-
+            itemView.setOnClickListener(this);
         }
 
         public void bind(Subject subject) {
@@ -95,42 +106,15 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHold
             Drawable background = ContextCompat.getDrawable(mContext, R.drawable.subject_tag);
             background.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(mContext, color), PorterDuff.Mode.SRC_IN));
             mSubjectNameTextView.setBackground(background);
-
-            if(subject.isEditMode()) {
-                mSubjectNameTextView.setOnClickListener(this);
-            }
         }
 
         @Override
         public void onClick(View view) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-            builder.setTitle("Would you like to remove " + mSubjectName + " from your subject tags?") ;
-
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    int position = getAdapterPosition();
-                    Subject subject = mSubjectsList.get(position);
-                    mSubjectsList.remove(position);
-
-                    ParseRelation<Subject> relation = ParseUser.getCurrentUser().getRelation("subjectInterests");
-                    relation.remove(subject);
-                    ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if(e != null) {
-                                Log.e(TAG, "Error saving edited user-subject relation to Parse: ", e);
-                                return;
-                            }
-                            Toast.makeText(mContext, "Subject Tag Removed!", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            });
-            builder.setNegativeButton("No", null);
-
-            Dialog dialog = builder.create();
-            dialog.show();
+            mClickListener.onClick(getAdapterPosition());
         }
+    }
+
+    public interface OnClickListener {
+        void onClick(int position);
     }
 }

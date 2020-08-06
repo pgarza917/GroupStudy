@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/profilePictureImageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -23,7 +23,7 @@
         android:id="@+id/profileBioTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/emailTextView"
+        android:layout_below="@+id/profileNameTextView"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="true"
@@ -42,22 +42,12 @@
         tools:src="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/emailTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/profileNameTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="16dp"
-        tools:text="pgarzamw3@gmail.com" />
-
-    <TextView
         android:id="@+id/yourEventsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/subjectsRecyclerView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="Your Events"
         android:textColor="@color/black"
         android:textSize="18sp"
@@ -99,7 +89,7 @@
         android:layout_below="@+id/profileBioTextView"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="false"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:orientation="horizontal" />
 
 </RelativeLayout>

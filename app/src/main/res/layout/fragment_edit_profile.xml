@@ -41,7 +41,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="17dp"
+        android:layout_marginTop="18dp"
         android:layout_marginEnd="32dp"
         android:ems="10"
         android:gravity="start|top"
@@ -54,7 +54,7 @@
         android:layout_height="125dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="16dp"
         android:background="@android:drawable/screen_background_light_transparent"
         android:backgroundTint="#FFFFFF"
         tools:src="@tools:sample/avatars" />
@@ -68,5 +68,41 @@
         android:layout_marginTop="0dp"
         android:text="Click Image To Edit"
         android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/yourTagsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editBioEditText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:text="Your Tags" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/yourTagsRecyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_below="@+id/yourTagsTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal" />
+
+    <TextView
+        android:id="@+id/addTagsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/yourTagsRecyclerView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:text="Select Tags to Add" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/addTagsRecyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_below="@+id/addTagsTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal" />
 
 </RelativeLayout>
