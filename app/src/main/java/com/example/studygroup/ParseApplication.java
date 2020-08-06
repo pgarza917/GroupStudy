@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
+import com.example.studygroup.models.Group;
 import com.example.studygroup.models.Post;
 import com.example.studygroup.models.Subject;
 import com.parse.Parse;
@@ -24,6 +25,7 @@ public class ParseApplication extends Application {
         ParseObject.registerSubclass(FileExtended.class);
         ParseObject.registerSubclass(Post.class);
         ParseObject.registerSubclass(Subject.class);
+        ParseObject.registerSubclass(Group.class);
 
         // Use for monitoring Parse OkHttp traffic
         // Can be Level.BASIC, Level.HEADERS, or Level.BODY

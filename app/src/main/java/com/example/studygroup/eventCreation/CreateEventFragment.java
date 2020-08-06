@@ -106,13 +106,6 @@ public class CreateEventFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        menu.clear();
-        inflater.inflate(R.menu.create_event_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Create");
@@ -254,7 +247,9 @@ public class CreateEventFragment extends Fragment {
                 data.putParcelableArrayList("eventUsers", (ArrayList<? extends Parcelable>) mEventUsers);
                 fragment.setArguments(data);
                 ((MainActivity) getContext()).getSupportFragmentManager()
-                        .beginTransaction().add(R.id.frameLayoutContainer, fragment, FileViewFragment.class.getSimpleName())
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
+                        .add(R.id.frameLayoutContainer, fragment, FileViewFragment.class.getSimpleName())
                         .addToBackStack(null)
                         .commit();
             }
@@ -269,7 +264,9 @@ public class CreateEventFragment extends Fragment {
                 data.putParcelableArrayList("eventUsers", (ArrayList<? extends Parcelable>) mEventUsers);
                 fragment.setArguments(data);
                 ((MainActivity) getContext()).getSupportFragmentManager()
-                        .beginTransaction().add(R.id.frameLayoutContainer, fragment, AddUsersFragment.class.getSimpleName())
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
+                        .add(R.id.frameLayoutContainer, fragment, AddUsersFragment.class.getSimpleName())
                         .addToBackStack(null)
                         .commit();
             }
@@ -300,7 +297,7 @@ public class CreateEventFragment extends Fragment {
         boolean inEdit = false;
         if(prevFragment != null) {
             String prevFragmentName = prevFragment.getClass().getSimpleName();
-            if (prevFragmentName.equals(EventDetailsFragment.class.getSimpleName())) {
+            if (prevFragmentName.equals(EventDetailsRootFragment.class.getSimpleName())) {
                 mSubmitButton.setText(R.string.update_button_text);
 
                 eventToEdit = getArguments().getParcelable("event");

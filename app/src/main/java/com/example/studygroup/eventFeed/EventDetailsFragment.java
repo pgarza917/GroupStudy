@@ -73,43 +73,6 @@ public class EventDetailsFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        menu.clear();
-        inflater.inflate(R.menu.edit_event_menu, menu);
-
-        mOptionsMenu = menu;
-        MenuItem editIcon = mOptionsMenu.findItem(R.id.action_edit_event);
-        if(!eventOwnersContainsUser(mEvent, ParseUser.getCurrentUser())) {
-            editIcon.setVisible(false);
-        }
-
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        int id = item.getItemId();
-
-        if(id == R.id.action_edit_event) {
-            Fragment fragment = new CreateEventFragment();
-            Bundle data = new Bundle();
-            data.putParcelable("event", mEvent);
-            fragment.setArguments(data);
-            fragment.setTargetFragment(EventDetailsFragment.this, 123);
-            ((MainActivity) getContext()).getSupportFragmentManager()
-                    .beginTransaction()
-                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                    .replace(R.id.frameLayoutContainer, fragment)
-                    .commit();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -176,16 +139,5 @@ public class EventDetailsFragment extends Fragment {
 
         mDateTextView.setText(date);
         mTimeTextView.setText(time);
-    }
-
-    private boolean eventOwnersContainsUser(Event event, ParseUser user) {
-        List<ParseUser> eventOwners = event.getOwners();
-        for(int i = 0; i < eventOwners.size(); i++) {
-            ParseUser currentOwner = eventOwners.get(i);
-            if(currentOwner.getObjectId().equals(user.getObjectId())) {
-                return true;
-            }
-        }
-        return false;
     }
 }

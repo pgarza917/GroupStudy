@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.example.studygroup.eventCreation.files.FileViewAdapter;
 import com.example.studygroup.eventCreation.CreateEventFragment;
 import com.example.studygroup.eventFeed.FeedFragment;
+import com.example.studygroup.groups.GroupListFragment;
 import com.example.studygroup.messaging.MessagesFragment;
 import com.example.studygroup.models.FileExtended;
 import com.example.studygroup.profile.ProfileFragment;
@@ -81,13 +82,17 @@ public class MainActivity extends AppCompatActivity {
                 getSupportActionBar().show();
                 int newPosition;
                 switch (id) {
+                    case R.id.action_groups:
+                        fragment = new GroupListFragment();
+                        newPosition = 1;
+                        break;
                     case R.id.action_create_event:
                         fragment = new CreateEventFragment();
-                        newPosition = 1;
+                        newPosition = 2;
                         break;
                     case R.id.action_profile:
                         fragment = new ProfileFragment();
-                        newPosition = 3;
+                        newPosition = 4;
                         break;
                     default:
                         fragment = new FeedFragment();
@@ -222,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
                 if(task.isSuccessful()) {
                     Log.i(TAG, "Successful login to Firebase");
                     Fragment fragment = new MessagesFragment();
-                    loadFragment(fragment, 2);
+                    loadFragment(fragment, 3);
                 } else {
                     firebaseRegister(username, email, password, imageUrl);
                 }

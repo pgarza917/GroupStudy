@@ -1,6 +1,7 @@
 package com.example.studygroup.eventCreation.users;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -21,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 
 import com.example.studygroup.MainActivity;
@@ -213,5 +215,10 @@ public class AddUsersFragment extends Fragment {
         // This is used so that the state of the previous create-event fragment is
         // not changed when we return to it
         fm.popBackStackImmediate();
+    }
+
+    public void hideSoftKeyboard(View view){
+        InputMethodManager imm =(InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

@@ -72,7 +72,7 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHold
         mColorMap.put("History", R.color.red);
         mColorMap.put("Psychology", R.color.blue);
         mColorMap.put("Economics", R.color.fuchsia);
-        mColorMap.put("Geography", R.color.grey);
+        mColorMap.put("Geology", R.color.grey);
         mColorMap.put("Math", R.color.maroon);
         mColorMap.put("Political Science", R.color.olive);
         mColorMap.put("Literature", R.color.purple);

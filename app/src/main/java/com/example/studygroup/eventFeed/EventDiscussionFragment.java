@@ -22,6 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -62,6 +65,7 @@ public class EventDiscussionFragment extends Fragment {
     private FloatingActionButton mCreatePostButton;
     private RecyclerView mPostsRecyclerView;
     private ProgressBar mProgressBar;
+    private TextView mNoPostsTextView;
 
     private List<Post> mPostsList;
     private PostsAdapter mPostsAdapter;
@@ -90,6 +94,7 @@ public class EventDiscussionFragment extends Fragment {
         mCreatePostButton = view.findViewById(R.id.createPostFloatingActionButton);
         mPostsRecyclerView = view.findViewById(R.id.discussionRecyclerView);
         mProgressBar = view.findViewById(R.id.discussionPostsProgressBar);
+        mNoPostsTextView = view.findViewById(R.id.noPostsTextView);
 
         mPostsList = new ArrayList<>();
         mPostsAdapter = new PostsAdapter(mPostsList, getContext(), mEvent);
@@ -198,8 +203,12 @@ public class EventDiscussionFragment extends Fragment {
                     Log.e(TAG, "Error querying event posts: ", e);
                     return;
                 }
-                mPostsAdapter.clear();
-                mPostsAdapter.addAll(posts);
+                if(posts != null && posts.size() > 0) {
+                    mPostsAdapter.clear();
+                    mPostsAdapter.addAll(posts);
+                } else {
+                    mNoPostsTextView.setVisibility(View.VISIBLE);
+                }
                 mProgressBar.setVisibility(View.INVISIBLE);
             }
         });

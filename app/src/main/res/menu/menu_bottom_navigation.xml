@@ -9,6 +9,11 @@
         android:title="Home"
         app:showAsAction="always" />
     <item
+        android:id="@+id/action_groups"
+        android:icon="@drawable/ic_baseline_group_24"
+        android:title="Groups"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_create_event"
         android:icon="@drawable/ic_add_box"
         android:title="Create Event"
