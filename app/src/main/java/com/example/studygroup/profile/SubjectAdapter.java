@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.models.Subject;
 
@@ -31,7 +32,7 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHold
         this.mSubjectsList = mSubjectsList;
         this.mContext = mContext;
         this.mClickListener = listener;
-        createColorMap();
+        mColorMap = MainActivity.createColorMap();
     }
 
     @NonNull
@@ -50,27 +51,6 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ViewHold
     @Override
     public int getItemCount() {
         return mSubjectsList.size();
-    }
-
-    private void createColorMap() {
-        mColorMap = new HashMap<String, Integer>();
-        mColorMap.put("Physics", R.color.aqua);
-        mColorMap.put("History", R.color.red);
-        mColorMap.put("Psychology", R.color.blue);
-        mColorMap.put("Economics", R.color.fuchsia);
-        mColorMap.put("Geology", R.color.grey);
-        mColorMap.put("Math", R.color.maroon);
-        mColorMap.put("Political Science", R.color.olive);
-        mColorMap.put("Literature", R.color.purple);
-        mColorMap.put("Art", R.color.warmPink);
-        mColorMap.put("Chemistry", R.color.seaGreen);
-        mColorMap.put("Law", R.color.goldenRod);
-        mColorMap.put("Biology", R.color.darkGreen);
-        mColorMap.put("Language", R.color.darkGrey);
-        mColorMap.put("Philosophy", R.color.orange);
-        mColorMap.put("Statistics", R.color.navyBlue);
-        mColorMap.put("Engineering", R.color.lushLava);
-        mColorMap.put("Computer Science", R.color.limeGreen);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

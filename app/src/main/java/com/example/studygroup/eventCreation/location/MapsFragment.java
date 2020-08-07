@@ -53,7 +53,7 @@ public class MapsFragment extends Fragment {
 
     private GoogleMap mMap;
 
-    public static final String TAG = MapsActivity.class.getSimpleName();
+    public static final String TAG = MapsFragment.class.getSimpleName();
     public static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     public static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     public static final int LOCATION_PERMISSION_REQUEST_CODE = 1254;
@@ -149,7 +149,7 @@ public class MapsFragment extends Fragment {
 
                 Fragment fragment = new AddUsersFragment();
                 Bundle data = new Bundle();
-                data.putParcelable(Event.class.getSimpleName(), mEvent);
+                data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(mEvent));
                 fragment.setArguments(data);
 
                 ((MainActivity) getContext()).getSupportFragmentManager()

@@ -109,4 +109,12 @@ public class Event extends ParseObject {
         return suggestion;
     }
 
+    public Subject getSubject() {
+        return (Subject) getParseObject("subject");
+    }
+
+    public void setSubject(Subject subject) {
+        put("subject", ParseObject.createWithoutData("Subject", subject.getObjectId()));
+    }
+
 }

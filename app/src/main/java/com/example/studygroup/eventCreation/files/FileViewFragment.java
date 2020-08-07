@@ -48,6 +48,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.studygroup.ConfirmEventFragment;
 import com.example.studygroup.DriveServiceHelper;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
@@ -57,6 +58,7 @@ import com.example.studygroup.eventCreation.CreateEventFragment;
 import com.example.studygroup.eventFeed.EventDiscussionFragment;
 import com.example.studygroup.messaging.ConversationFragment;
 import com.example.studygroup.messaging.MessagesFragment;
+import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.common.api.Scope;
@@ -67,6 +69,8 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
+
+import org.parceler.Parcels;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -101,6 +105,7 @@ public class FileViewFragment extends Fragment {
     private DriveServiceHelper mDriveServiceHelper;
     private String mOpenFileId;
     private AlertDialog mFileDialog;
+    private Event mEvent;
 
     private EditText mFileTitleEditText;
     private ProgressBar mProgressBar;
@@ -136,6 +141,12 @@ public class FileViewFragment extends Fragment {
         if(fragmentName.equals(FileViewFragment.class.getSimpleName())) {
             switch(item.getItemId()) {
                 case R.id.action_check:
+                    for(ParseUser user : mNewEventUsers) {
+                        mEvent.addUnique("users", user);
+                    }
+                    for(FileExtended file : mFilesList) {
+                        mEvent.addUnique("files", file);
+                    }
                     endFileSelection();
                     return true;
                 default:
@@ -153,9 +164,9 @@ public class FileViewFragment extends Fragment {
 
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Files");
 
-        Bundle data = getArguments();
+        mEvent = Parcels.unwrap(getArguments().getParcelable(Event.class.getSimpleName()));
 
-        List<FileExtended> alreadyAttachedFiles = data.getParcelableArrayList("filesAttached");
+        List<FileExtended> alreadyAttachedFiles = mEvent.getFiles();
         if(alreadyAttachedFiles != null) {
             if(mFilesList == null) mFilesList = new ArrayList<>();
             mFilesList.addAll(alreadyAttachedFiles);
@@ -163,7 +174,7 @@ public class FileViewFragment extends Fragment {
             mFilesList = new ArrayList<>();
         }
 
-        List<ParseUser> alreadySelectedUsers = data.getParcelableArrayList("eventUsers");
+        List<ParseUser> alreadySelectedUsers = mEvent.getUsers();
         if(alreadySelectedUsers != null) {
             if(mEventUsers == null) mEventUsers = new ArrayList<>();
             mEventUsers.addAll(alreadySelectedUsers);
@@ -576,23 +587,38 @@ public class FileViewFragment extends Fragment {
     }
 
     private void endFileSelection() {
-        // This case implementation handles the returning of the list of files that the user has
-        // added to the event back to the create event fragment for upload of the event
-        Intent intent = new Intent();
-        intent.putParcelableArrayListExtra("uploadFiles", (ArrayList<? extends Parcelable>) mFilesList);
+        Fragment targetFragment = getTargetFragment();
+        if(targetFragment != null && !targetFragment.getClass().getSimpleName().equals(ConfirmEventFragment.TAG)) {
+            // This case implementation handles the returning of the list of files that the user has
+            // added to the event back to the create event fragment for upload of the event
+            Intent intent = new Intent();
+            intent.putParcelableArrayListExtra("uploadFiles", (ArrayList<? extends Parcelable>) mFilesList);
 
-        String targetFragmentName = getTargetFragment().getClass().getSimpleName();
+            String targetFragmentName = targetFragment.getClass().getSimpleName();
 
-        if(targetFragmentName.equals(CreateEventFragment.class.getSimpleName())) {
-            intent.putParcelableArrayListExtra("newUsers", (ArrayList<? extends Parcelable>) mNewEventUsers);
-            getTargetFragment().onActivityResult(CreateEventFragment.FILE_UPLOAD_REQUEST_CODE, Activity.RESULT_OK, intent);
+            if (targetFragmentName.equals(CreateEventFragment.class.getSimpleName())) {
+                intent.putParcelableArrayListExtra("newUsers", (ArrayList<? extends Parcelable>) mNewEventUsers);
+                getTargetFragment().onActivityResult(CreateEventFragment.FILE_UPLOAD_REQUEST_CODE, Activity.RESULT_OK, intent);
+            } else {
+                getTargetFragment().onActivityResult(EventDiscussionFragment.FILE_ADD_REQUEST_CODE, Activity.RESULT_OK, intent);
+            }
+
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            // This is used so that the state of the previous create-event fragment is
+            // not changed when we return to it
+            fm.popBackStackImmediate();
         } else {
-            getTargetFragment().onActivityResult(EventDiscussionFragment.FILE_ADD_REQUEST_CODE, Activity.RESULT_OK, intent);
-        }
+            Fragment fragment = new ConfirmEventFragment();
+            Bundle data = new Bundle();
+            data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(mEvent));
+            fragment.setArguments(data);
 
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        // This is used so that the state of the previous create-event fragment is
-        // not changed when we return to it
-        fm.popBackStackImmediate();
+            ((MainActivity) getContext()).getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left)
+                    .add(R.id.frameLayoutContainer, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 }

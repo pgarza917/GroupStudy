@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF"
+    tools:context=".ConfirmEventFragment">
+
+    <EditText
+        android:id="@+id/confirmEventTitleEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/textView14"
+        android:maxLines="1"
+        tools:text="Math Review" />
+
+    <EditText
+        android:id="@+id/confirmEventDescriptionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/confirmEventTitleEditText"
+        android:layout_centerHorizontal="false"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="32dp"
+        android:maxLines="3"
+        tools:text="This session will be covering Stoke's Theorem and its applications" />
+
+    <ImageButton
+        android:id="@+id/confirmEventsDateImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/confirmEventDescriptionEditText"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="30dp"
+        android:background="@android:color/transparent"
+        android:scaleX="2.0"
+        android:scaleY="2.0"
+        android:src="@drawable/ic_baseline_calendar_today_24"
+        android:tint="#64DD17" />
+
+    <TextView
+        android:id="@+id/confirmEventDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/confirmEventDescriptionEditText"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="34dp"
+        android:layout_toEndOf="@+id/confirmEventsDateImageButton"
+        android:textColor="#000"
+        android:textSize="18sp"
+        tools:text="12 Oct 2019 at 3:00 PM" />
+
+    <ImageButton
+        android:id="@+id/confirmEventLocationImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/confirmEventsDateImageButton"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
+        android:background="@android:color/transparent"
+        android:scaleX="2.0"
+        android:scaleY="2.0"
+        android:src="@drawable/ic_baseline_location_on_24"
+        android:tint="@color/red" />
+
+    <TextView
+        android:id="@+id/confirmEventLocationTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/confirmEventsDateImageButton"
+        android:layout_marginStart="34dp"
+        android:layout_marginTop="42dp"
+        android:layout_toEndOf="@+id/confirmEventLocationImageButton"
+        android:textColor="#000"
+        android:textSize="18sp"
+        tools:text="Bass Library" />
+
+    <ImageButton
+        android:id="@+id/confirmEventPrivacyImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/confirmEventLocationImageButton"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="32dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_baseline_lock_48"
+        android:tint="#00897B" />
+
+    <TextView
+        android:id="@+id/confirmEventPrivacyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/confirmEventLocationImageButton"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="46dp"
+        android:layout_toEndOf="@+id/confirmEventPrivacyImageButton"
+        android:textColor="#000"
+        android:textSize="18sp"
+        tools:text="Closed" />
+
+    <ImageButton
+        android:id="@+id/confirmEventUsersImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/confirmEventPrivacyImageButton"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_baseline_person_add_48"
+        android:tint="#FB8C00" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/confirmEventUsersRecyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="130dp"
+        android:layout_below="@+id/confirmEventPrivacyImageButton"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="30dp"
+        android:layout_toEndOf="@+id/confirmEventUsersImageButton" />
+
+    <ImageButton
+        android:id="@+id/confirmEventFilesImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/confirmEventUsersRecyclerView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_add"
+        android:tint="#039BE5" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/confirmEventFilesRecyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="130dp"
+        android:layout_below="@+id/confirmEventUsersRecyclerView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="30dp"
+        android:layout_toEndOf="@+id/confirmEventFilesImageButton" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="20dp"
+        android:text="Title:"
+        android:textColor="#000"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/confirmEventSubjectTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/confirmEventLocationTextView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="46dp"
+        android:layout_marginEnd="30dp"
+        android:background="@drawable/subject_tag"
+        android:backgroundTint="#039BE5"
+        android:paddingStart="8dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp"
+        android:textColor="#fff"
+        android:textSize="18sp"
+        tools:text="Biology" />
+
+</RelativeLayout>

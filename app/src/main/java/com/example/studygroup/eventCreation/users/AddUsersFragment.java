@@ -36,6 +36,8 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,6 +53,8 @@ public class AddUsersFragment extends Fragment {
     private List<ParseUser> mSelectedUsers;
     private UserSearchResultAdapter mUsersSearchAdapter;
     private UsersAdapter mSelectedUsersAdapter;
+
+    private Event mEvent;
 
     public AddUsersFragment() {
         // Required empty public constructor
@@ -74,13 +78,22 @@ public class AddUsersFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        int id = item.getItemId();
-        if(id == R.id.action_check) {
-            endUserSelection();
-            return true;
-        }
+        Fragment currentFragment = ((MainActivity) getContext()).getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainer);
+        String fragmentName = currentFragment.getClass().getSimpleName();
 
-        return super.onOptionsItemSelected(item);
+        if(fragmentName.equals(TAG)) {
+            int id = item.getItemId();
+            if (id == R.id.action_check) {
+                for(ParseUser user : mSelectedUsers) {
+                    mEvent.addUnique("users", user);
+                }
+
+                endUserSelection();
+                return true;
+            }
+            return super.onOptionsItemSelected(item);
+        }
+        return false;
     }
 
     @Override
@@ -89,9 +102,10 @@ public class AddUsersFragment extends Fragment {
 
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Add Users");
 
-        Bundle data = getArguments();
 
-        List<ParseUser> alreadyAddedUsers = data.getParcelableArrayList("eventUsers");
+        mEvent = Parcels.unwrap(getArguments().getParcelable(Event.class.getSimpleName()));
+
+        List<ParseUser> alreadyAddedUsers = mEvent.getUsers();
 
         mUserSearchResults = new ArrayList<>();
         mSelectedUsers = new ArrayList<>();
@@ -203,19 +217,32 @@ public class AddUsersFragment extends Fragment {
     }
 
     private void endUserSelection() {
-        String targetClassName = getTargetFragment().getClass().getSimpleName();
+        Fragment targetFragment = getTargetFragment();
 
-        Intent intent = new Intent();
-        intent.putParcelableArrayListExtra("eventUsers", (ArrayList<? extends Parcelable>) mSelectedUsers);
-        if(targetClassName.equals(CreateEventFragment.class.getSimpleName())) {
-            getTargetFragment().onActivityResult(CreateEventFragment.ADD_USERS_REQUEST_CODE, Activity.RESULT_OK, intent);
+        if(targetFragment != null) {
+            String targetClassName = targetFragment.getClass().getSimpleName();
+            if(targetClassName.equals(FileViewFragment.class.getSimpleName())) {
+                Intent intent = new Intent();
+                intent.putParcelableArrayListExtra("eventUsers", (ArrayList<? extends Parcelable>) mSelectedUsers);
+                getTargetFragment().onActivityResult(FileViewFragment.ADD_USERS_REQUEST_CODE, Activity.RESULT_OK, intent);
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                // This is used so that the state of the previous create-event fragment is
+                // not changed when we return to it
+                fm.popBackStackImmediate();
+            }
         } else {
-            getTargetFragment().onActivityResult(FileViewFragment.ADD_USERS_REQUEST_CODE, Activity.RESULT_OK, intent);
+            Fragment fragment = new FileViewFragment();
+            Bundle data = new Bundle();
+            data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(mEvent));
+            fragment.setArguments(data);
+
+            ((MainActivity) getContext()).getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left)
+                    .add(R.id.frameLayoutContainer, fragment, FileViewFragment.TAG)
+                    .addToBackStack(null)
+                    .commit();
         }
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        // This is used so that the state of the previous create-event fragment is
-        // not changed when we return to it
-        fm.popBackStackImmediate();
     }
 
     public void hideSoftKeyboard(View view){

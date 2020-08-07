@@ -292,4 +292,27 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    public static HashMap<String, Integer> createColorMap() {
+        HashMap<String, Integer> map = new HashMap<String, Integer>();
+        map.put("Physics", R.color.aqua);
+        map.put("History", R.color.red);
+        map.put("Psychology", R.color.blue);
+        map.put("Economics", R.color.fuchsia);
+        map.put("Geology", R.color.grey);
+        map.put("Math", R.color.maroon);
+        map.put("Political Science", R.color.olive);
+        map.put("Literature", R.color.purple);
+        map.put("Art", R.color.warmPink);
+        map.put("Chemistry", R.color.seaGreen);
+        map.put("Law", R.color.goldenRod);
+        map.put("Biology", R.color.darkGreen);
+        map.put("Language", R.color.darkGrey);
+        map.put("Philosophy", R.color.orange);
+        map.put("Statistics", R.color.navyBlue);
+        map.put("Engineering", R.color.lushLava);
+        map.put("Computer Science", R.color.limeGreen);
+
+        return map;
+    }
+
 }

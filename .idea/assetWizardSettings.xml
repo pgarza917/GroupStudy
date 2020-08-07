@@ -324,7 +324,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material/icons/materialicons/access_time/baseline_access_time_24.xml" />
+                                      <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material/icons/materialicons/subject/baseline_subject_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -334,7 +334,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_baseline_access_time_60" />
+                            <entry key="outputName" value="ic_baseline_subject_48" />
                             <entry key="sourceFile" value="$USER_HOME$/Downloads/iconfinder__google_save_to_drive_2006460.svg" />
                           </map>
                         </option>
