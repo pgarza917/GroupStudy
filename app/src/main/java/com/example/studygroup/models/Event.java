@@ -2,6 +2,7 @@ package com.example.studygroup.models;
 
 import com.parse.Parse;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseUser;

@@ -1,6 +1,9 @@
 package com.example.studygroup;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -16,11 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.studygroup.eventCreation.TitleDescAndSubjectFragment;
 import com.example.studygroup.eventCreation.dateTime.DateTimeAndPrivacyFragment;
@@ -29,9 +34,16 @@ import com.example.studygroup.eventCreation.files.FileViewFragment;
 import com.example.studygroup.eventCreation.location.MapsFragment;
 import com.example.studygroup.eventCreation.users.AddUsersFragment;
 import com.example.studygroup.eventCreation.users.UsersAdapter;
+import com.example.studygroup.eventFeed.FeedFragment;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
+import com.example.studygroup.models.Subject;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import org.parceler.Parcels;
 
@@ -79,6 +91,16 @@ public class ConfirmEventFragment extends Fragment {
         setHasOptionsMenu(true);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_confirm_event, container, false);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if(item.getItemId() == R.id.action_check) {
+            launchConfirmDialog();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -137,13 +159,23 @@ public class ConfirmEventFragment extends Fragment {
         mLocationTextView.setText(mEvent.getLocationName());
         mPrivacyTextView.setText(mEvent.getPrivacy());
 
-        String subjectName = mEvent.getSubject().getSubjectName();
-        mSubjectTextView.setText(subjectName);
-        HashMap<String, Integer> colorMap = MainActivity.createColorMap();
-        Integer color = colorMap.get(subjectName);
-        Drawable background = ContextCompat.getDrawable(getContext(), R.drawable.subject_tag);
-        background.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(getContext(), color), PorterDuff.Mode.SRC_IN));
-        mSubjectTextView.setBackground(background);
+        String subjectId = mEvent.getSubject().getObjectId();
+        ParseQuery<Subject> subjectQuery = ParseQuery.getQuery(Subject.class);
+        subjectQuery.whereEqualTo("objectId", subjectId);
+
+        subjectQuery.findInBackground(new FindCallback<Subject>() {
+            @Override
+            public void done(List<Subject> subjects, ParseException e) {
+                Subject subject = subjects.get(0);
+                String subjectName = subject.getSubjectName();
+                mSubjectTextView.setText(subjectName);
+                HashMap<String, Integer> colorMap = MainActivity.createColorMap();
+                Integer color = colorMap.get(subjectName);
+                Drawable background = ContextCompat.getDrawable(getContext(), R.drawable.subject_tag);
+                background.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(getContext(), color), PorterDuff.Mode.SRC_IN));
+                mSubjectTextView.setBackground(background);
+            }
+        });
 
 
         View.OnClickListener datePrivacyClickListener = new View.OnClickListener() {
@@ -253,6 +285,40 @@ public class ConfirmEventFragment extends Fragment {
         } else if(requestCode == RC_EDIT_FILES) {
 
         }
+    }
+
+    private void launchConfirmDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+        builder.setTitle("Create Event?");
+
+        builder.setNegativeButton("No", null);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                mEvent.addUnique("owners", ParseUser.getCurrentUser());
+                mEvent.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e != null) {
+                            Log.e(TAG, "Error saving new event to Parse: ", e);
+                            return;
+                        }
+                        Toast.makeText(getContext(), "Event Created Successfully!", Toast.LENGTH_SHORT).show();
+                        BottomNavigationView bottomNavigationView = getActivity().findViewById(R.id.bottom_navigation);
+                        bottomNavigationView.setSelectedItemId(R.id.action_home);
+                        Fragment fragment = new FeedFragment();
+                        ((MainActivity) getContext()).getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.frameLayoutContainer, fragment)
+                                .commit();
+                    }
+                });
+            }
+        });
+
+        Dialog dialog = builder.create();
+        dialog.show();
     }
 
     public void setDateTimeText(Event event) {

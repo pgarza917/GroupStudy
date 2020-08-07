@@ -174,9 +174,11 @@ public class TitleDescAndSubjectFragment extends Fragment {
             return false;
         }
 
+        Subject subject = selectedSubjectList.get(0);
+
         mEvent.setTitle(title);
         mEvent.setDescription(description);
-        mEvent.put("subject", ParseObject.createWithoutData("Subject", selectedSubjectList.get(0).getObjectId()));
+        mEvent.put("subject", ParseObject.createWithoutData("Subject", subject.getObjectId()));
 
         return true;
     }
