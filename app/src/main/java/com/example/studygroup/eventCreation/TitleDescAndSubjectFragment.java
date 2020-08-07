@@ -74,27 +74,33 @@ public class TitleDescAndSubjectFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        if(item.getItemId() == R.id.action_check) {
-            if(!saveEventChanges(mTitleEditText.getText().toString(), mDescriptionEditText.getText().toString(), mSelectedSubjectList)) {
-                return false;
+        Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainer);
+        String fragmentName = currentFragment.getClass().getSimpleName();
+
+        if(fragmentName.equals(TitleDescAndSubjectFragment.class.getSimpleName())) {
+            if (item.getItemId() == R.id.action_check) {
+                if (!saveEventChanges(mTitleEditText.getText().toString(), mDescriptionEditText.getText().toString(), mSelectedSubjectList)) {
+                    return false;
+                }
+
+                Fragment fragment = new DateTimeAndPrivacyFragment();
+                Bundle data = new Bundle();
+                data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(mEvent));
+                fragment.setArguments(data);
+
+                ((MainActivity) getContext()).getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left)
+                        .add(R.id.frameLayoutContainer, fragment)
+                        .addToBackStack(null)
+                        .commit();
+
+                return true;
             }
-
-            Fragment fragment = new DateTimeAndPrivacyFragment();
-            Bundle data = new Bundle();
-            data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(mEvent));
-            fragment.setArguments(data);
-
-            ((MainActivity) getContext()).getSupportFragmentManager()
-                    .beginTransaction()
-                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left)
-                    .add(R.id.frameLayoutContainer, fragment)
-                    .addToBackStack(null)
-                    .commit();
-
-            return true;
+            return super.onOptionsItemSelected(item);
+        } else {
+            return false;
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

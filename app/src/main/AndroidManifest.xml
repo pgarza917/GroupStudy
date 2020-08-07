@@ -40,7 +40,7 @@
 
         <activity
             android:name=".eventCreation.location.MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps" />
 
         <meta-data
             android:name="com.google.android.gms.version"

@@ -90,6 +90,7 @@ public class AddUsersFragment extends Fragment {
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Add Users");
 
         Bundle data = getArguments();
+
         List<ParseUser> alreadyAddedUsers = data.getParcelableArrayList("eventUsers");
 
         mUserSearchResults = new ArrayList<>();

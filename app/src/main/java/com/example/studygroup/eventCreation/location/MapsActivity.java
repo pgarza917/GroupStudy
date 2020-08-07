@@ -95,7 +95,7 @@ public class MapsActivity extends AppCompatActivity
         }
         mPlacesClient = Places.createClient(this);
 
-        mAutoCompleteSupportFragment = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocompleteFragment);
+        //mAutoCompleteSupportFragment = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocompleteFragment);
         mAutoCompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME));
         mAutoCompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override

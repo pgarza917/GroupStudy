@@ -39,7 +39,8 @@
         android:layout_marginStart="66dp"
         android:layout_marginTop="34dp"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_baseline_calendar_today_60" />
+        android:src="@drawable/ic_baseline_calendar_today_60"
+        android:tint="#64DD17" />
 
     <ImageButton
         android:id="@+id/timeImageButton"
@@ -50,7 +51,8 @@
         android:layout_marginTop="34dp"
         android:layout_marginEnd="66dp"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_baseline_access_time_60" />
+        android:src="@drawable/ic_baseline_access_time_60"
+        android:tint="#000" />
 
     <TextView
         android:id="@+id/textView8"
@@ -69,11 +71,12 @@
         android:layout_below="@+id/textView8"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
+        android:textColor="#000"
         android:textSize="18sp"
         tools:text="Oct. 10 2020" />
 
     <TextView
-        android:id="@+id/timeTextView"
+        android:id="@+id/timeTextTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/dateTextView"
@@ -83,12 +86,13 @@
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/textView11"
+        android:id="@+id/timeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/timeTextView"
+        android:layout_below="@id/timeTextTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
+        android:textColor="#000"
         android:textSize="18sp"
         tools:text="5:00 PM" />
 
@@ -96,9 +100,9 @@
         android:id="@+id/textView12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView11"
+        android:layout_below="@+id/timeTextView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="93dp"
+        android:layout_marginTop="60dp"
         android:text="Event Open To All?"
         android:textSize="18sp" />
 
