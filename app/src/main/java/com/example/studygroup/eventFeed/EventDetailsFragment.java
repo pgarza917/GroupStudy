@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.transition.Fade;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,8 +23,10 @@ import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.eventCreation.files.FileViewAdapter;
 import com.example.studygroup.eventCreation.CreateEventFragment;
+import com.example.studygroup.eventCreation.files.FileViewFragment;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
+import com.example.studygroup.profile.ProfileFragment;
 import com.parse.ParseUser;
 
 import org.parceler.Parcels;

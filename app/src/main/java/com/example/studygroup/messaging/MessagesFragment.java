@@ -253,8 +253,11 @@ public class MessagesFragment extends Fragment {
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
+            public boolean onQueryTextChange(String query) {
+                if(!query.isEmpty()) {
+                    searchUsers(query);
+                }
+                return true;
             }
         });
     }

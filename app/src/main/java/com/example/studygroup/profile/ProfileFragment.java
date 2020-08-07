@@ -48,6 +48,7 @@ import java.util.List;
 public class ProfileFragment extends Fragment {
 
     public static final String TAG = ProfileFragment.class.getSimpleName();
+    public static final int RC_DETAILS = 3401;
 
     private TextView mProfileNameTextView;
     private TextView mBioTextView;
@@ -82,7 +83,12 @@ public class ProfileFragment extends Fragment {
         mUserEventList = new ArrayList<>();
         mSubjectList = new ArrayList<>();
         mUserEventsAdapter = new EventsAdapter(getContext(), mUserEventList);
-        mSubjectAdapter = new SubjectAdapter(getContext(), mSubjectList, null);
+        mSubjectAdapter = new SubjectAdapter(getContext(), mSubjectList, new SubjectAdapter.OnClickListener() {
+            @Override
+            public void onClick(int position) {
+                // Do nothing here
+            }
+        });
 
         mProfileNameTextView = view.findViewById(R.id.profileNameTextView);
         mBioTextView = view.findViewById(R.id.profileBioTextView);

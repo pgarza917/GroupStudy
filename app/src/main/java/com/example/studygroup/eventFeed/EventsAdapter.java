@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.models.Event;
+import com.example.studygroup.profile.ProfileFragment;
 
 import org.parceler.Parcels;
 
@@ -123,6 +124,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 data.putInt("position", position);
                 fragment.setArguments(data);
 
+                Fragment currentFragment = ((MainActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainer);
+                if(currentFragment.getClass().getSimpleName().equals(ProfileFragment.TAG)) {
+                    fragment.setTargetFragment(currentFragment, ProfileFragment.RC_DETAILS);
+                }
 
                 ((MainActivity) mContext).getSupportFragmentManager()
                         .beginTransaction()

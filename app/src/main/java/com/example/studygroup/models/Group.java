@@ -19,6 +19,7 @@ public class Group extends ParseObject {
     public static final String KEY_GROUP_EVENTS = "events";
     public static final String KEY_NUMBER_USERS = "numberOfUsers";
     public static final String KEY_GROUP_PICTURE = "groupImage";
+    public static final String KEY_GROUP_DESCRIPTION = "description";
     public boolean isCurrentUserMember = false;
 
     public String getGroupName() {
@@ -71,5 +72,13 @@ public class Group extends ParseObject {
 
     public void setCurrentUserMember(boolean currentUserMember) {
         isCurrentUserMember = currentUserMember;
+    }
+
+    public String getGroupDescription() {
+        return getString(KEY_GROUP_DESCRIPTION);
+    }
+
+    public void setGroupDescription(String description) {
+        put(KEY_GROUP_DESCRIPTION, description);
     }
 }

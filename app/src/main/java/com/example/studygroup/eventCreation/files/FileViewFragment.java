@@ -374,7 +374,7 @@ public class FileViewFragment extends Fragment {
         Spinner typeSelectSpinner = customDialogLayout.findViewById(R.id.googleFileTypeSpinner);
         LinearLayout addOtherUsersLinearLayout = customDialogLayout.findViewById(R.id.addOtherUsersLinearLayout);
 
-        addAllEventUsersCheckBox.setChecked(true);
+        addAllEventUsersCheckBox.setChecked(false);
 
         RecyclerView usersForShareRecyclerView = customDialogLayout.findViewById(R.id.usersForShareRecyclerView);
         usersForShareRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

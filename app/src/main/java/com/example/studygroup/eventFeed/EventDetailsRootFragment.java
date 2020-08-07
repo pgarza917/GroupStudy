@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +20,7 @@ import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.eventCreation.CreateEventFragment;
 import com.example.studygroup.models.Event;
+import com.example.studygroup.profile.ProfileFragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.parse.ParseUser;
@@ -109,6 +111,27 @@ public class EventDetailsRootFragment extends Fragment {
                         }
                     }
                 }).attach();
+
+        EventDetailsRootFragment fragment = (EventDetailsRootFragment) getFragmentManager().findFragmentById(R.id.frameLayoutContainer);
+        fragment.getView().setFocusableInTouchMode(true);
+        fragment.getView().requestFocus();
+        fragment.getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                if(getTargetFragment() != null) {
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        Fragment fragment1 = new ProfileFragment();
+                        ((MainActivity) getContext()).getSupportFragmentManager()
+                                .beginTransaction()
+                                .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right)
+                                .replace(R.id.frameLayoutContainer, fragment1)
+                                .commit();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     public static boolean eventOwnersContainsUser(Event event, ParseUser user) {

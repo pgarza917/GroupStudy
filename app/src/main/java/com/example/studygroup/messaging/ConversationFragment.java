@@ -25,6 +25,9 @@ import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.models.Message;
 import com.example.studygroup.models.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +35,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -135,6 +139,32 @@ public class ConversationFragment extends Fragment {
         mConversationMessagesRecyclerView.setLayoutManager(linearLayoutManager);
 
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        authenticateFirebase(userId);
+    }
+
+    private void authenticateFirebase(String userId) {
+        if(mFirebaseUser != null) {
+            loadUserInfo(userId);
+        } else {
+            ParseUser currentUser = ParseUser.getCurrentUser();
+            String email = currentUser.getEmail();
+            String password = currentUser.getObjectId();
+
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        Log.i(TAG, "Successful login to Firebase");
+                        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                        loadUserInfo(userId);
+                    }
+                }
+            });
+        }
+
+    }
+
+    private void loadUserInfo(String userId) {
         mDatabaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
 
         mDatabaseReference.addValueEventListener(new ValueEventListener() {

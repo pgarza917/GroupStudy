@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
         return mimeTypeMap.getExtensionFromMimeType(resolver.getType(uri));
     }
 
-    private void firebaseAuthentication() {
+    public void firebaseAuthentication() {
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         if(mFirebaseUser != null) {
