@@ -1,11 +1,13 @@
 package com.example.studygroup.profile;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -13,6 +15,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -146,7 +149,13 @@ public class EditProfileFragment extends Fragment {
         final DialogInterface.OnClickListener takePhotoListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                onLaunchCamera(view);
+                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA}, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                    onLaunchCamera();
+                } else {
+                    onLaunchCamera();
+                }
             }
         };
 
@@ -226,6 +235,20 @@ public class EditProfileFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.i(TAG, "Camera Permission Granted");
+                onLaunchCamera();
+            } else {
+                Log.i(TAG, "Camera Permission Denied");
+            }
+        }
+    }
+
     private void queryUserSubjects() {
         ParseRelation<Subject> userSubjectsRelation = ParseUser.getCurrentUser().getRelation("subjectInterests");
 
@@ -296,7 +319,7 @@ public class EditProfileFragment extends Fragment {
     }
 
     // Method to handle the launching of the camera activity for users to take photos
-    public void onLaunchCamera(View view) {
+    public void onLaunchCamera() {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Create a File reference for future access

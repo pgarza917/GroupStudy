@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,8 +60,16 @@ public class AddEventsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_add_events, container, false);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.create_event_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -74,17 +84,20 @@ public class AddEventsFragment extends Fragment {
                 }
 
                 endEventsSelection();
+                return true;
             }
 
             return super.onOptionsItemSelected(item);
         } else {
-            return super.onOptionsItemSelected(item);
+            return false;
         }
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        ((MainActivity) getContext()).getSupportActionBar().setTitle("Add Events");
 
         mGroup = Parcels.unwrap(getArguments().getParcelable(Group.class.getSimpleName()));
 
@@ -135,20 +148,31 @@ public class AddEventsFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String query) {
-                searchEvents(query);
+                //searchEvents(query);
                 return true;
             }
         });
     }
 
     private void searchEvents(String query) {
-        ParseQuery<Event> eventParseQuery = ParseQuery.getQuery(Event.class);
-        eventParseQuery.whereEqualTo("title", query);
-        eventParseQuery.whereEqualTo("description", query);
-        eventParseQuery.whereEqualTo("locationName", query);
-        eventParseQuery.orderByDescending(Event.KEY_TIME);
+        ParseQuery<Event> titleQuery = ParseQuery.getQuery(Event.class);
+        titleQuery.whereContains("title", query);
 
-        eventParseQuery.findInBackground(new FindCallback<Event>() {
+        ParseQuery<Event> descriptionQuery = ParseQuery.getQuery(Event.class);
+        descriptionQuery.whereContains("description", query);
+
+        ParseQuery<Event> locationNameQuery = ParseQuery.getQuery(Event.class);
+        locationNameQuery.whereContains("locationName", query);
+
+        List<ParseQuery<Event>> queries = new ArrayList<ParseQuery<Event>>();
+        queries.add(titleQuery);
+        queries.add(descriptionQuery);
+        queries.add(locationNameQuery);
+
+        ParseQuery<Event> fullEventQuery = ParseQuery.or(queries);
+        fullEventQuery.orderByDescending(Event.KEY_TIME);
+
+        fullEventQuery.findInBackground(new FindCallback<Event>() {
             @Override
             public void done(List<Event> events, ParseException e) {
                 if (e != null) {

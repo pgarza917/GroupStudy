@@ -167,7 +167,7 @@ public class FileViewFragment extends Fragment {
             }
         }
         else {
-            return super.onOptionsItemSelected(item);
+            return false;
         }
     }
 
@@ -255,9 +255,9 @@ public class FileViewFragment extends Fragment {
                 if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
                             != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(new String[]{Manifest.permission.CAMERA}, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-                    onLaunchCamera(view);
+                    onLaunchCamera();
                 } else {
-                    onLaunchCamera(view);
+                    onLaunchCamera();
                 }
             }
         });
@@ -369,6 +369,7 @@ public class FileViewFragment extends Fragment {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.i(TAG, "Camera Permission Granted");
+                onLaunchCamera();
             } else {
                 Log.i(TAG, "Camera Permission Denied");
             }
@@ -517,7 +518,7 @@ public class FileViewFragment extends Fragment {
     }
 
     // Method to handle the launching of the camera activity for users to take photos
-    public void onLaunchCamera(View view) {
+    public void onLaunchCamera() {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Create a File reference for future access

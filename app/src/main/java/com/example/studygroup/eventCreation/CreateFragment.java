@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +18,22 @@ import com.example.studygroup.R;
 import com.example.studygroup.groups.GroupListFragment;
 import com.example.studygroup.groups.GroupStartCreate;
 import com.example.studygroup.models.Event;
+import com.example.studygroup.models.FileExtended;
 import com.example.studygroup.models.Group;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseQuery;
 
 import org.parceler.Parcels;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class CreateFragment extends Fragment {
+    public static final String TAG = CreateFragment.class.getSimpleName();
 
     private ImageButton mCreateEventImageButton;
     private ImageButton mCreateGroupImageButton;
@@ -64,7 +73,7 @@ public class CreateFragment extends Fragment {
         View.OnClickListener groupClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                beginGroupCreationSeq();
+                findAndSetDefaultPic();
             }
         };
 
@@ -90,10 +99,9 @@ public class CreateFragment extends Fragment {
                 .commit();
     }
 
-    private void beginGroupCreationSeq() {
+    private void beginGroupCreationSeq(Group group) {
         Fragment fragment = new GroupStartCreate();
         Bundle data = new Bundle();
-        Group group = new Group();
         data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(group));
         fragment.setArguments(data);
 
@@ -103,5 +111,25 @@ public class CreateFragment extends Fragment {
                 .replace(R.id.frameLayoutContainer, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    private void findAndSetDefaultPic() {
+        ParseQuery<FileExtended> fileQuery = ParseQuery.getQuery(FileExtended.class);
+        fileQuery.whereEqualTo("objectId", "AIq6uAFqvh");
+
+        fileQuery.findInBackground(new FindCallback<FileExtended>() {
+            @Override
+            public void done(List<FileExtended> files, ParseException e) {
+                if(e != null) {
+                    Log.e(TAG, "Error querying Parse for default group image: ", e);
+                    return;
+                }
+                FileExtended defaultGroupPictureFile = files.get(0);
+                ParseFile file = defaultGroupPictureFile.getFile();
+                Group group = new Group();
+                group.put("groupImage", file);
+                beginGroupCreationSeq(group);
+            }
+        });
     }
 }
