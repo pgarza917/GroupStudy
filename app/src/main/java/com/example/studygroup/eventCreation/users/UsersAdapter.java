@@ -116,7 +116,11 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
             mDisplayNameTextView.setText(displayName);
             String email = user.getString("openEmail");
             mEmailTextView.setText(email);
+
             mAddUserCheckBox.setChecked(true);
+            if(user.getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
+                mAddUserCheckBox.setVisibility(View.GONE);
+            }
 
             ParseFile profilePicture = user.getParseFile("profileImage");
             Glide.with(mContext).load(profilePicture.getUrl()).circleCrop().into(mProfilePictureImageView);

@@ -7,8 +7,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.studygroup.eventFeed.EventDetailsFragment;
-import com.example.studygroup.eventFeed.EventDiscussionFragment;
 import com.example.studygroup.models.Event;
 
 import org.parceler.Parcels;
@@ -35,12 +33,12 @@ public class EventDetailsViewPagerAdapter extends FragmentStateAdapter {
 
             return fragment;
         } else if(position == 1) {
-            Fragment fragment = new EventDiscussionFragment();
+            Fragment fragment = new DiscussionFragment();
             fragment.setArguments(data);
 
             return fragment;
         } else {
-            Fragment fragment = new EventFilesFragment();
+            Fragment fragment = new FilesFragment();
             fragment.setArguments(data);
 
             return fragment;

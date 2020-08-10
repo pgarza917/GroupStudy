@@ -104,6 +104,13 @@ public class GroupStartCreate extends Fragment {
                 Fragment fragment = new AddUsersFragment();
                 Bundle data = new Bundle();
                 data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(mGroup));
+                if(mParsePhotoFile != null) {
+                    data.putParcelable("groupImage", mParsePhotoFile);
+                    FileExtended file = new FileExtended();
+                    file.setFile(mParsePhotoFile);
+                    file.setFileName(mParsePhotoFile.getName());
+                    file.saveInBackground();
+                }
                 fragment.setArguments(data);
                 fragment.setTargetFragment(currentFragment, 100);
                 ((MainActivity) getContext()).getSupportFragmentManager()

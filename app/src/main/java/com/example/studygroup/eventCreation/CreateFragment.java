@@ -24,6 +24,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.parceler.Parcels;
 
@@ -128,6 +129,7 @@ public class CreateFragment extends Fragment {
                 ParseFile file = defaultGroupPictureFile.getFile();
                 Group group = new Group();
                 group.put("groupImage", file);
+                group.addUnique("users", ParseUser.getCurrentUser());
                 beginGroupCreationSeq(group);
             }
         });

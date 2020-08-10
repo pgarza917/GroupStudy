@@ -29,10 +29,12 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
 
     private Context mContext;
     private List<Group> mGroupsList;
+    private OnClickListener mClickListener;
 
-    public GroupsAdapter(Context mContext, List<Group> mGroupsList) {
+    public GroupsAdapter(Context mContext, List<Group> mGroupsList, OnClickListener listener) {
         this.mContext = mContext;
         this.mGroupsList = mGroupsList;
+        this.mClickListener = listener;
     }
 
     @NonNull
@@ -48,12 +50,18 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
         holder.bind(group);
     }
 
+    public void setIsCurrentMember(List<Group> groups){
+        for(Group group : groups) {
+            group.setCurrentUserMember(true);
+        }
+    }
+
     @Override
     public int getItemCount() {
         return mGroupsList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView mGroupPictureImageView;
         private TextView mGroupNameTextView;
@@ -83,8 +91,19 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
             }
 
             if(group.isCurrentUserMember) {
-                mJoinButton.setVisibility(View.VISIBLE);
+                mJoinButton.setVisibility(View.GONE);
             }
         }
+
+        @Override
+        public void onClick(View view) {
+            if(mClickListener != null) {
+                mClickListener.onClick(getAdapterPosition());
+            }
+        }
+    }
+
+    public interface OnClickListener {
+        void onClick(int position);
     }
 }

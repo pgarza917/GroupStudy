@@ -204,9 +204,11 @@ public class AddUsersFragment extends Fragment {
     private void searchUsers(String queryString) {
         ParseQuery<ParseUser> nameQuery = ParseUser.getQuery();
         nameQuery.whereContains("lowerDisplayName", queryString.toLowerCase());
+        nameQuery.whereNotEqualTo("lowerDisplayName", ParseUser.getCurrentUser().get("lowerDisplayName"));
 
         ParseQuery<ParseUser> emailQuery = ParseUser.getQuery();
         emailQuery.whereContains("email", queryString.toLowerCase());
+        emailQuery.whereNotEqualTo("email", ParseUser.getCurrentUser().getEmail());
 
         List<ParseQuery<ParseUser>> userQueries = new ArrayList<ParseQuery<ParseUser>>();
         userQueries.add(nameQuery);
@@ -250,6 +252,9 @@ public class AddUsersFragment extends Fragment {
             data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(mEvent));
         } else {
             data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(mGroup));
+            if(getArguments().containsKey("groupImage")){
+                data.putParcelable("groupImage", getArguments().getParcelable("groupImage"));
+            }
         }
         fragment.setArguments(data);
         ((MainActivity) getContext()).getSupportFragmentManager()

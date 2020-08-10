@@ -148,7 +148,7 @@ public class AddEventsFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String query) {
-                //searchEvents(query);
+                searchEvents(query);
                 return true;
             }
         });
@@ -189,6 +189,9 @@ public class AddEventsFragment extends Fragment {
         Fragment fragment = new ConfirmGroupFragment();
         Bundle data = new Bundle();
         data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(mGroup));
+        if(getArguments().containsKey("groupImage")){
+            data.putParcelable("groupImage", getArguments().getParcelable("groupImage"));
+        }
         fragment.setArguments(data);
 
         ((MainActivity) getContext()).getSupportFragmentManager()

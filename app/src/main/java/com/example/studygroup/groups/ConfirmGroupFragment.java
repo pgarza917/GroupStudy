@@ -45,6 +45,7 @@ import com.example.studygroup.eventFeed.EventsAdapter;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
 import com.example.studygroup.models.Group;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.parse.ParseException;
@@ -114,12 +115,6 @@ public class ConfirmGroupFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.action_check) {
             if(saveNewGroup(mGroupNameEditText.getText().toString(), mGroupDescriptionEditText.getText().toString())) {
-                Fragment fragment = new GroupListFragment();
-                ((MainActivity) getContext()).getSupportFragmentManager()
-                        .beginTransaction()
-                        .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right)
-                        .replace(R.id.frameLayoutContainer, fragment)
-                        .commit();
                 return true;
             }
             return false;
@@ -145,6 +140,9 @@ public class ConfirmGroupFragment extends Fragment {
         }
         if(mGroup.getGroupEvents() != null) {
             mEventsList.addAll(mGroup.getGroupEvents());
+        }
+        if(getArguments().containsKey("groupImage")) {
+            mParsePhotoFile = getArguments().getParcelable("groupImage");
         }
 
         mUsersAdapter = new UsersAdapter(getContext(), mUsersList, new UsersAdapter.CheckBoxListener() {
@@ -184,10 +182,20 @@ public class ConfirmGroupFragment extends Fragment {
         mFilesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mEventsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        Glide.with(getContext())
-                .load(mGroup.getGroupImage().getUrl())
-                .circleCrop()
-                .into(mGroupPictureImageButton);
+        if(mParsePhotoFile == null) {
+            Glide.with(getContext())
+                    .load(mGroup.getGroupImage().getUrl())
+                    .circleCrop()
+                    .into(mGroupPictureImageButton);
+        } else {
+            File file = getFileFromParseFile(mParsePhotoFile);
+            if(file != null) {
+                Glide.with(getContext())
+                        .load(file)
+                        .circleCrop()
+                        .into(mGroupPictureImageButton);
+            }
+        }
 
         mGroupNameEditText.setText(mGroup.getGroupName());
         mGroupDescriptionEditText.setText(mGroup.getGroupDescription());
@@ -372,6 +380,7 @@ public class ConfirmGroupFragment extends Fragment {
         for(Event event : mEventsList) {
             mGroup.addUnique("events", event);
         }
+        mGroup.setNumberOfUsers(mUsersList.size());
 
         if(mParsePhotoFile != null) {
             mGroup.put("groupImage", mParsePhotoFile);
@@ -385,8 +394,26 @@ public class ConfirmGroupFragment extends Fragment {
                     return;
                 }
                 Toast.makeText(getContext(), "Group Created!", Toast.LENGTH_SHORT).show();
+                BottomNavigationView bottomNavigationView = getActivity().findViewById(R.id.bottom_navigation);
+                bottomNavigationView.setSelectedItemId(R.id.action_groups);
+                Fragment fragment = new GroupListFragment();
+                ((MainActivity) getContext()).getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right)
+                        .replace(R.id.frameLayoutContainer, fragment)
+                        .commit();
             }
         });
         return true;
+    }
+
+    private File getFileFromParseFile(ParseFile file) {
+        try {
+            File retFile = file.getFile();
+            return retFile;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

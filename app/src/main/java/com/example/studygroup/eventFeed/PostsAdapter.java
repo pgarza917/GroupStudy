@@ -24,12 +24,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
 
     private List<Post> mPosts;
     private Context mContext;
-    private Event mEvent;
-
-    public PostsAdapter(List<Post> mPosts, Context mContext, Event event) {
+    public PostsAdapter(List<Post> mPosts, Context mContext) {
         this.mPosts = mPosts;
         this.mContext = mContext;
-        this.mEvent = event;
     }
 
     @NonNull

@@ -8,14 +8,20 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.models.Group;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +30,7 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class GroupListFragment extends Fragment {
+    public static final String TAG = GroupListFragment.class.getSimpleName();
 
     private RecyclerView mGroupsRecyclerView;
     private ProgressBar mProgressBar;
@@ -50,7 +57,13 @@ public class GroupListFragment extends Fragment {
         ((MainActivity) getContext()).getSupportActionBar().setTitle("Groups");
 
         mGroupsList = new ArrayList<>();
-        mGroupsAdapter = new GroupsAdapter(getContext(), mGroupsList);
+        mGroupsAdapter = new GroupsAdapter(getContext(), mGroupsList, new GroupsAdapter.OnClickListener() {
+            @Override
+            public void onClick(int position) {
+                Group group = mGroupsList.get(position);
+
+            }
+        });
 
         mGroupsRecyclerView = view.findViewById(R.id.groupsRecyclerView);
         mProgressBar = view.findViewById(R.id.groupsListProgressBar);
@@ -58,6 +71,30 @@ public class GroupListFragment extends Fragment {
         mGroupsRecyclerView.setAdapter(mGroupsAdapter);
         mGroupsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        queryGroups();
+    }
 
+    private void queryGroups() {
+        ParseQuery<Group> query = ParseQuery.getQuery(Group.class);
+        query.whereEqualTo("users", ParseUser.getCurrentUser());
+        query.include("files");
+        query.include("events");
+        query.include("users");
+        query.orderByDescending("updatedAt");
+        mProgressBar.setVisibility(View.VISIBLE);
+        query.findInBackground(new FindCallback<Group>() {
+            @Override
+            public void done(List<Group> groups, ParseException e) {
+                if(e != null) {
+                    Log.e(TAG, "Error querying Parse for groups: ", e);
+                    return;
+                }
+                mGroupsList.clear();
+                mGroupsList.addAll(groups);
+                mGroupsAdapter.setIsCurrentMember(groups);
+                mGroupsAdapter.notifyDataSetChanged();
+                mProgressBar.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 }

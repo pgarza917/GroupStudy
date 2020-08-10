@@ -55,11 +55,8 @@ import com.example.studygroup.R;
 import com.example.studygroup.eventCreation.users.UsersAdapter;
 import com.example.studygroup.eventCreation.users.AddUsersFragment;
 import com.example.studygroup.eventCreation.CreateEventFragment;
-import com.example.studygroup.eventFeed.EventDiscussionFragment;
+import com.example.studygroup.eventFeed.DiscussionFragment;
 import com.example.studygroup.groups.AddEventsFragment;
-import com.example.studygroup.groups.GroupStartCreate;
-import com.example.studygroup.messaging.ConversationFragment;
-import com.example.studygroup.messaging.MessagesFragment;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
 import com.example.studygroup.models.Group;
@@ -622,7 +619,7 @@ public class FileViewFragment extends Fragment {
                 intent.putParcelableArrayListExtra("newUsers", (ArrayList<? extends Parcelable>) mNewEventUsers);
                 getTargetFragment().onActivityResult(CreateEventFragment.FILE_UPLOAD_REQUEST_CODE, Activity.RESULT_OK, intent);
             } else {
-                getTargetFragment().onActivityResult(EventDiscussionFragment.FILE_ADD_REQUEST_CODE, Activity.RESULT_OK, intent);
+                getTargetFragment().onActivityResult(DiscussionFragment.FILE_ADD_REQUEST_CODE, Activity.RESULT_OK, intent);
             }
 
             FragmentManager fm = getActivity().getSupportFragmentManager();
@@ -638,6 +635,9 @@ public class FileViewFragment extends Fragment {
         } else {
             fragment = new AddEventsFragment();
             data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(mGroup));
+            if(getArguments().containsKey("groupImage")){
+                data.putParcelable("groupImage", getArguments().getParcelable("groupImage"));
+            }
         }
         fragment.setArguments(data);
 

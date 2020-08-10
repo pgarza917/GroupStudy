@@ -16,6 +16,7 @@ public class Post extends ParseObject {
     public static final String KEY_CREATOR = "creator";
     public static final String KEY_EDITED = "editedEvent";
     public static final String KEY_EVENT = "event";
+    public static final String KEY_GROUP = "group";
 
     public String getText() {
         return getString(KEY_TEXT);
@@ -55,5 +56,13 @@ public class Post extends ParseObject {
 
     public void setEvent(Event event) {
         put(KEY_EVENT, event);
+    }
+
+    public Group getGroup() {
+        return (Group) getParseObject(KEY_GROUP);
+    }
+
+    public void setGroup(Group group) {
+        put(KEY_GROUP, group);
     }
 }
