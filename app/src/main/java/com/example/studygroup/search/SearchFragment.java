@@ -25,10 +25,12 @@ import android.widget.Spinner;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
+import com.example.studygroup.eventFeed.EventDetailsRootFragment;
 import com.example.studygroup.eventFeed.EventsAdapter;
 import com.example.studygroup.eventFeed.FeedFragment;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.profile.ProfileDetailsFragment;
+import com.example.studygroup.profile.ProfileFragment;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -89,7 +91,34 @@ public class SearchFragment extends Fragment {
 
         mEventsResultList = new ArrayList<>();
         mUsersResultsList = new ArrayList<>();
-        mEventsAdapter = new EventsAdapter(getContext(), mEventsResultList);
+        mEventsAdapter = new EventsAdapter(getContext(), mEventsResultList, new EventsAdapter.OnClickListener() {
+            @Override
+            public void onClick(int position) {
+                Event event = mEventsResultList.get(position);
+
+                if(position != RecyclerView.NO_POSITION) {
+
+                    Fragment fragment = new EventDetailsRootFragment();
+
+                    Bundle data = new Bundle();
+                    data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(event));
+                    data.putInt("position", position);
+                    fragment.setArguments(data);
+
+                    Fragment currentFragment = ((MainActivity) getContext()).getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainer);
+                    if(currentFragment.getClass().getSimpleName().equals(ProfileFragment.TAG)) {
+                        fragment.setTargetFragment(currentFragment, ProfileFragment.RC_DETAILS);
+                    }
+
+                    ((MainActivity) getContext()).getSupportFragmentManager()
+                            .beginTransaction()
+                            .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+                            .replace(R.id.frameLayoutContainer, fragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            }
+        });
         mUsersAdapter = new UserSearchResultAdapter(getContext(), mUsersResultsList, new UserSearchResultAdapter.ResultClickListener() {
             @Override
             public void onResultClicked(int position) {

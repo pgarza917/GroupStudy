@@ -22,6 +22,7 @@ import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.Subject;
+import com.example.studygroup.profile.ProfileFragment;
 import com.example.studygroup.search.SearchFragment;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -29,6 +30,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +93,34 @@ public class FeedFragment extends Fragment {
         // 1. Create the adapter
         // 2. Create the data source
         // 3. Set the adapter on the Recycler View
-        mEventsAdapter = new EventsAdapter(getContext(), mEventsList);
+        mEventsAdapter = new EventsAdapter(getContext(), mEventsList, new EventsAdapter.OnClickListener() {
+            @Override
+            public void onClick(int position) {
+                Event event = mEventsList.get(position);
+
+                if(position != RecyclerView.NO_POSITION) {
+
+                    Fragment fragment = new EventDetailsRootFragment();
+
+                    Bundle data = new Bundle();
+                    data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(event));
+                    data.putInt("position", position);
+                    fragment.setArguments(data);
+
+                    Fragment currentFragment = ((MainActivity) getContext()).getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainer);
+                    if(currentFragment.getClass().getSimpleName().equals(ProfileFragment.TAG)) {
+                        fragment.setTargetFragment(currentFragment, ProfileFragment.RC_DETAILS);
+                    }
+
+                    ((MainActivity) getContext()).getSupportFragmentManager()
+                            .beginTransaction()
+                            .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+                            .replace(R.id.frameLayoutContainer, fragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            }
+        });
         mEventsRecyclerView.setAdapter(mEventsAdapter);
         // 4. Set the layout manager on the Recycler View
         mEventsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

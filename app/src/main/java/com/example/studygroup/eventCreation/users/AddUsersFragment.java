@@ -27,7 +27,9 @@ import android.widget.SearchView;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
+import com.example.studygroup.groups.GroupStartCreate;
 import com.example.studygroup.models.Event;
+import com.example.studygroup.models.Group;
 import com.example.studygroup.search.UserSearchResultAdapter;
 import com.example.studygroup.eventCreation.CreateEventFragment;
 import com.example.studygroup.eventCreation.files.FileViewFragment;
@@ -55,6 +57,7 @@ public class AddUsersFragment extends Fragment {
     private UsersAdapter mSelectedUsersAdapter;
 
     private Event mEvent;
+    private Group mGroup;
 
     public AddUsersFragment() {
         // Required empty public constructor
@@ -84,8 +87,14 @@ public class AddUsersFragment extends Fragment {
         if(fragmentName.equals(TAG)) {
             int id = item.getItemId();
             if (id == R.id.action_check) {
-                for(ParseUser user : mSelectedUsers) {
-                    mEvent.addUnique("users", user);
+                if(mEvent != null) {
+                    for (ParseUser user : mSelectedUsers) {
+                        mEvent.addUnique("users", user);
+                    }
+                } else {
+                    for(ParseUser user : mSelectedUsers) {
+                        mGroup.addUnique("users", user);
+                    }
                 }
 
                 endUserSelection();
@@ -102,11 +111,15 @@ public class AddUsersFragment extends Fragment {
 
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Add Users");
 
-
-        mEvent = Parcels.unwrap(getArguments().getParcelable(Event.class.getSimpleName()));
-
-        List<ParseUser> alreadyAddedUsers = mEvent.getUsers();
-
+        List<ParseUser> alreadyAddedUsers;
+        if(getArguments().containsKey(Group.class.getSimpleName()))
+        {
+            mGroup = Parcels.unwrap(getArguments().getParcelable(Group.class.getSimpleName()));
+            alreadyAddedUsers = mGroup.getGroupUsers();
+        } else {
+            mEvent = Parcels.unwrap(getArguments().getParcelable(Event.class.getSimpleName()));
+            alreadyAddedUsers = mEvent.getUsers();
+        }
         mUserSearchResults = new ArrayList<>();
         mSelectedUsers = new ArrayList<>();
         if(alreadyAddedUsers != null) {
@@ -173,7 +186,7 @@ public class AddUsersFragment extends Fragment {
             }
         });
 
-        AddUsersFragment fragment = (AddUsersFragment) getFragmentManager().findFragmentByTag(AddUsersFragment.class.getSimpleName());
+        AddUsersFragment fragment = (AddUsersFragment) getFragmentManager().findFragmentById(R.id.frameLayoutContainer);
         fragment.getView().setFocusableInTouchMode(true);
         fragment.getView().requestFocus();
         fragment.getView().setOnKeyListener(new View.OnKeyListener() {
@@ -230,19 +243,21 @@ public class AddUsersFragment extends Fragment {
                 // not changed when we return to it
                 fm.popBackStackImmediate();
             }
-        } else {
-            Fragment fragment = new FileViewFragment();
-            Bundle data = new Bundle();
-            data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(mEvent));
-            fragment.setArguments(data);
-
-            ((MainActivity) getContext()).getSupportFragmentManager()
-                    .beginTransaction()
-                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left)
-                    .add(R.id.frameLayoutContainer, fragment, FileViewFragment.TAG)
-                    .addToBackStack(null)
-                    .commit();
         }
+        Fragment fragment = new FileViewFragment();
+        Bundle data = new Bundle();
+        if(mEvent != null) {
+            data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(mEvent));
+        } else {
+            data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(mGroup));
+        }
+        fragment.setArguments(data);
+        ((MainActivity) getContext()).getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left)
+                .add(R.id.frameLayoutContainer, fragment, FileViewFragment.TAG)
+                .addToBackStack(null)
+                .commit();
     }
 
     public void hideSoftKeyboard(View view){

@@ -7,6 +7,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +17,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Switch;
 
+import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
+import com.example.studygroup.eventCreation.users.AddUsersFragment;
 import com.example.studygroup.models.Group;
+
+import org.parceler.Parcels;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,13 +52,32 @@ public class GroupStartCreate extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.create_event_menu, menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainer);
-        String fragmentName = fragment.getClass().getSimpleName();
+        Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainer);
+        String fragmentName = currentFragment.getClass().getSimpleName();
 
         if(fragmentName.equals(TAG)) {
             if(item.getItemId() == R.id.action_check) {
                 saveGroupChanges();
+
+                Fragment fragment = new AddUsersFragment();
+                Bundle data = new Bundle();
+                data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(mGroup));
+                fragment.setArguments(data);
+                fragment.setTargetFragment(currentFragment, 100);
+                ((MainActivity) getContext()).getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left)
+                        .add(R.id.frameLayoutContainer, fragment)
+                        .addToBackStack(null)
+                        .commit();
 
                 return true;
             }

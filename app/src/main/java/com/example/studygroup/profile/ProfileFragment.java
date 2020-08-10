@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.studygroup.eventFeed.EventDetailsRootFragment;
 import com.example.studygroup.eventFeed.EventsAdapter;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.MainActivity;
@@ -38,6 +39,8 @@ import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +85,34 @@ public class ProfileFragment extends Fragment {
 
         mUserEventList = new ArrayList<>();
         mSubjectList = new ArrayList<>();
-        mUserEventsAdapter = new EventsAdapter(getContext(), mUserEventList);
+        mUserEventsAdapter = new EventsAdapter(getContext(), mUserEventList, new EventsAdapter.OnClickListener() {
+            @Override
+            public void onClick(int position) {
+                Event event = mUserEventList.get(position);
+
+                if(position != RecyclerView.NO_POSITION) {
+
+                    Fragment fragment = new EventDetailsRootFragment();
+
+                    Bundle data = new Bundle();
+                    data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(event));
+                    data.putInt("position", position);
+                    fragment.setArguments(data);
+
+                    Fragment currentFragment = ((MainActivity) getContext()).getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainer);
+                    if(currentFragment.getClass().getSimpleName().equals(ProfileFragment.TAG)) {
+                        fragment.setTargetFragment(currentFragment, ProfileFragment.RC_DETAILS);
+                    }
+
+                    ((MainActivity) getContext()).getSupportFragmentManager()
+                            .beginTransaction()
+                            .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+                            .replace(R.id.frameLayoutContainer, fragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            }
+        });
         mSubjectAdapter = new SubjectAdapter(getContext(), mSubjectList, new SubjectAdapter.OnClickListener() {
             @Override
             public void onClick(int position) {

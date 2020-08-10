@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".groups.ConfirmGroupFragment">
+
+    <EditText
+        android:id="@+id/confirmGroupNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"/>
+
+    <EditText
+        android:id="@+id/confirmDescriptionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/confirmGroupNameEditText"
+        android:layout_marginTop="4dp"
+        android:maxLines="5"/>
+
+</RelativeLayout>

@@ -56,10 +56,13 @@ import com.example.studygroup.eventCreation.users.UsersAdapter;
 import com.example.studygroup.eventCreation.users.AddUsersFragment;
 import com.example.studygroup.eventCreation.CreateEventFragment;
 import com.example.studygroup.eventFeed.EventDiscussionFragment;
+import com.example.studygroup.groups.AddEventsFragment;
+import com.example.studygroup.groups.GroupStartCreate;
 import com.example.studygroup.messaging.ConversationFragment;
 import com.example.studygroup.messaging.MessagesFragment;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.models.FileExtended;
+import com.example.studygroup.models.Group;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.common.api.Scope;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -106,6 +109,7 @@ public class FileViewFragment extends Fragment {
     private String mOpenFileId;
     private AlertDialog mFileDialog;
     private Event mEvent;
+    private Group mGroup;
 
     private EditText mFileTitleEditText;
     private ProgressBar mProgressBar;
@@ -141,11 +145,20 @@ public class FileViewFragment extends Fragment {
         if(fragmentName.equals(FileViewFragment.class.getSimpleName())) {
             switch(item.getItemId()) {
                 case R.id.action_check:
-                    for(ParseUser user : mNewEventUsers) {
-                        mEvent.addUnique("users", user);
-                    }
-                    for(FileExtended file : mFilesList) {
-                        mEvent.addUnique("files", file);
+                    if(mEvent != null) {
+                        for (ParseUser user : mNewEventUsers) {
+                            mEvent.addUnique("users", user);
+                        }
+                        for (FileExtended file : mFilesList) {
+                            mEvent.addUnique("files", file);
+                        }
+                    } else {
+                        for(ParseUser user : mNewEventUsers) {
+                            mGroup.addUnique("users", user);
+                        }
+                        for(FileExtended file : mFilesList) {
+                            mGroup.addUnique("files", file);
+                        }
                     }
                     endFileSelection();
                     return true;
@@ -164,9 +177,18 @@ public class FileViewFragment extends Fragment {
 
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Files");
 
-        mEvent = Parcels.unwrap(getArguments().getParcelable(Event.class.getSimpleName()));
-
-        List<FileExtended> alreadyAttachedFiles = mEvent.getFiles();
+        List<FileExtended> alreadyAttachedFiles;
+        List<ParseUser> alreadySelectedUsers;
+        if(getArguments().containsKey(Group.class.getSimpleName())) {
+            mGroup = Parcels.unwrap(getArguments().getParcelable(Group.class.getSimpleName()));
+            alreadyAttachedFiles = mGroup.getGroupFiles();
+            alreadySelectedUsers = mGroup.getGroupUsers();
+        }
+        else {
+            mEvent = Parcels.unwrap(getArguments().getParcelable(Event.class.getSimpleName()));
+            alreadyAttachedFiles = mEvent.getFiles();
+            alreadySelectedUsers = mEvent.getUsers();
+        }
         if(alreadyAttachedFiles != null) {
             if(mFilesList == null) mFilesList = new ArrayList<>();
             mFilesList.addAll(alreadyAttachedFiles);
@@ -174,7 +196,6 @@ public class FileViewFragment extends Fragment {
             mFilesList = new ArrayList<>();
         }
 
-        List<ParseUser> alreadySelectedUsers = mEvent.getUsers();
         if(alreadySelectedUsers != null) {
             if(mEventUsers == null) mEventUsers = new ArrayList<>();
             mEventUsers.addAll(alreadySelectedUsers);
@@ -182,8 +203,8 @@ public class FileViewFragment extends Fragment {
             mEventUsers = new ArrayList<>();
         }
 
-        mUsers = new ArrayList<>();
         mNewEventUsers = new ArrayList<>();
+        mUsers = new ArrayList<>();
 
         mProgressBar = view.findViewById(R.id.fileViewProgressBar);
         RecyclerView mFileViewRecyclerView = view.findViewById(R.id.uploadedFilesRecyclerView);
@@ -258,7 +279,7 @@ public class FileViewFragment extends Fragment {
             }
         });
 
-        FileViewFragment fragment = (FileViewFragment) getFragmentManager().findFragmentByTag(FileViewFragment.class.getSimpleName());
+        FileViewFragment fragment = (FileViewFragment) getFragmentManager().findFragmentById(R.id.frameLayoutContainer);
         fragment.getView().setFocusableInTouchMode(true);
         fragment.getView().requestFocus();
         fragment.getView().setOnKeyListener(new View.OnKeyListener() {
@@ -588,7 +609,7 @@ public class FileViewFragment extends Fragment {
 
     private void endFileSelection() {
         Fragment targetFragment = getTargetFragment();
-        if(targetFragment != null && !targetFragment.getClass().getSimpleName().equals(ConfirmEventFragment.TAG)) {
+        if(targetFragment != null) {
             // This case implementation handles the returning of the list of files that the user has
             // added to the event back to the create event fragment for upload of the event
             Intent intent = new Intent();
@@ -607,18 +628,23 @@ public class FileViewFragment extends Fragment {
             // This is used so that the state of the previous create-event fragment is
             // not changed when we return to it
             fm.popBackStackImmediate();
-        } else {
-            Fragment fragment = new ConfirmEventFragment();
-            Bundle data = new Bundle();
-            data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(mEvent));
-            fragment.setArguments(data);
-
-            ((MainActivity) getContext()).getSupportFragmentManager()
-                    .beginTransaction()
-                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left)
-                    .add(R.id.frameLayoutContainer, fragment)
-                    .addToBackStack(null)
-                    .commit();
         }
+        Fragment fragment;
+        Bundle data = new Bundle();
+        if(mEvent != null){
+            fragment = new ConfirmEventFragment();
+            data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(mEvent));
+        } else {
+            fragment = new AddEventsFragment();
+            data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(mGroup));
+        }
+        fragment.setArguments(data);
+
+        ((MainActivity) getContext()).getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left)
+                .add(R.id.frameLayoutContainer, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 }

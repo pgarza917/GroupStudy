@@ -14,7 +14,10 @@ import android.widget.TextView;
 
 import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
+import com.example.studygroup.groups.GroupListFragment;
+import com.example.studygroup.groups.GroupStartCreate;
 import com.example.studygroup.models.Event;
+import com.example.studygroup.models.Group;
 
 import org.parceler.Parcels;
 
@@ -73,7 +76,6 @@ public class CreateFragment extends Fragment {
     }
 
     private void beginEventCreationSeq() {
-
         Fragment fragment = new TitleDescAndSubjectFragment();
         Bundle data = new Bundle();
         Event event = new Event();
@@ -89,6 +91,17 @@ public class CreateFragment extends Fragment {
     }
 
     private void beginGroupCreationSeq() {
+        Fragment fragment = new GroupStartCreate();
+        Bundle data = new Bundle();
+        Group group = new Group();
+        data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(group));
+        fragment.setArguments(data);
 
+        ((MainActivity) getContext()).getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left)
+                .replace(R.id.frameLayoutContainer, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 }

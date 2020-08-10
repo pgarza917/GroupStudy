@@ -27,10 +27,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
     private Context mContext;
     private List<Event> mEventsList;
+    private OnClickListener mClickListener;
 
-    public EventsAdapter(Context mContext, List<Event> mEventsList) {
+    public EventsAdapter(Context mContext, List<Event> mEventsList, OnClickListener clickListener) {
         this.mContext = mContext;
         this.mEventsList = mEventsList;
+        this.mClickListener = clickListener;
     }
 
     @NonNull
@@ -112,30 +114,14 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
 
         @Override
         public void onClick(View view) {
-            final int position = getAdapterPosition();
-            Event event = mEventsList.get(position);
-
-            if(position != RecyclerView.NO_POSITION) {
-
-                Fragment fragment = new EventDetailsRootFragment();
-
-                Bundle data = new Bundle();
-                data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(event));
-                data.putInt("position", position);
-                fragment.setArguments(data);
-
-                Fragment currentFragment = ((MainActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainer);
-                if(currentFragment.getClass().getSimpleName().equals(ProfileFragment.TAG)) {
-                    fragment.setTargetFragment(currentFragment, ProfileFragment.RC_DETAILS);
-                }
-
-                ((MainActivity) mContext).getSupportFragmentManager()
-                        .beginTransaction()
-                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                        .replace(R.id.frameLayoutContainer, fragment)
-                        .addToBackStack(null)
-                        .commit();
+            if(mClickListener != null) {
+                final int position = getAdapterPosition();
+                mClickListener.onClick(position);
             }
         }
+    }
+
+    public interface OnClickListener {
+        void onClick(int position);
     }
 }
