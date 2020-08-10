@@ -16,7 +16,8 @@
         android:layout_toEndOf="@+id/groupPictureImageView"
         android:text="TextView"
         android:textColor="#000"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/groupPictureImageView"

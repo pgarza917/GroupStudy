@@ -192,8 +192,9 @@ public class DiscussionFragment extends Fragment {
     }
 
     private void queryGroupPosts() {
+        mProgressBar.setVisibility(View.VISIBLE);
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.whereNotEqualTo("group", mGroup);
+        query.whereEqualTo("group", mGroup);
         query.orderByDescending(Event.KEY_CREATED_AT);
 
         query.include("creator");
@@ -206,10 +207,13 @@ public class DiscussionFragment extends Fragment {
                     Log.e(TAG, "Error querying Parse for Group posts: ", e);
                     return;
                 }
-                if(posts != null) {
+                if(posts != null && posts.size() > 0) {
                     mPostsAdapter.clear();
                     mPostsAdapter.addAll(posts);
+                } else {
+                    mNoPostsTextView.setVisibility(View.VISIBLE);
                 }
+                mProgressBar.setVisibility(View.INVISIBLE);
             }
         });
     }

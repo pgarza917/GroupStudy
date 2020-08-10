@@ -76,6 +76,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
             mNumberOfUsersTextView = itemView.findViewById(R.id.numberOfUsersTextView);
             mJoinButton = itemView.findViewById(R.id.joinGroupButton);
 
+            itemView.setOnClickListener(this);
         }
 
         public void bind(Group group) {

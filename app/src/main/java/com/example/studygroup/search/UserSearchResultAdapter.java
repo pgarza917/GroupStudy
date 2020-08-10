@@ -92,8 +92,10 @@ public class UserSearchResultAdapter extends RecyclerView.Adapter<UserSearchResu
 
         @Override
         public void onClick(View view) {
-            view.setBackgroundColor(mContext.getResources().getColor(R.color.transparent_green));
-            listener.onResultClicked(getAdapterPosition());
+            if(listener != null) {
+                view.setBackgroundColor(mContext.getResources().getColor(R.color.transparent_green));
+                listener.onResultClicked(getAdapterPosition());
+            }
         }
     }
 

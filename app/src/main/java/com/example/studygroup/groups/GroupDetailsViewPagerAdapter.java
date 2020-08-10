@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.studygroup.eventFeed.DiscussionFragment;
+import com.example.studygroup.eventFeed.EventDetailsFragment;
 import com.example.studygroup.eventFeed.FilesFragment;
 import com.example.studygroup.models.Group;
 
@@ -29,27 +30,23 @@ public class GroupDetailsViewPagerAdapter extends FragmentStateAdapter {
         Bundle data = new Bundle();
         data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(mGroup));
 
-        Fragment fragment;
-        switch(position) {
-            case 0:
-                fragment = new DiscussionFragment();
-                break;
-            case 1:
-                fragment = new DiscussionFragment();
-                break;
-            case 2:
-                fragment = new FilesFragment();
-                break;
-            case 3:
-                fragment = new GroupDetailsFragment();
-                break;
-            default:
-                fragment = new DiscussionFragment();
-                break;
+        if(position == 0) {
+            Fragment fragment = new DiscussionFragment();
+            fragment.setArguments(data);
+            return fragment;
+        } else if(position == 1) {
+            Fragment fragment = new GroupEventsFragment();
+            fragment.setArguments(data);
+            return fragment;
+        } else if(position == 2) {
+            Fragment fragment = new FilesFragment();
+            fragment.setArguments(data);
+            return fragment;
+        } else {
+            Fragment fragment = new GroupDetailsFragment();
+            fragment.setArguments(data);
+            return fragment;
         }
-        fragment.setArguments(data);
-
-        return fragment;
     }
 
     @Override

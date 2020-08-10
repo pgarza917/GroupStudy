@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,8 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +64,17 @@ public class GroupListFragment extends Fragment {
             @Override
             public void onClick(int position) {
                 Group group = mGroupsList.get(position);
+                Fragment fragment = new GroupDetailsRootFragment();
+                Bundle data = new Bundle();
+                data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(group));
+                fragment.setArguments(data);
 
+                ((MainActivity) getContext()).getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                        .replace(R.id.frameLayoutContainer, fragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 

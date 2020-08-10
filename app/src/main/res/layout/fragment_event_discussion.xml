@@ -45,11 +45,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:text="There Are No Posts For This Event"
-        android:textColor="@color/darkGreen"
+        android:layout_marginTop="250dp"
+        android:text="No Posts Have Been Made\nTap the Button Below to Create One"
+        android:textAlignment="center"
         android:textSize="18sp"
-        android:textStyle="bold"
         android:visibility="invisible" />
 
 </RelativeLayout>
