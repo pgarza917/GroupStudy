@@ -12,6 +12,12 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.Calendar;
 
+/**
+ * DatePickerFragment is a subclass of the {@link DialogFragment} class. It handles the
+ * functionality of setting up a new Native Android Date Picker Dialog widget for the
+ * user to select a date from. It also handles receiving that selected date data and
+ * sending it back to the correct fragment that requested that data (a create UI fragment)
+ */
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
     @Override

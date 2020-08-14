@@ -28,17 +28,17 @@ public class EventDetailsViewPagerAdapter extends FragmentStateAdapter {
         data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(mEvent));
 
         if(position == 0) {
-            Fragment fragment = new EventDetailsFragment();
-            fragment.setArguments(data);
-
-            return fragment;
-        } else if(position == 1) {
             Fragment fragment = new DiscussionFragment();
             fragment.setArguments(data);
 
             return fragment;
-        } else {
+        } else if(position == 1) {
             Fragment fragment = new FilesFragment();
+            fragment.setArguments(data);
+
+            return fragment;
+        } else {
+            Fragment fragment = new EventDetailsFragment();
             fragment.setArguments(data);
 
             return fragment;

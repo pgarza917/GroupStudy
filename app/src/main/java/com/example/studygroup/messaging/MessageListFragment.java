@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.studygroup.R;
 import com.example.studygroup.models.Message;
@@ -46,6 +47,7 @@ public class MessageListFragment extends Fragment {
     private FirebaseUserAdapter mFirebaseUsersAdapter;
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mDatabaseReference;
+    private TextView mNoMessagesTextView;
 
     public MessageListFragment() {
         // Required empty public constructor
@@ -81,6 +83,7 @@ public class MessageListFragment extends Fragment {
         mMessagesRecyclerView = view.findViewById(R.id.messagesListRecyclerView);
         mMessagesRecyclerView.setHasFixedSize(true);
         mMessagesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mNoMessagesTextView = view.findViewById(R.id.noMessagesTextView);
 
         DividerItemDecoration divider = new DividerItemDecoration(mMessagesRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
         mMessagesRecyclerView.addItemDecoration(divider);
@@ -107,6 +110,7 @@ public class MessageListFragment extends Fragment {
                         if (message.getReceiver().equals(mFirebaseUser.getUid())) {
                             mUserIdList.add(message.getSender());
                         }
+                        
                     }
 
                     readChats();
@@ -148,6 +152,9 @@ public class MessageListFragment extends Fragment {
                             }
                         }
                     }
+                }
+                if(mUsersList.size() <= 0) {
+                    mNoMessagesTextView.setVisibility(View.VISIBLE);
                 }
                 mProgressBar.setVisibility(View.INVISIBLE);
                 mFirebaseUsersAdapter = new FirebaseUserAdapter(getContext(), mUsersList);

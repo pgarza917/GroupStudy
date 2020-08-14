@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.example.studygroup.groups.GroupDetailsFragment;
+import com.example.studygroup.groups.GroupListFragment;
 import com.example.studygroup.messaging.MessageListFragment;
 
 public class MessagesViewPagerAdapter extends FragmentStateAdapter {
@@ -18,7 +20,11 @@ public class MessagesViewPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        return MessageListFragment.newInstance(position);
+        if(position == 0) {
+            return MessageListFragment.newInstance(position);
+        } else {
+            return new GroupListFragment();
+        }
     }
 
     @Override

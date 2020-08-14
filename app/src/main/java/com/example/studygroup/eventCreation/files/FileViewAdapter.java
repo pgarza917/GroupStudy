@@ -19,6 +19,13 @@ import com.example.studygroup.models.FileExtended;
 
 import java.util.List;
 
+/**
+ * FileViewAdapter is a subclass of {@link RecyclerView.Adapter<FileViewAdapter.ViewHolder>}.
+ * It handles the functionality for how users view and interact with the individual items
+ * in the Recycler View that contains files that are uploaded to or created in the app when
+ * creating an event, group, or post or retrieved from the Parse server from an earlier
+ * creation of an event, group, or post.
+ */
 public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHolder> {
 
     public static final int WRITE_PERMISSION = 2390;
@@ -68,9 +75,15 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
             mFileNameTextView.setText(filename);
             long fileSize = file.getFileSize();
             String fileSizeString;
+
             if(fileSize >= 0) {
+                // If the fileSize is positive number, the file is not a Google Drive file
+                // and should have its size formatted a into a user-friendly, readable format
                 fileSizeString = getSize(fileSize);
             } else {
+                // Otherwise, we need to assign the correct file name based on the negative
+                // file size number (these are values I decided on my own but that are
+                // consistent with Google Drive file creation)
                 if(fileSize == - 1) {
                     fileSizeString = "Google Document";
                 } else if(fileSize == -2) {
@@ -81,6 +94,9 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
             }
             mFileSizeTextView.setText(fileSizeString);
 
+            // Setting a listener on the download icon to launch the the native Android
+            // Download manager to download the selected file from Parse to the user's
+            // device
             mDownloadFileButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

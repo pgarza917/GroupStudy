@@ -1,5 +1,7 @@
 package com.example.studygroup.groups;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -25,6 +27,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 import org.parceler.Parcels;
 
@@ -36,6 +39,7 @@ import java.util.List;
  */
 public class GroupEventsFragment extends Fragment {
     public static final String TAG = GroupEventsFragment.class.getSimpleName();
+    public static final int ADD_EVENTS_REQUEST_CODE = 3692;
 
     private TextView mNoEventsTextView;
 
@@ -94,13 +98,47 @@ public class GroupEventsFragment extends Fragment {
         AddEventsFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Fragment fragment = new AddEventsFragment();
+                Bundle data = new Bundle();
+                data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(mGroup));
+                fragment.setArguments(data);
+                fragment.setTargetFragment(GroupEventsFragment.this, ADD_EVENTS_REQUEST_CODE);
 
+                ((MainActivity) getContext()).getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom)
+                        .add(R.id.frameLayoutContainer, fragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
         EventsRecyclerView.setAdapter(mEventsAdapter);
         EventsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        getGroupEvents();
+    }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode != Activity.RESULT_OK) {
+            Log.i(TAG, "Error returning from adding events!");
+            return;
+        }
+
+        if(requestCode == ADD_EVENTS_REQUEST_CODE) {
+            mGroup = Parcels.unwrap(data.getParcelableExtra(Group.class.getSimpleName()));
+            mGroup.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    getGroupEvents();
+                }
+            });
+        }
+    }
+
+    private void getGroupEvents() {
         List<Event> groupEvents = mGroup.getGroupEvents();
         if(groupEvents != null && groupEvents.size() > 0) {
             mEventsAdapter.clear();

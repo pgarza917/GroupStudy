@@ -61,8 +61,8 @@ public class GroupStartCreate extends Fragment {
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1092;
 
     private ImageButton mGroupPictureImageButton;
-    private TextInputEditText mNameEditText;
-    private TextInputEditText mDescriptionEditText;
+    private EditText mNameEditText;
+    private EditText mDescriptionEditText;
     private Switch mPrivacySwitch;
 
     private Group mGroup;

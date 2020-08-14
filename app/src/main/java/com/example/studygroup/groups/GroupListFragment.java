@@ -5,12 +5,16 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -58,6 +62,7 @@ public class GroupListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         ((MainActivity) getContext()).getSupportActionBar().setTitle("Groups");
+        ((MainActivity) getContext()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         mGroupsList = new ArrayList<>();
         mGroupsAdapter = new GroupsAdapter(getContext(), mGroupsList, new GroupsAdapter.OnClickListener() {
@@ -83,6 +88,8 @@ public class GroupListFragment extends Fragment {
 
         mGroupsRecyclerView.setAdapter(mGroupsAdapter);
         mGroupsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        DividerItemDecoration divider = new DividerItemDecoration(mGroupsRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        mGroupsRecyclerView.addItemDecoration(divider);
 
         queryGroups();
     }

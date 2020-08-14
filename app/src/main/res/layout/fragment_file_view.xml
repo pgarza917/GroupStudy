@@ -76,7 +76,7 @@
         android:layout_below="@+id/createGoogleDocTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:text="Files for this Event"
+        android:text="Files Selected"
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold" />

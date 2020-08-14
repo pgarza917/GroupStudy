@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -89,6 +90,21 @@ public class EventDetailsRootFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new FeedFragment();
+                ((MainActivity) getContext()).getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_left)
+                        .replace(R.id.frameLayoutContainer, fragment)
+                        .commit();
+            }
+        });
+
         ViewPager2 mViewPager = view.findViewById(R.id.eventDetailsViewPager);
         TabLayout mTabLayout = view.findViewById(R.id.eventDetailsTabLayout);
 
@@ -103,11 +119,11 @@ public class EventDetailsRootFragment extends Fragment {
                     @Override
                     public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                         if(position == 0) {
-                            tab.setText("Details");
-                        } else if(position == 1) {
                             tab.setText("Discussion");
-                        } else {
+                        } else if(position == 1) {
                             tab.setText("Files");
+                        } else {
+                            tab.setText("Details");
                         }
                     }
                 }).attach();

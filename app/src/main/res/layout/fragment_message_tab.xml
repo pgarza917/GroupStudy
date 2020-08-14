@@ -24,4 +24,15 @@
         android:layout_marginTop="30dp"
         android:visibility="invisible"/>
 
+    <TextView
+        android:id="@+id/noMessagesTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="250dp"
+        android:text="You Have No Direct Messages\nTap The Button In The Top Right to Start a Conversation"
+        android:textAlignment="center"
+        android:visibility="invisible" />
+
 </RelativeLayout>

@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="12dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 android:backgroundTint="@color/quantum_white_100"
                 android:src="@drawable/ic_baseline_calendar_today_24"
                 android:tint="#64DD17" />
@@ -39,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="22dp"
+                android:layout_marginTop="18dp"
                 android:layout_toEndOf="@+id/detailsCalendarImageButton"
                 android:text="2 Oct 2019"
                 android:textSize="18sp" />
@@ -51,7 +51,7 @@
                 android:layout_below="@+id/detailsCalendarImageButton"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="12dp"
-                android:layout_marginTop="22dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginBottom="12dp"
                 android:backgroundTint="@color/quantum_white_100"
                 android:src="@drawable/ic_baseline_location_on_24"
@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/detailsCalendarImageButton"
                 android:layout_marginStart="0dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginBottom="12dp"
                 android:layout_toEndOf="@+id/detailsLocationImageButton"
                 android:textSize="18sp"
@@ -73,7 +73,7 @@
                 android:id="@+id/detailsTimeImageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="4dp"
                 android:layout_toStartOf="@+id/detailsTimeTextView"
                 android:backgroundTint="#FFFFFF"
@@ -85,10 +85,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="22dp"
+                android:layout_marginTop="18dp"
                 android:layout_marginEnd="80dp"
                 android:textSize="18sp"
                 tools:text="3:00 PM" />
+
+            <TextView
+                android:id="@+id/textView11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/detailsLocationTextView"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="-10dp"
+                android:layout_toEndOf="@+id/detailsLocationImageButton"
+                android:text="(Tap Location Name or Icon to Reset Map)"
+                android:textSize="10sp" />
 
         </RelativeLayout>
 
@@ -139,6 +150,15 @@
 
 
     </androidx.cardview.widget.CardView>
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/logisticsCardView"
+        android:layout_marginTop="8dp"
+        tools:context=".eventCreation.location.MapsFragment" />
 
 
 </RelativeLayout>

@@ -210,6 +210,7 @@ public class DiscussionFragment extends Fragment {
                 if(posts != null && posts.size() > 0) {
                     mPostsAdapter.clear();
                     mPostsAdapter.addAll(posts);
+                    mNoPostsTextView.setVisibility(View.INVISIBLE);
                 } else {
                     mNoPostsTextView.setVisibility(View.VISIBLE);
                 }
@@ -237,6 +238,7 @@ public class DiscussionFragment extends Fragment {
                 if(posts != null && posts.size() > 0) {
                     mPostsAdapter.clear();
                     mPostsAdapter.addAll(posts);
+                    mNoPostsTextView.setVisibility(View.INVISIBLE);
                 } else {
                     mNoPostsTextView.setVisibility(View.VISIBLE);
                 }
@@ -273,8 +275,11 @@ public class DiscussionFragment extends Fragment {
         fragment.setTargetFragment(DiscussionFragment.this, FILE_ADD_REQUEST_CODE);
 
         Bundle data = new Bundle();
-        data.putParcelableArrayList("filesAttached", (ArrayList<? extends Parcelable>) mPostFilesList);
-        data.putParcelableArrayList("eventUsers", (ArrayList<? extends Parcelable>) eventUsers);
+        if(mEvent != null) {
+            data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(mEvent));
+        } else {
+            data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(mGroup));
+        }
         fragment.setArguments(data);
 
         ((MainActivity) getContext()).getSupportFragmentManager()

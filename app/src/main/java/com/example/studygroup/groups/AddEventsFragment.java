@@ -1,14 +1,17 @@
 package com.example.studygroup.groups;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.LinkAddress;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -186,19 +189,28 @@ public class AddEventsFragment extends Fragment {
     }
 
     private void endEventsSelection() {
-        Fragment fragment = new ConfirmGroupFragment();
-        Bundle data = new Bundle();
-        data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(mGroup));
-        if(getArguments().containsKey("groupImage")){
-            data.putParcelable("groupImage", getArguments().getParcelable("groupImage"));
-        }
-        fragment.setArguments(data);
+        if(getTargetFragment() != null) {
+            Intent intent = new Intent();
+            intent.putExtra(Group.class.getSimpleName(), Parcels.wrap(mGroup));
+            getTargetFragment().onActivityResult(GroupEventsFragment.ADD_EVENTS_REQUEST_CODE, Activity.RESULT_OK, intent);
+            FragmentManager fm = getActivity().getSupportFragmentManager();
 
-        ((MainActivity) getContext()).getSupportFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left)
-                .add(R.id.frameLayoutContainer, fragment)
-                .addToBackStack(null)
-                .commit();
+            fm.popBackStackImmediate();
+        } else {
+            Fragment fragment = new ConfirmGroupFragment();
+            Bundle data = new Bundle();
+            data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(mGroup));
+            if (getArguments().containsKey("groupImage")) {
+                data.putParcelable("groupImage", getArguments().getParcelable("groupImage"));
+            }
+            fragment.setArguments(data);
+
+            ((MainActivity) getContext()).getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left)
+                    .add(R.id.frameLayoutContainer, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 }

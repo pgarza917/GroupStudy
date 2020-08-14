@@ -14,6 +14,12 @@ import androidx.fragment.app.DialogFragment;
 import java.text.DateFormat;
 import java.util.Calendar;
 
+/**
+ * TimePickerFragment is a subclass of the {@link DialogFragment} class. It handles the
+ * functionality of launching a native Android time picker dialog widget that users can
+ * select a time from. It also handles the receiving that selected time data and
+ * sending it back to the correct fragment that requested that data (a create UI fragment)
+ */
 public class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 
     @NonNull

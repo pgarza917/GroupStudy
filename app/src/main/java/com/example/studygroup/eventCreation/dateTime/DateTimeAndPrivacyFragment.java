@@ -38,7 +38,10 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * A simple {@link Fragment} subclass.
+ * DateTimeAndPrivacyFragment is a subclass of the {@link Fragment} class. It handles
+ * the functionality that allows users to select a date, a time, and a privacy (open
+ * or closed) for the event they are in the process of creating. It is the second screen
+ * in the event creation UI flow
  */
 public class DateTimeAndPrivacyFragment extends Fragment {
 
@@ -75,21 +78,32 @@ public class DateTimeAndPrivacyFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
+        // Clear the menu to make sure no extra menu items we don't want appear
         menu.clear();
+        // Inflate the correct menu, i.e. one with a check menu icon
         inflater.inflate(R.menu.create_event_menu, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
+        // Get the current fragment being displayed on the device (frameLayoutContainer is the view
+        // always used for displaying fragments in MainActivity)
         Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainer);
+        // Get the class name of this fragment
         String fragmentName = currentFragment.getClass().getSimpleName();
 
+        // Make sure that the current displayed fragment is an instance of this class to make sure
+        // that the user's taps on the menu items execute the code for these action in the
+        // correct fragment
         if(fragmentName.equals(DateTimeAndPrivacyFragment.class.getSimpleName())) {
             if (item.getItemId() == R.id.action_check) {
+                // Save the event changes successfully on the Event object before proceeding
                 if (!saveEventChanges()) {
                     return false;
                 }
+                // Start the Maps fragment to allow users to select a location for their event and
+                // pass the event that now also has a date, time, and privacy
                 Fragment fragment = new MapsFragment();
                 Bundle data = new Bundle();
                 data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(mEvent));
@@ -114,8 +128,10 @@ public class DateTimeAndPrivacyFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Retrieving and opening the event being created
         mEvent = Parcels.unwrap(getArguments().getParcelable(Event.class.getSimpleName()));
 
+        // Getting references to the various view components
         mDateImageButton = view.findViewById(R.id.dateImageButton);
         mTimeImageButton = view.findViewById(R.id.timeImageButton);
         mSelectDateTextView = view.findViewById(R.id.selectDateTextView);
@@ -124,6 +140,8 @@ public class DateTimeAndPrivacyFragment extends Fragment {
         mTimeTextView = view.findViewById(R.id.timeTextView);
         mPrivacySwitch = view.findViewById(R.id.privacySwitch);
 
+        // Listener to handle launching a date picker dialog widget for users to select an event
+        // date when they tap the calendar icon
         View.OnClickListener dateClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -131,6 +149,8 @@ public class DateTimeAndPrivacyFragment extends Fragment {
             }
         };
 
+        // Listener to handle launching a time picker dialog widget for users to select an event
+        // time when they tap the clock icon
         View.OnClickListener timeClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -138,11 +158,15 @@ public class DateTimeAndPrivacyFragment extends Fragment {
             }
         };
 
+        // Setting listeners mentioned above on relevant image buttons and text views to increase
+        // the tap area for launching date or time pickers
         mDateImageButton.setOnClickListener(dateClickListener);
         mTimeImageButton.setOnClickListener(timeClickListener);
         mSelectDateTextView.setOnClickListener(dateClickListener);
         mSelectTimeTextView.setOnClickListener(timeClickListener);
 
+        // Listener to handle capturing the selected privacy when users change the state of the
+        // Switch button (boolean --> false = closed , true = open)
         mPrivacySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -214,9 +238,14 @@ public class DateTimeAndPrivacyFragment extends Fragment {
         timePickerFragment.show(((MainActivity)getContext()).getSupportFragmentManager(), "timePicker");
     }
 
+    // This method handles editing relevant properties (date, time, privacy) of the Event object
+    // that is in the process of being created
     private boolean saveEventChanges() {
         Date eventDateTime = null;
+        // Making sure the user has selected a date and time
         if(mFormattedDate != null && mFormattedTime != null && !mFormattedDate.isEmpty() && !mFormattedTime.isEmpty()) {
+            // Creating a timestamp in a "dd.MM.yyyy HH:mm" so that it can be parsed to create a
+            // precise Date object that can be uploaded to Parse
             String formattedDateTime = mFormattedDate + " " + mFormattedTime;
             try {
                 eventDateTime = stringToDate(formattedDateTime, "dd.MM.yyyy HH:mm", Locale.ENGLISH);
@@ -239,7 +268,8 @@ public class DateTimeAndPrivacyFragment extends Fragment {
         return true;
     }
 
-    // Method for helping parse a Date format and creating a Date object
+    // Method for helping parse a formatted timestamp string and creating a precise Date
+    // object out of it
     public static Date stringToDate(String string, final String format, final Locale locale) throws ParseException {
         ThreadLocal formatter = new ThreadLocal() {
             protected SimpleDateFormat initialValue() {

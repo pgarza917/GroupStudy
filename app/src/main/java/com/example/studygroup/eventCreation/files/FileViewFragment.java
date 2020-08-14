@@ -86,7 +86,10 @@ import okio.BufferedSource;
 import okio.Okio;
 
 /**
- * A simple {@link Fragment} subclass.
+ * FileViewFragment is a subclass of {@link Fragment}. It handles the functionality of
+ * allowing users to create Google Drive files, take and upload pictures using their
+ * device's camera, and upload files from their device. Users can also see files they've
+ * created or uploaded in a recycler view
  */
 public class FileViewFragment extends Fragment {
 
@@ -136,13 +139,21 @@ public class FileViewFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Get the current fragment being displayed on the device (frameLayoutContainer is the view
+        // always used for displaying fragments in MainActivity)
         Fragment fragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainer);
         String fragmentName = fragment.getClass().getSimpleName();
 
+        // Make sure that the current displayed fragment is an instance of this class to make sure
+        // that the user's taps on the menu items execute the code for these action in the
+        // correct fragment
         if(fragmentName.equals(FileViewFragment.class.getSimpleName())) {
             switch(item.getItemId()) {
                 case R.id.action_check:
                     if(mEvent != null) {
+                        // If we are in the process of creating an event, we want to save
+                        // the added users and added files specified by the user to the
+                        // event Pars object
                         for (ParseUser user : mNewEventUsers) {
                             mEvent.addUnique("users", user);
                         }
@@ -150,6 +161,9 @@ public class FileViewFragment extends Fragment {
                             mEvent.addUnique("files", file);
                         }
                     } else {
+                        // If we are in the process of creating a group, we want to save
+                        // the added users and added files specified by the user to the
+                        // event Pars object
                         for(ParseUser user : mNewEventUsers) {
                             mGroup.addUnique("users", user);
                         }
@@ -157,6 +171,8 @@ public class FileViewFragment extends Fragment {
                             mGroup.addUnique("files", file);
                         }
                     }
+                    // Being the transition to the next fragment in the event or group
+                    // UI flow
                     endFileSelection();
                     return true;
                 default:
@@ -164,6 +180,8 @@ public class FileViewFragment extends Fragment {
             }
         }
         else {
+            // Returning false if this is not an instance of the fragment class being displayed
+            // so the next fragment class can be checked to run the correct code of the action
             return false;
         }
     }
@@ -172,35 +190,38 @@ public class FileViewFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Setting the action bar title
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Files");
 
-        List<FileExtended> alreadyAttachedFiles;
         List<ParseUser> alreadySelectedUsers;
+        // This if/else block determines if we are in the process of creating an event or
+        // group by checking what arguments were passed to this fragment
         if(getArguments().containsKey(Group.class.getSimpleName())) {
+            // If a group object was passed (designated by the Group class name as a key), then
+            // we want to retrieve and open it and get its already selected users
             mGroup = Parcels.unwrap(getArguments().getParcelable(Group.class.getSimpleName()));
-            alreadyAttachedFiles = mGroup.getGroupFiles();
             alreadySelectedUsers = mGroup.getGroupUsers();
         }
         else {
+            // Otherwise an event must have been passed (designated by the Event class name as a key),
+            // then we want to retrieve and open it and get its already selected users
             mEvent = Parcels.unwrap(getArguments().getParcelable(Event.class.getSimpleName()));
-            alreadyAttachedFiles = mEvent.getFiles();
             alreadySelectedUsers = mEvent.getUsers();
         }
-        if(alreadyAttachedFiles != null) {
-            if(mFilesList == null) mFilesList = new ArrayList<>();
-            mFilesList.addAll(alreadyAttachedFiles);
-        } else {
-            mFilesList = new ArrayList<>();
-        }
 
+        // List to hold all the files created (drive, picture, or uploaded) by the user
+        mFilesList = new ArrayList<>();
+
+        // Here we check to see if there are any already selected users attached to this event or
+        // group object and add them if they exist
+        mEventUsers = new ArrayList<>();
         if(alreadySelectedUsers != null) {
-            if(mEventUsers == null) mEventUsers = new ArrayList<>();
             mEventUsers.addAll(alreadySelectedUsers);
-        } else {
-            mEventUsers = new ArrayList<>();
         }
 
+        // Separate list to hold users added to the event or group in this fragment
         mNewEventUsers = new ArrayList<>();
+        // Separate list to hold all users in general for this event or group
         mUsers = new ArrayList<>();
 
         mProgressBar = view.findViewById(R.id.fileViewProgressBar);
@@ -209,6 +230,8 @@ public class FileViewFragment extends Fragment {
         ImageButton mTakePhotoImageButton = view.findViewById(R.id.takePhotoImageButton);
         ImageButton mUploadFilesImageButton = view.findViewById(R.id.uploadFilesImageButton);
 
+        // Creating a listener to remove users when the user taps to uncheck the check box
+        // that each added user item in user recycler views has
         UsersAdapter.CheckBoxListener checkBoxListener = new UsersAdapter.CheckBoxListener() {
             @Override
             public void onBoxChecked(int position) {
@@ -228,9 +251,12 @@ public class FileViewFragment extends Fragment {
 
         mFileViewRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        // Adding a divider between user items for clearer UI design
         DividerItemDecoration itemDecor = new DividerItemDecoration(mFileViewRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
         mFileViewRecyclerView.addItemDecoration(itemDecor);
 
+        // Adding listener to upload icon to launch the native Android file picker application
+        // so that users can select files from their device to upload
         mUploadFilesImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -245,25 +271,36 @@ public class FileViewFragment extends Fragment {
             }
         });
 
+        // Adding listener to camera icon to launch the user's device's camera to take a picture
+        // and bring that picture into this app
         mTakePhotoImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i(TAG, "Launching camera activity");
+                // Before launching the camera we need to ensure that the necessary permissions
+                // are in place that state that this app can open and take pictures with the device's
+                // camera. If not, we need to request those permissions first
                 if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
                             != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(new String[]{Manifest.permission.CAMERA}, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-                    onLaunchCamera();
                 } else {
                     onLaunchCamera();
                 }
             }
         });
 
+        // Adding listener to Google Drive icon to launch dialog to configure Google Drive file
+        // creation
         mCreateDocImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i(TAG, "Beginning to create new Google Doc for event");
 
+                // Before launching the Google Drive file creation dialog, we need to ensure the
+                // current user has a valid an authenticated Google account associated with it. We
+                // also need to make sure that the user has given this app permission to create
+                // files on their Google Drive on their behalf. If we do not have the permissions to
+                // do this, we must request these Google permissions
                 if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(getActivity()), new Scope(DriveScopes.DRIVE_FILE))) {
                     GoogleSignIn.requestPermissions(
                             getActivity(),
@@ -276,6 +313,9 @@ public class FileViewFragment extends Fragment {
             }
         });
 
+        // Adding a key listener to the current fragment, which should be this one, to register
+        // when the user taps the back button. We want to ensure this action leads the user to
+        // a logical place
         FileViewFragment fragment = (FileViewFragment) getFragmentManager().findFragmentById(R.id.frameLayoutContainer);
         fragment.getView().setFocusableInTouchMode(true);
         fragment.getView().requestFocus();
@@ -350,6 +390,8 @@ public class FileViewFragment extends Fragment {
         if(requestCode == ADD_USERS_REQUEST_CODE) {
             mFileDialog.show();
             List<ParseUser> newUsers = data.getParcelableArrayListExtra("eventUsers");
+            // As long as the added users from the AddUser fragment exist, we want to
+            // add them to the users list and new users list
             if(newUsers != null) {
                 addNewUsers(newUsers);
 
@@ -364,6 +406,8 @@ public class FileViewFragment extends Fragment {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            // If camera permissions were granted, launch the device's camera to allow users to
+            // take pictures
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.i(TAG, "Camera Permission Granted");
                 onLaunchCamera();
@@ -371,23 +415,55 @@ public class FileViewFragment extends Fragment {
                 Log.i(TAG, "Camera Permission Denied");
             }
         }
+        if(requestCode == RC_REQUEST_PERMISSION_SUCCESS_CONTINUE_FILE_CREATION) {
+            // Check all requested permissions and, if all are granted, launch the dialog
+            // to continue with creating Google Drive files on the user's behalf
+            boolean permissionCheck = true;
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    permissionCheck = false;
+                    break;
+                }
+            }
+            if(permissionCheck){
+                gsuiteConfigureCreateDialog();
+            }
+        }
     }
 
+    // This method handles the creation and launching of the dialog that allows users to configure
+    // the Google Drive file they'd like to create and add to the event or group. This method also
+    // largely handles that functionality
     private void gsuiteConfigureCreateDialog() {
+        // Now that we have the necessary permissions to create Google Drive files on the user's
+        // Google account, we need to communicate with the Google Drive API v3. As with all Google
+        // APIs, this dialog needs to begin with authentication and authorization using the OAuth2
+        // protocol. A credential is created for this account in order to request an access token to
+        // access private data using the Google Drive API. Since we checked permissions already, the
+        // access token should be granted and received in the background, allowing us to create a
+        // Drive Service object that will facilitate further communication with the Google Drive API
+        // for file creation in Java
         GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(getContext(), Collections.singleton(DriveScopes.DRIVE_FILE));
         Account account = GoogleSignIn.getLastSignedInAccount(getContext()).getAccount();
         credential.setSelectedAccount(account);
         Drive googleDriveService = new Drive.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential)
                 .setApplicationName("Study Group")
                 .build();
+        // Instantiating an instance of a helper class that assists in communicating with the Google
+        // Drive API to create Google Drive files
         mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
+        mUsersAdapter.clear();
 
+        // Beginning the creation of the dialog and setting its title
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Drive File Creation");
 
+        // Getting a reference to the layout file created and setting it as the dialog's layout to
+        // guide the user in creating a Google Drive file from this app
         final View customDialogLayout = ((MainActivity) getContext()).getLayoutInflater().inflate(R.layout.gsuite_create_dialog_layout, null);
         builder.setView(customDialogLayout);
 
+        // Getting references to the various components in our dialog layout view
         mFileTitleEditText = customDialogLayout.findViewById(R.id.dialogFileTitleEditText);
         CheckBox addAllEventUsersCheckBox = customDialogLayout.findViewById(R.id.addEventUsersCheckBox);
         Spinner typeSelectSpinner = customDialogLayout.findViewById(R.id.googleFileTypeSpinner);
@@ -399,6 +475,8 @@ public class FileViewFragment extends Fragment {
         usersForShareRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         usersForShareRecyclerView.setAdapter(mUsersAdapter);
 
+        // Creating a list of options for Google Drive files the user can create that will be used
+        // to populate the spinner
         List<String> fileTypeOptions = new ArrayList<String>();
         fileTypeOptions.add("Select File Type");
         fileTypeOptions.add("Doc");
@@ -407,6 +485,7 @@ public class FileViewFragment extends Fragment {
 
         int[] fileType = {0};
 
+        // Initializing the spinner to load the correct options in a default format
         ArrayAdapter<String> fileTypeSpinnerAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, fileTypeOptions);
         fileTypeSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeSelectSpinner.setAdapter(fileTypeSpinnerAdapter);
@@ -414,6 +493,8 @@ public class FileViewFragment extends Fragment {
         typeSelectSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                // Changing the selected type every time the user taps on a different option in
+                // the spinner menu
                 fileType[0] = position;
             }
 
@@ -422,6 +503,8 @@ public class FileViewFragment extends Fragment {
             }
         });
 
+        // Setting a positive button on the dialog to handle creating the a Google Drive file given
+        // the various configurations the user has elected throughout the dialog
         builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -429,15 +512,20 @@ public class FileViewFragment extends Fragment {
                     Toast.makeText(getContext(), "Please Select a File Type", Toast.LENGTH_SHORT).show();
                     return;
                 } else if(fileType[0] == 1) {
+                    // Creating a Google Document file
                     createDriveFile("application/vnd.google-apps.document", -1);
                 } else if(fileType[0] == 2) {
+                    // Creating a Google Sheet file
                     createDriveFile("application/vnd.google-apps.spreadsheet", -2);
                 } else {
+                    // Creating a Google Slide file
                     createDriveFile("application/vnd.google-apps.presentation", -3);
                 }
             }
         });
 
+        // Adding listener on checkbox so that when the user checks the box, all already added event
+        // or group users are added to users list for sharing the file to be created
         addAllEventUsersCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -451,9 +539,13 @@ public class FileViewFragment extends Fragment {
 
         builder.setNegativeButton("Cancel", null);
 
+        // Deploying the dialog
         mFileDialog = builder.create();
         mFileDialog.show();
 
+        // Adding a listener to a linear layout that contains an add user button and text view so
+        // that an Add Users fragment with an expected return result to allow the user to add
+        // other users to the group or event and share the Google Drive file to
         addOtherUsersLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -561,17 +653,24 @@ public class FileViewFragment extends Fragment {
             mProgressBar.setVisibility(View.VISIBLE);
             Log.d(TAG, "Creating a file.");
 
+            // If the user has not set a file name, we just give the file we create a filename of
+            // "Untitled"
             String fileName = mFileTitleEditText.getText().toString();
             if(fileName.isEmpty()) {
                 fileName = "Untitled";
             }
 
+            // Getting the final filename, must be final as it's used in an inner function
             final String finalFileName = fileName;
             final int finalGoogleType = googleType;
             mDriveServiceHelper.createFile(fileName, mimeType)
                     .addOnSuccessListener(fileId -> {
+                        // Getting the file id for the newly-created Google Drive file
                         mOpenFileId = fileId;
 
+                        // Calling a method within the helper class to share this newly created
+                        // file with the users selected by the current user via permissions handling
+                        // and communication with the Google Drive API
                         mDriveServiceHelper.updatePermissions(fileId, mUsers)
                                 .addOnSuccessListener((Void) ->
                                         Log.i(TAG, "Updated permissions"))
@@ -626,26 +725,27 @@ public class FileViewFragment extends Fragment {
             // This is used so that the state of the previous create-event fragment is
             // not changed when we return to it
             fm.popBackStackImmediate();
-        }
-        Fragment fragment;
-        Bundle data = new Bundle();
-        if(mEvent != null){
-            fragment = new ConfirmEventFragment();
-            data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(mEvent));
         } else {
-            fragment = new AddEventsFragment();
-            data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(mGroup));
-            if(getArguments().containsKey("groupImage")){
-                data.putParcelable("groupImage", getArguments().getParcelable("groupImage"));
+            Fragment fragment;
+            Bundle data = new Bundle();
+            if (mEvent != null) {
+                fragment = new ConfirmEventFragment();
+                data.putParcelable(Event.class.getSimpleName(), Parcels.wrap(mEvent));
+            } else {
+                fragment = new AddEventsFragment();
+                data.putParcelable(Group.class.getSimpleName(), Parcels.wrap(mGroup));
+                if (getArguments().containsKey("groupImage")) {
+                    data.putParcelable("groupImage", getArguments().getParcelable("groupImage"));
+                }
             }
-        }
-        fragment.setArguments(data);
+            fragment.setArguments(data);
 
-        ((MainActivity) getContext()).getSupportFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left)
-                .add(R.id.frameLayoutContainer, fragment)
-                .addToBackStack(null)
-                .commit();
+            ((MainActivity) getContext()).getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_left)
+                    .add(R.id.frameLayoutContainer, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 }

@@ -274,6 +274,7 @@ public class MessagesFragment extends Fragment {
         userQueries.add(emailQuery);
 
         ParseQuery<ParseUser> usersFullQuery = ParseQuery.or(userQueries);
+        usersFullQuery.whereNotEqualTo("objectId", ParseUser.getCurrentUser().getObjectId());
         usersFullQuery.orderByDescending(Event.KEY_CREATED_AT);
         usersFullQuery.setLimit(4);
 

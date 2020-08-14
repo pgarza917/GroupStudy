@@ -29,6 +29,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -68,8 +69,8 @@ public class ConfirmGroupFragment extends Fragment {
     public static final int FILE_PICKER_REQUEST_CODE = 6920;
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 5391;
 
-    private TextInputEditText mGroupNameEditText;
-    private TextInputEditText mGroupDescriptionEditText;
+    private EditText mGroupNameEditText;
+    private EditText mGroupDescriptionEditText;
     private ImageButton mGroupPictureImageButton;
     private ImageButton mAddUsersImageButton;
     private ImageButton mAddFilesImageButton;

@@ -20,6 +20,7 @@ public class Group extends ParseObject {
     public static final String KEY_NUMBER_USERS = "numberOfUsers";
     public static final String KEY_GROUP_PICTURE = "groupImage";
     public static final String KEY_GROUP_DESCRIPTION = "description";
+    public static final String KEY_HAS_CHAT = "hasChat";
     public boolean isCurrentUserMember = false;
 
     public String getGroupName() {
@@ -80,5 +81,13 @@ public class Group extends ParseObject {
 
     public void setGroupDescription(String description) {
         put(KEY_GROUP_DESCRIPTION, description);
+    }
+
+    public boolean hasChat() {
+        return getBoolean(KEY_HAS_CHAT);
+    }
+
+    public void setHasChat(boolean hasChat) {
+        put(KEY_HAS_CHAT, hasChat);
     }
 }

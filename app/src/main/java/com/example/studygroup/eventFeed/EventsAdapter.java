@@ -1,13 +1,17 @@
 package com.example.studygroup.eventFeed;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -17,10 +21,12 @@ import com.example.studygroup.MainActivity;
 import com.example.studygroup.R;
 import com.example.studygroup.models.Event;
 import com.example.studygroup.profile.ProfileFragment;
+import com.parse.ParseUser;
 
 import org.parceler.Parcels;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder> {
@@ -88,7 +94,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
             mTimeTextView = itemView.findViewById(R.id.timeTextView);
             mSuggestedTextView = itemView.findViewById(R.id.suggestionTextView);
 
-
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    launchDeleteDialog();
+                    return true;
+                }
+            });
             itemView.setOnClickListener(this);
         }
 
@@ -118,6 +130,40 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 final int position = getAdapterPosition();
                 mClickListener.onClick(position);
             }
+        }
+
+        private void launchDeleteDialog() {
+            int position = getAdapterPosition();
+            Event event = mEventsList.get(position);
+            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+            builder.setTitle("Would you like to remove " + event.getTitle() + "?");
+            builder.setNegativeButton("No", null);
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    mEventsList.remove(position);
+                    notifyItemRemoved(position);
+                    if(eventHasUser(event, ParseUser.getCurrentUser())) {
+                        event.removeAll("users", Collections.singletonList(ParseUser.getCurrentUser()));
+                    }
+                    Toast.makeText(mContext, event.getTitle() + " Removed!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            Dialog dialog = builder.create();
+            dialog.show();
+        }
+
+        private boolean eventHasUser(Event event, ParseUser user) {
+            List<ParseUser> users = event.getUsers();
+            if(users != null) {
+                for (ParseUser eventUser : users) {
+                    if (user.getObjectId().equals(eventUser.getObjectId())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 
